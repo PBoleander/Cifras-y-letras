@@ -4,11 +4,15 @@ import fichas.ContenedorFicha;
 import fichas.Letra;
 
 import java.awt.event.MouseEvent;
+import java.util.Arrays;
 
 class Letras extends Juego {
 
     final ContenedorFicha[] letrasDisponibles, letrasPuestas;
     final int numeroLetras = 9;
+    final int[] memoria;
+
+    int longitudMemoria;
 
     private ContenedorFicha contenedorBajoPuntero;
     private int numeroLetrasSacadas;
@@ -17,6 +21,7 @@ class Letras extends Juego {
     Letras() {
         super();
 
+        this.memoria = new int[numeroLetras];
         this.letrasDisponibles = new ContenedorFicha[numeroLetras];
         this.letrasPuestas = new ContenedorFicha[numeroLetras];
 
@@ -37,7 +42,6 @@ class Letras extends Juego {
     public void mouseClicked(MouseEvent mouseEvent) {
         if (! estaBloqueado() && contenedorBajoPuntero != null) {
             if (contenedorBajoPuntero.estaOcupado()) {
-                assert contenedorBajoPuntero.getFicha() instanceof Letra;
                 Letra letraClicada = (Letra) contenedorBajoPuntero.getFicha();
 
                 if (esLetraDisponible(contenedorBajoPuntero)) {
@@ -57,7 +61,6 @@ class Letras extends Juego {
         if (! estaBloqueado() && contenedorBajoPuntero != null) {
             if (contenedorBajoPuntero.estaOcupado()) {
                 if (! esLetraDisponible(contenedorBajoPuntero)) { // Es letra puesta
-                    assert contenedorBajoPuntero.getFicha() instanceof Letra;
                     letraArrastrada = (Letra) contenedorBajoPuntero.getFicha();
                     contenedorBajoPuntero.setFicha(null);
                 }
@@ -106,6 +109,7 @@ class Letras extends Juego {
     @Override
     void iniciar() {
         setTiempoInicial(45); // TODO Completar con el tiempo correcto
+        Arrays.fill(memoria, -1);
 
         for (int i = 0; i < numeroLetras; i++) {
             letrasDisponibles[i].setFicha(null);
@@ -118,6 +122,22 @@ class Letras extends Juego {
         for (ContenedorFicha contenedorFicha: letrasPuestas) {
             if (contenedorFicha.estaOcupado()) {
                 contenedorFicha.setFicha(null);
+            }
+        }
+    }
+
+    void memorizar() {
+        Letra letra;
+        Arrays.fill(memoria, -1);
+        longitudMemoria = 0;
+
+        for (ContenedorFicha contenedorFicha: letrasPuestas) {
+            if (contenedorFicha.estaOcupado()) {
+                letra = (Letra) contenedorFicha.getFicha();
+                if (letra != null) {
+                    memorizar(letra);
+                    longitudMemoria++;
+                }
             }
         }
     }
@@ -136,6 +156,12 @@ class Letras extends Juego {
         // TODO Quitar mensaje pausa
     }
 
+    void recuperarMemoria() {
+        for (int i = 0; i < longitudMemoria; i++) {
+            usar((Letra) letrasDisponibles[memoria[i]].getFicha());
+        }
+    }
+
     @Override
     void resolver() {
         super.resolver();
@@ -152,12 +178,29 @@ class Letras extends Juego {
             super.iniciar();
     }
 
+    private void memorizar(Letra letra) {
+        int i = 0;
+        while (i < numeroLetras && memoria[i] != -1)
+            i++;
+
+        memoria[i] = quePosicionOcupa(letra);
+    }
+
     private boolean esLetraDisponible(ContenedorFicha contenedorFicha) {
         int i = 0;
         while (i < numeroLetras && ! letrasDisponibles[i].equals(contenedorFicha))
             i++;
 
         return i < numeroLetras;
+    }
+
+    private int quePosicionOcupa(Letra letra) {
+        for (int i = 0; i < numeroLetras; i++) {
+            if (((Letra) letrasDisponibles[i].getFicha()).equals(letra)) {
+                return i;
+            }
+        }
+        return -1; // Aquí no debe llegar
     }
 
     private void usar(Letra letra) {
