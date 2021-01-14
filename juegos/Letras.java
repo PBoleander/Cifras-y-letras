@@ -34,8 +34,9 @@ class Letras extends Juego {
         }
 
         this.contenedorBajoPuntero = null;
-        this.numeroLetrasSacadas = 0;
         this.letraArrastrada = null;
+
+        iniciar();
     }
 
     @Override
@@ -62,7 +63,6 @@ class Letras extends Juego {
             if (contenedorBajoPuntero.estaOcupado()) {
                 if (! esLetraDisponible(contenedorBajoPuntero)) { // Es letra puesta
                     letraArrastrada = (Letra) contenedorBajoPuntero.getFicha();
-                    contenedorBajoPuntero.setFicha(null);
                 }
             }
         }
@@ -72,10 +72,16 @@ class Letras extends Juego {
     public void mouseReleased(MouseEvent mouseEvent) {
         if (mouseEvent.getClickCount() == 0) {
             if (!estaBloqueado() && contenedorBajoPuntero != null) {
-                if (!contenedorBajoPuntero.estaOcupado()) {
-                    if (!esLetraDisponible(contenedorBajoPuntero)) { // Es letra puesta
+                if (!esLetraDisponible(contenedorBajoPuntero)) { // Es letra puesta
+                    if (!contenedorBajoPuntero.estaOcupado()) {
                         if (letraArrastrada != null) {
                             contenedorBajoPuntero.setFicha(letraArrastrada);
+                            ((ContenedorFicha) mouseEvent.getSource()).setFicha(null);
+                            letraArrastrada = null;
+                        }
+                    } else {
+                        if (letraArrastrada != null) {
+                            ((ContenedorFicha) mouseEvent.getSource()).setFicha(letraArrastrada);
                             letraArrastrada = null;
                         }
                     }
@@ -110,6 +116,7 @@ class Letras extends Juego {
     void iniciar() {
         setTiempoInicial(45); // TODO Completar con el tiempo correcto
         Arrays.fill(memoria, -1);
+        numeroLetrasSacadas = 0;
 
         for (int i = 0; i < numeroLetras; i++) {
             letrasDisponibles[i].setFicha(null);
@@ -121,6 +128,7 @@ class Letras extends Juego {
     void limpiar() {
         for (ContenedorFicha contenedorFicha: letrasPuestas) {
             if (contenedorFicha.estaOcupado()) {
+                ((Letra) contenedorFicha.getFicha()).setUsada(false);
                 contenedorFicha.setFicha(null);
             }
         }
@@ -157,6 +165,8 @@ class Letras extends Juego {
     }
 
     void recuperarMemoria() {
+        limpiar();
+
         for (int i = 0; i < longitudMemoria; i++) {
             usar((Letra) letrasDisponibles[memoria[i]].getFicha());
         }

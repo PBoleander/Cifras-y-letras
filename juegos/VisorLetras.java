@@ -23,6 +23,22 @@ public class VisorLetras extends JPanel {
         constraints.gridy = 2;
         add(new PanelControlLetras(letras), constraints);
 
+        constraints.gridy = 3;
+        JPanel panelLetrasDisponibles = new JPanel(new GridLayout(1, letras.numeroLetras, 10, 0));
+        for (int i = 0; i < letras.numeroLetras; i++) {
+            panelLetrasDisponibles.add(letras.letrasDisponibles[i]);
+        }
+
+        add(panelLetrasDisponibles, constraints);
+
+        constraints.gridy = 4;
+        JPanel panelLetrasPuestas = new JPanel(new GridLayout(1, letras.numeroLetras, 10, 0));
+        for (int i = 0; i < letras.numeroLetras; i++) {
+            panelLetrasPuestas.add(letras.letrasPuestas[i]);
+        }
+
+        add(panelLetrasPuestas, constraints);
+
         constraints.fill = GridBagConstraints.NONE; // Reiniciamos el valor de constraints fill al original
     }
 }

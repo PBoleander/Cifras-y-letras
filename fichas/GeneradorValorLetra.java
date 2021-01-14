@@ -33,7 +33,7 @@ class GeneradorValorLetra {
     private int[] frecuenciasVocales;
 
     public GeneradorValorLetra() {
-
+        setIdioma(Idioma.CASTELLANO); // TODO Sólo es temporal, mirar cómo arreglarlo
     }
 
     public void setIdioma(Idioma idioma) {

@@ -32,5 +32,8 @@ public class ContenedorFicha extends JPanel {
         this.ficha = ficha;
         if (ficha != null)
             add(ficha);
+
+        revalidate();
+        repaint();
     }
 }
