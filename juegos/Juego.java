@@ -11,8 +11,10 @@ abstract class Juego implements MouseListener {
 
     Juego() {
         this.mostradorTiempo = new MostradorTiempo();
-        this.bloqueo = false;
+        this.bloqueo = true;
     }
+
+    abstract void limpiar();
 
     boolean estaBloqueado() {
         return bloqueo;

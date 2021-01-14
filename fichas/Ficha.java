@@ -12,6 +12,8 @@ abstract class Ficha extends JLabel {
     private static final Color FOREGROUND = Color.BLACK;
     private static final Font FUENTE = new Font(Font.DIALOG, Font.BOLD, 32);
 
+    private boolean usada;
+
     Ficha() {
         super();
 
@@ -23,5 +25,15 @@ abstract class Ficha extends JLabel {
         setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
         setPreferredSize(new Dimension(ANCHO, ALTO));
+
+        this.usada = false;
+    }
+
+    public boolean isUsada() {
+        return usada;
+    }
+
+    public void setUsada(boolean usada) {
+        this.usada = usada;
     }
 }

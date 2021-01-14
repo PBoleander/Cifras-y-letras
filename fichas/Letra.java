@@ -10,15 +10,17 @@ public class Letra extends Ficha {
 
     private char valor;
 
-    public Letra() {
+    public Letra(Tipo tipo) {
         super();
+
+        nuevoValor(tipo);
     }
 
     public char getValor() {
         return valor;
     }
 
-    public void nuevoValor(Tipo tipo) {
+    private void nuevoValor(Tipo tipo) {
         this.valor = generador.getValor(tipo);
 
         setText(String.valueOf(valor));

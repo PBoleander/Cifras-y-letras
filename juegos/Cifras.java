@@ -4,7 +4,7 @@ import java.awt.event.MouseEvent;
 
 class Cifras extends Juego {
 
-    public Cifras() {
+    Cifras() {
         super();
     }
 
@@ -40,6 +40,11 @@ class Cifras extends Juego {
         setTiempoInicial(60);
 
         super.iniciar();
+    }
+
+    @Override
+    void limpiar() {
+
     }
 
     @Override

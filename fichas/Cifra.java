@@ -11,13 +11,15 @@ public class Cifra extends Ficha {
 
     public Cifra() {
         super();
+
+        nuevoValor();
     }
 
     public int getValor() {
         return valor;
     }
 
-    public void nuevoValor() {
+    private void nuevoValor() {
         int indiceAleatorio = RANDOM.nextInt(VALORES_POSIBLES.length);
         this.valor = VALORES_POSIBLES[indiceAleatorio];
 
