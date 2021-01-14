@@ -172,10 +172,10 @@ class Letras extends Juego {
             letrasDisponibles[numeroLetrasSacadas].setFicha(new Letra(tipo));
 
             numeroLetrasSacadas++;
-        }
 
-        if (numeroLetrasSacadas == numeroLetras)
-            super.iniciar();
+            if (numeroLetrasSacadas == numeroLetras)
+                super.iniciar();
+        }
     }
 
     private void memorizar(Letra letra) {
