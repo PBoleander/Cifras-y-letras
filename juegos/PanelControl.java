@@ -7,7 +7,7 @@ import java.awt.event.ActionListener;
 
 class PanelControl extends JPanel implements ActionListener {
 
-    private final JButton btnIniciar, btnPausa, btnResolver;
+    private final JButton btnIniciar, btnLimpiar, btnPausa, btnResolver;
     private final JCheckBox chkContrarreloj;
     private final Juego juego;
 
@@ -17,18 +17,20 @@ class PanelControl extends JPanel implements ActionListener {
         this.juego = juego;
 
         btnIniciar = new JButton("Nuevo");
+        btnLimpiar = new JButton("Limpiar");
         btnPausa = new JButton("Pausar");
         btnResolver = new JButton("Resolver");
-        // TODO Añadir botón de limpiar intentos
 
         chkContrarreloj = new JCheckBox("Contrarreloj", true);
 
         btnIniciar.addActionListener(this);
+        btnLimpiar.addActionListener(this);
         btnPausa.addActionListener(this);
         btnResolver.addActionListener(this);
         chkContrarreloj.addActionListener(this);
 
         add(btnPausa);
+        add(btnLimpiar);
         add(btnResolver);
         add(btnIniciar);
         add(chkContrarreloj);
@@ -44,6 +46,11 @@ class PanelControl extends JPanel implements ActionListener {
             if (!juego.haEmpezado()) juego.iniciar();
 
             else if (mostrarConfirmacion() == JOptionPane.YES_OPTION) juego.resolver();
+
+        } else if (source.equals(btnLimpiar)) {
+            if (juego.haEmpezado() && !juego.estaBloqueado()) {
+                juego.limpiar();
+            }
 
         } else if (source.equals(btnPausa)) {
             if (juego.haEmpezado()) {
