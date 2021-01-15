@@ -17,6 +17,7 @@ class Letras extends Juego {
 
     private final Letra[] letrasDisponiblesAux;
     private ContenedorFicha contenedorBajoPuntero;
+    private Idioma idioma;
     private int numeroLetrasSacadas;
     private Letra letraArrastrada;
 
@@ -115,10 +116,24 @@ class Letras extends Juego {
         }
     }
 
+    String getPalabraMemorizada() {
+        if (longitudMemoria == 0) return "";
+        else {
+            StringBuilder palabraMemorizada = new StringBuilder();
+
+            for (int i = 0; i < longitudMemoria; i++) {
+                palabraMemorizada.append(letrasDisponiblesAux[memoria[i]].getValor());
+            }
+
+            return palabraMemorizada.toString();
+        }
+    }
+
     @Override
     void iniciar() {
-        setTiempoInicial(45); // TODO Completar con el tiempo correcto
+        setTiempoInicial(idioma == Idioma.INGLES ? 60 : 45);
         Arrays.fill(memoria, -1);
+        longitudMemoria = 0;
         numeroLetrasSacadas = 0;
 
         for (int i = 0; i < numeroLetras; i++) {
@@ -194,6 +209,7 @@ class Letras extends Juego {
     }
 
     void setIdioma(Idioma idioma) {
+        this.idioma = idioma;
         Letra.generador.setIdioma(idioma);
     }
 
