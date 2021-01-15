@@ -6,7 +6,7 @@ public class Letra extends Ficha {
         CONSONANTE, VOCAL
     }
 
-    private static final GeneradorValorLetra generador = new GeneradorValorLetra();
+    public static final GeneradorValorLetra generador = new GeneradorValorLetra();
 
     private char valor;
 

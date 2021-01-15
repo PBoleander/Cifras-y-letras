@@ -2,6 +2,7 @@ package juegos;
 
 import fichas.ContenedorFicha;
 import fichas.Letra;
+import general.Idioma;
 
 import java.awt.event.MouseEvent;
 import java.util.Arrays;
@@ -190,6 +191,10 @@ class Letras extends Juego {
             if (numeroLetrasSacadas == numeroLetras)
                 super.iniciar();
         }
+    }
+
+    void setIdioma(Idioma idioma) {
+        Letra.generador.setIdioma(idioma);
     }
 
     private void desusar(Letra letra) {
