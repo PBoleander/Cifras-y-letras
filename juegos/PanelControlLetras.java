@@ -41,11 +41,11 @@ class PanelControlLetras extends JPanel implements ActionListener {
             letras.sacar(Letra.Tipo.CONSONANTE);
 
         } else if (source.equals(btnMemorizar)) {
-            if (!letras.estaBloqueado())
+            if (letras.haEmpezado() && !letras.estaBloqueado())
                 letras.memorizar();
 
         } else if (source.equals(btnRecuperar)) {
-            if (!letras.estaBloqueado())
+            if (letras.haEmpezado() && !letras.estaBloqueado())
                 letras.recuperarMemoria();
 
         } else if (source.equals(btnVocal)) {

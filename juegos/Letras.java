@@ -14,6 +14,7 @@ class Letras extends Juego {
 
     int longitudMemoria;
 
+    private final Letra[] letrasDisponiblesAux;
     private ContenedorFicha contenedorBajoPuntero;
     private int numeroLetrasSacadas;
     private Letra letraArrastrada;
@@ -23,6 +24,7 @@ class Letras extends Juego {
 
         this.memoria = new int[numeroLetras];
         this.letrasDisponibles = new ContenedorFicha[numeroLetras];
+        this.letrasDisponiblesAux = new Letra[numeroLetras];
         this.letrasPuestas = new ContenedorFicha[numeroLetras];
 
         for (int i = 0; i < numeroLetras; i++) {
@@ -41,7 +43,7 @@ class Letras extends Juego {
 
     @Override
     public void mouseClicked(MouseEvent mouseEvent) {
-        if (! estaBloqueado() && contenedorBajoPuntero != null) {
+        if (haEmpezado() && ! estaBloqueado() && contenedorBajoPuntero != null) {
             if (contenedorBajoPuntero.estaOcupado()) {
                 Letra letraClicada = (Letra) contenedorBajoPuntero.getFicha();
 
@@ -50,7 +52,7 @@ class Letras extends Juego {
                         usar(letraClicada);
                     }
                 } else { // Es letra puesta
-                    letraClicada.setUsada(false);
+                    desusar(letraClicada);
                     contenedorBajoPuntero.setFicha(null);
                 }
             }
@@ -59,7 +61,7 @@ class Letras extends Juego {
 
     @Override
     public void mousePressed(MouseEvent mouseEvent) {
-        if (! estaBloqueado() && contenedorBajoPuntero != null) {
+        if (haEmpezado() && ! estaBloqueado() && contenedorBajoPuntero != null) {
             if (contenedorBajoPuntero.estaOcupado()) {
                 if (! esLetraDisponible(contenedorBajoPuntero)) { // Es letra puesta
                     letraArrastrada = (Letra) contenedorBajoPuntero.getFicha();
@@ -71,7 +73,7 @@ class Letras extends Juego {
     @Override
     public void mouseReleased(MouseEvent mouseEvent) {
         if (mouseEvent.getClickCount() == 0) {
-            if (!estaBloqueado() && contenedorBajoPuntero != null) {
+            if (haEmpezado() && !estaBloqueado() && contenedorBajoPuntero != null) {
                 if (!esLetraDisponible(contenedorBajoPuntero)) { // Es letra puesta
                     if (!contenedorBajoPuntero.estaOcupado()) {
                         if (letraArrastrada != null) {
@@ -94,7 +96,7 @@ class Letras extends Juego {
 
     @Override
     public void mouseEntered(MouseEvent mouseEvent) {
-        if (! estaBloqueado()) {
+        if (haEmpezado() && ! estaBloqueado()) {
             Object source = mouseEvent.getSource();
             if (source instanceof ContenedorFicha) {
                 contenedorBajoPuntero = (ContenedorFicha) source;
@@ -104,7 +106,7 @@ class Letras extends Juego {
 
     @Override
     public void mouseExited(MouseEvent mouseEvent) {
-        if (! estaBloqueado()) {
+        if (haEmpezado() && ! estaBloqueado()) {
             Object source = mouseEvent.getSource();
             if (source instanceof ContenedorFicha) {
                 contenedorBajoPuntero = null;
@@ -128,7 +130,7 @@ class Letras extends Juego {
     void limpiar() {
         for (ContenedorFicha contenedorFicha: letrasPuestas) {
             if (contenedorFicha.estaOcupado()) {
-                ((Letra) contenedorFicha.getFicha()).setUsada(false);
+                desusar((Letra) contenedorFicha.getFicha());
                 contenedorFicha.setFicha(null);
             }
         }
@@ -168,7 +170,7 @@ class Letras extends Juego {
         limpiar();
 
         for (int i = 0; i < longitudMemoria; i++) {
-            usar((Letra) letrasDisponibles[memoria[i]].getFicha());
+            usar(letrasDisponiblesAux[memoria[i]]);
         }
     }
 
@@ -179,7 +181,9 @@ class Letras extends Juego {
 
     void sacar(Letra.Tipo tipo) {
         if (numeroLetrasSacadas < numeroLetras) {
-            letrasDisponibles[numeroLetrasSacadas].setFicha(new Letra(tipo));
+            Letra letra = new Letra(tipo);
+            letrasDisponibles[numeroLetrasSacadas].setFicha(letra);
+            letrasDisponiblesAux[numeroLetrasSacadas] = letra;
 
             numeroLetrasSacadas++;
 
@@ -188,12 +192,9 @@ class Letras extends Juego {
         }
     }
 
-    private void memorizar(Letra letra) {
-        int i = 0;
-        while (i < numeroLetras && memoria[i] != -1)
-            i++;
-
-        memoria[i] = quePosicionOcupa(letra);
+    private void desusar(Letra letra) {
+        letrasDisponibles[quePosicionOcupa(letra)].setFicha(letra);
+        letra.setUsada(false);
     }
 
     private boolean esLetraDisponible(ContenedorFicha contenedorFicha) {
@@ -204,9 +205,17 @@ class Letras extends Juego {
         return i < numeroLetras;
     }
 
+    private void memorizar(Letra letra) {
+        int i = 0;
+        while (i < numeroLetras && memoria[i] != -1)
+            i++;
+
+        memoria[i] = quePosicionOcupa(letra);
+    }
+
     private int quePosicionOcupa(Letra letra) {
         for (int i = 0; i < numeroLetras; i++) {
-            if (((Letra) letrasDisponibles[i].getFicha()).equals(letra)) {
+            if (letrasDisponiblesAux[i].equals(letra)) {
                 return i;
             }
         }
@@ -219,6 +228,7 @@ class Letras extends Juego {
             i++;
 
         if (i < numeroLetras) {
+            letrasDisponibles[quePosicionOcupa(letra)].setFicha(null);
             letrasPuestas[i].setFicha(letra);
             letra.setUsada(true);
         }

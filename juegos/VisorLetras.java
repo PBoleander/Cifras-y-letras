@@ -20,6 +20,7 @@ public class VisorLetras extends JPanel {
         constraints.fill = GridBagConstraints.HORIZONTAL;
         add(letras.mostradorTiempo, constraints);
 
+        constraints.fill = GridBagConstraints.NONE; // Reiniciamos el valor de constraints fill al original
         constraints.gridy = 2;
         add(new PanelControlLetras(letras), constraints);
 
@@ -38,7 +39,5 @@ public class VisorLetras extends JPanel {
         }
 
         add(panelLetrasPuestas, constraints);
-
-        constraints.fill = GridBagConstraints.NONE; // Reiniciamos el valor de constraints fill al original
     }
 }
