@@ -5,15 +5,16 @@ import java.awt.*;
 
 public class ContenedorFicha extends JPanel {
 
-    private static final GridBagLayout gbl = new GridBagLayout();
+    private static final GridLayout gl = new GridLayout();
 
     private Ficha ficha;
 
     public ContenedorFicha(Ficha ficha) {
-        super(gbl);
+        super(gl);
 
         setPreferredSize(new Dimension(Ficha.ANCHO, Ficha.ALTO));
         setOpaque(false);
+        setBorder(BorderFactory.createLoweredBevelBorder());
 
         setFicha(ficha);
     }

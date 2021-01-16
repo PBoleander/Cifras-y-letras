@@ -8,20 +8,26 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-class PanelControlLetras extends JPanel implements ActionListener {
+class PanelControlLetras implements ActionListener {
+
+    final JButton btnComprobar;
+    final JPanel botonesLetras, panelIdioma, panelMemoria;
+    final JLabel labelMemoria;
 
     private final JButton btnConsonante, btnMemorizar, btnRecuperar, btnVocal;
     private final JComboBox<Idioma> selectorIdioma;
-    private final JLabel labelMemoria;
     private final Letras letras;
 
     private Idioma anteriorIdioma;
 
     PanelControlLetras(Letras letras) {
-        super(new GridLayout(2, 4, 10, 10));
-
         this.letras = letras;
 
+        botonesLetras = new JPanel(new GridLayout(1, 2, 10, 0));
+        panelIdioma = new JPanel();
+        panelMemoria = new JPanel(new GridBagLayout());
+
+        btnComprobar = new JButton("Comprobar");
         btnConsonante = new JButton("Consonante");
         btnMemorizar = new JButton("Memorizar");
         btnRecuperar = new JButton("Recuperar");
@@ -30,6 +36,7 @@ class PanelControlLetras extends JPanel implements ActionListener {
         JLabel labelIdioma = new JLabel("Idioma:");
         selectorIdioma = new JComboBox<>(Idioma.values());
 
+        btnComprobar.addActionListener(this);
         btnConsonante.addActionListener(this);
         btnMemorizar.addActionListener(this);
         btnRecuperar.addActionListener(this);
@@ -39,14 +46,18 @@ class PanelControlLetras extends JPanel implements ActionListener {
         labelIdioma.setHorizontalAlignment(SwingConstants.RIGHT);
         labelMemoria.setPreferredSize(new Dimension(200, 10));
 
-        add(btnConsonante);
-        add(btnVocal);
-        add(labelIdioma);
-        add(selectorIdioma);
+        botonesLetras.add(btnConsonante);
+        botonesLetras.add(btnVocal);
 
-        add(btnMemorizar);
-        add(btnRecuperar);
-        add(labelMemoria);
+        panelIdioma.add(labelIdioma);
+        panelIdioma.add(selectorIdioma);
+
+        GridBagConstraints c = new GridBagConstraints();
+        c.insets = new Insets(0, 10, 0, 10);
+
+        panelMemoria.add(btnMemorizar, c);
+        panelMemoria.add(btnRecuperar, c);
+        panelMemoria.add(labelMemoria, c);
 
         anteriorIdioma = (Idioma) selectorIdioma.getSelectedItem();
         letras.setIdioma(anteriorIdioma);
@@ -56,7 +67,10 @@ class PanelControlLetras extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent actionEvent) {
         Object source = actionEvent.getSource();
 
-        if (source.equals(btnConsonante)) {
+        if (source.equals(btnComprobar)) {
+            // TODO
+
+        } else if (source.equals(btnConsonante)) {
             letras.sacar(Letra.Tipo.CONSONANTE);
 
         } else if (source.equals(btnMemorizar)) {

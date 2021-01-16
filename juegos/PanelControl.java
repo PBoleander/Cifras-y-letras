@@ -5,15 +5,14 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-class PanelControl extends JPanel implements ActionListener {
+class PanelControl implements ActionListener {
 
-    private final JButton btnIniciar, btnLimpiar, btnPausa, btnResolver;
-    private final JCheckBox chkContrarreloj;
+    final JButton btnIniciar, btnLimpiar, btnPausa, btnResolver;
+    final JCheckBox chkContrarreloj;
+
     private final Juego juego;
 
     PanelControl(Juego juego) {
-        super(new GridLayout(1, 5, 10, 0));
-
         this.juego = juego;
 
         btnIniciar = new JButton("Nuevo");
@@ -28,12 +27,6 @@ class PanelControl extends JPanel implements ActionListener {
         btnPausa.addActionListener(this);
         btnResolver.addActionListener(this);
         chkContrarreloj.addActionListener(this);
-
-        add(btnPausa);
-        add(btnLimpiar);
-        add(btnResolver);
-        add(btnIniciar);
-        add(chkContrarreloj);
 
         juego.setContrarreloj(chkContrarreloj.isSelected());
     }

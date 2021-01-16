@@ -9,12 +9,13 @@ public class VisorCifras extends JPanel {
         super(new GridBagLayout());
 
         Cifras cifras = new Cifras();
+        PanelControl pc = new PanelControl(cifras);
 
         GridBagConstraints constraints = new GridBagConstraints();
 
         constraints.insets = new Insets(5, 10, 5, 10);
 
-        add(new PanelControl(cifras), constraints);
+        // TODO Falta un add
         constraints.gridy = 1;
         constraints.fill = GridBagConstraints.HORIZONTAL;
         add(cifras.mostradorTiempo, constraints);

@@ -22,7 +22,6 @@ abstract class Ficha extends JLabel {
         setBackground(BACKGROUND);
         setForeground(FOREGROUND);
         setFont(FUENTE);
-        setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
         setPreferredSize(new Dimension(ANCHO, ALTO));
 
