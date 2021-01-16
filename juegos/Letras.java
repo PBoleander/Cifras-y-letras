@@ -50,9 +50,7 @@ class Letras extends Juego {
                 Letra letraClicada = (Letra) contenedorBajoPuntero.getFicha();
 
                 if (esLetraDisponible(contenedorBajoPuntero)) {
-                    if (! letraClicada.isUsada()) {
-                        usar(letraClicada);
-                    }
+                    usar(letraClicada);
                 } else { // Es letra puesta
                     desusar(letraClicada);
                     contenedorBajoPuntero.setFicha(null);
@@ -215,7 +213,6 @@ class Letras extends Juego {
 
     private void desusar(Letra letra) {
         letrasDisponibles[quePosicionOcupa(letra)].setFicha(letra);
-        letra.setUsada(false);
     }
 
     private boolean esLetraDisponible(ContenedorFicha contenedorFicha) {
@@ -251,7 +248,6 @@ class Letras extends Juego {
         if (i < numeroLetras) {
             letrasDisponibles[quePosicionOcupa(letra)].setFicha(null);
             letrasPuestas[i].setFicha(letra);
-            letra.setUsada(true);
         }
     }
 }
