@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
 class PanelControlLetras implements ActionListener {
 
@@ -35,6 +36,12 @@ class PanelControlLetras implements ActionListener {
         labelMemoria = new JLabel("Memoria:");
         JLabel labelIdioma = new JLabel("Idioma:");
         selectorIdioma = new JComboBox<>(Idioma.values());
+
+        btnComprobar.setMnemonic(KeyEvent.VK_P);
+        btnConsonante.setMnemonic(KeyEvent.VK_C);
+        btnMemorizar.setMnemonic(KeyEvent.VK_M);
+        btnRecuperar.setMnemonic(KeyEvent.VK_R);
+        btnVocal.setMnemonic(KeyEvent.VK_V);
 
         btnComprobar.addActionListener(this);
         btnConsonante.addActionListener(this);

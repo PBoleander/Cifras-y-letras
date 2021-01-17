@@ -46,7 +46,7 @@ class Letras extends Juego implements KeyListener {
 
     @Override
     public void keyTyped(KeyEvent keyEvent) {
-        if (haEmpezado() && !estaBloqueado()) {
+        if (haEmpezado() && !estaBloqueado() && !keyEvent.isAltDown()) {
             if (keyEvent.getKeyChar() == KeyEvent.VK_BACK_SPACE) {
                 int ultimaPosicionPuesta = ultimaPosicionPuesta();
                 if (ultimaPosicionPuesta > -1) {
@@ -153,7 +153,6 @@ class Letras extends Juego implements KeyListener {
 
     @Override
     void iniciar() {
-        setTiempoInicial(idioma == Idioma.INGLES ? 60 : 45);
         Arrays.fill(memoria, -1);
         longitudMemoria = 0;
         numeroLetrasSacadas = 0;
@@ -205,10 +204,12 @@ class Letras extends Juego implements KeyListener {
     }
 
     void recuperarMemoria() {
-        limpiar();
+        if (longitudMemoria > 0) {
+            limpiar();
 
-        for (int i = 0; i < longitudMemoria; i++) {
-            usar(letrasDisponiblesAux[memoria[i]]);
+            for (int i = 0; i < longitudMemoria; i++) {
+                usar(letrasDisponiblesAux[memoria[i]]);
+            }
         }
     }
 
@@ -225,8 +226,10 @@ class Letras extends Juego implements KeyListener {
 
             numeroLetrasSacadas++;
 
-            if (numeroLetrasSacadas == numeroLetras)
+            if (numeroLetrasSacadas == numeroLetras) {
+                setTiempoInicial(idioma == Idioma.INGLES ? 60 : 45);
                 super.iniciar();
+            }
         }
     }
 

@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
 class PanelControl implements ActionListener {
 
@@ -19,8 +20,12 @@ class PanelControl implements ActionListener {
         btnLimpiar = new JButton("Limpiar");
         btnPausa = new JButton("Pausar");
         btnResolver = new JButton("Resolver");
-
         chkContrarreloj = new JCheckBox("Contrarreloj", true);
+
+        btnIniciar.setMnemonic(KeyEvent.VK_N);
+        btnLimpiar.setMnemonic(KeyEvent.VK_L);
+        btnPausa.setMnemonic(KeyEvent.VK_A);
+        btnResolver.setMnemonic(KeyEvent.VK_S);
 
         btnIniciar.addActionListener(this);
         btnLimpiar.addActionListener(this);
