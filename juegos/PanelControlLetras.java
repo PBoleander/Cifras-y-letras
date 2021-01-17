@@ -15,7 +15,7 @@ class PanelControlLetras implements ActionListener {
     final JLabel labelMemoria;
 
     private final JButton btnConsonante, btnMemorizar, btnRecuperar, btnVocal;
-    private final JComboBox<Idioma> selectorIdioma;
+    final JComboBox<Idioma> selectorIdioma;
     private final Letras letras;
 
     private Idioma anteriorIdioma;
@@ -44,7 +44,7 @@ class PanelControlLetras implements ActionListener {
         selectorIdioma.addActionListener(this);
 
         labelIdioma.setHorizontalAlignment(SwingConstants.RIGHT);
-        labelMemoria.setPreferredSize(new Dimension(200, 10));
+        labelMemoria.setPreferredSize(new Dimension(200, 15));
 
         botonesLetras.add(btnConsonante);
         botonesLetras.add(btnVocal);
@@ -87,7 +87,7 @@ class PanelControlLetras implements ActionListener {
             letras.sacar(Letra.Tipo.VOCAL);
 
         } else if (source.equals(selectorIdioma)) {
-            if (!letras.haEmpezado()) {
+            if (!letras.haEmpezado() && letras.numeroLetrasSacadas == 0) {
                 anteriorIdioma = (Idioma) selectorIdioma.getSelectedItem();
                 letras.setIdioma(anteriorIdioma);
             } else {

@@ -16,15 +16,19 @@ class CifrasYLetras extends JFrame {
         setTitle("Cifras y letras");
         setIconImage(Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("/iconos/blackboard.png")));
 
+        VisorLetras visorLetras = new VisorLetras();
+
         JTabbedPane tabbedPane = new JTabbedPane();
-        tabbedPane.addTab("Cifras", new VisorCifras());
-        tabbedPane.addTab("Letras", new VisorLetras());
+        //tabbedPane.addTab("Cifras", new VisorCifras());
+        tabbedPane.addTab("Letras", visorLetras);
 
         add(tabbedPane);
 
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
+
+        visorLetras.requestFocusInWindow();
     }
 
     public static void main(String[] args) {

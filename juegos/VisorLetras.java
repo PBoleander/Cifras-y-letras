@@ -4,8 +4,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 
-public class VisorLetras extends JPanel implements ActionListener {
+public class VisorLetras extends JPanel implements ActionListener, FocusListener {
 
     private final JButton btnIniciar;
     private final Letras letras;
@@ -84,6 +86,12 @@ public class VisorLetras extends JPanel implements ActionListener {
 
         constraints.gridy++;
         add(panel2, constraints);
+
+        setFocusable(true);
+        addKeyListener(letras);
+        addFocusListener(this);
+        pcl.selectorIdioma.addFocusListener(this);
+        pcl.selectorIdioma.addActionListener(this);
     }
 
     @Override
@@ -92,6 +100,19 @@ public class VisorLetras extends JPanel implements ActionListener {
             // Para que primero se ejecute el otro propósito de btnIniciar (el de iniciar nueva partida)
             SwingUtilities.invokeLater(this::actualizarLabelMemoria);
         }
+
+        // Cuando el selector de idioma ha hecho su trabajo devuelve el foco al panel
+        if (!isFocusOwner())
+            SwingUtilities.invokeLater(this::requestFocusInWindow);
+    }
+
+    @Override
+    public void focusGained(FocusEvent focusEvent) {}
+
+    @Override
+    public void focusLost(FocusEvent focusEvent) {
+        if (focusEvent.getSource().equals(this) && focusEvent.getOppositeComponent() != pcl.selectorIdioma)
+            SwingUtilities.invokeLater(this::requestFocusInWindow);
     }
 
     private void actualizarLabelMemoria() {

@@ -4,21 +4,22 @@ import fichas.ContenedorFicha;
 import fichas.Letra;
 import general.Idioma;
 
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.util.Arrays;
 
-class Letras extends Juego {
+class Letras extends Juego implements KeyListener {
 
     final ContenedorFicha[] letrasDisponibles, letrasPuestas;
     final int numeroLetras = 9;
     final int[] memoria;
 
-    int longitudMemoria;
+    int longitudMemoria, numeroLetrasSacadas;
 
     private final Letra[] letrasDisponiblesAux;
     private ContenedorFicha contenedorBajoPuntero;
     private Idioma idioma;
-    private int numeroLetrasSacadas;
     private Letra letraArrastrada;
 
     Letras() {
@@ -42,6 +43,29 @@ class Letras extends Juego {
 
         iniciar();
     }
+
+    @Override
+    public void keyTyped(KeyEvent keyEvent) {
+        if (haEmpezado() && !estaBloqueado()) {
+            if (keyEvent.getKeyChar() == KeyEvent.VK_BACK_SPACE) {
+                int ultimaPosicionPuesta = ultimaPosicionPuesta();
+                if (ultimaPosicionPuesta > -1) {
+                    desusar((Letra) letrasPuestas[ultimaPosicionPuesta].getFicha());
+                    letrasPuestas[ultimaPosicionPuesta].setFicha(null);
+                }
+            } else {
+                char letraEscrita = keyEvent.getKeyChar();
+                letraEscrita = String.valueOf(letraEscrita).toUpperCase().charAt(0);
+                usar(letraEscrita);
+            }
+        }
+    }
+
+    @Override
+    public void keyPressed(KeyEvent keyEvent) {}
+
+    @Override
+    public void keyReleased(KeyEvent keyEvent) {}
 
     @Override
     public void mouseClicked(MouseEvent mouseEvent) {
@@ -212,7 +236,10 @@ class Letras extends Juego {
     }
 
     private void desusar(Letra letra) {
-        letrasDisponibles[quePosicionOcupa(letra)].setFicha(letra);
+        if (letra != null) {
+            letrasDisponibles[quePosicionDisponibleOcupa(letra)].setFicha(letra);
+            letra.setUsada(false);
+        }
     }
 
     private boolean esLetraDisponible(ContenedorFicha contenedorFicha) {
@@ -228,10 +255,19 @@ class Letras extends Juego {
         while (i < numeroLetras && memoria[i] != -1)
             i++;
 
-        memoria[i] = quePosicionOcupa(letra);
+        memoria[i] = quePosicionDisponibleOcupa(letra);
     }
 
-    private int quePosicionOcupa(Letra letra) {
+    private int quePosicionDisponibleOcupa(char letra) {
+        for (int i = 0; i < numeroLetras; i++) {
+            if (!letrasDisponiblesAux[i].isUsada() && letrasDisponiblesAux[i].getValor() == letra) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private int quePosicionDisponibleOcupa(Letra letra) {
         for (int i = 0; i < numeroLetras; i++) {
             if (letrasDisponiblesAux[i].equals(letra)) {
                 return i;
@@ -240,14 +276,39 @@ class Letras extends Juego {
         return -1; // Aquí no debe llegar
     }
 
+    private int ultimaPosicionPuesta() {
+        int i = numeroLetras - 1;
+        while (i >= 0 && !letrasPuestas[i].estaOcupado())
+            i--;
+
+        return i;
+    }
+
+    private void usar(char letra) {
+        int i = 0;
+        while (i < numeroLetras && letrasPuestas[i].estaOcupado())
+            i++;
+
+        if (i < numeroLetras) {
+            int posicion = quePosicionDisponibleOcupa(letra);
+            if (posicion != -1) {
+                Letra letraEscogida = (Letra) letrasDisponibles[posicion].getFicha();
+                letrasPuestas[i].setFicha(letraEscogida);
+                letrasDisponibles[posicion].setFicha(null);
+                letraEscogida.setUsada(true);
+            }
+        }
+    }
+
     private void usar(Letra letra) {
         int i = 0;
         while (i < numeroLetras && letrasPuestas[i].estaOcupado())
             i++;
 
         if (i < numeroLetras) {
-            letrasDisponibles[quePosicionOcupa(letra)].setFicha(null);
+            letrasDisponibles[quePosicionDisponibleOcupa(letra)].setFicha(null);
             letrasPuestas[i].setFicha(letra);
+            letra.setUsada(true);
         }
     }
 }
