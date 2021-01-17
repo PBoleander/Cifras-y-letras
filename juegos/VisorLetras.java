@@ -21,11 +21,24 @@ public class VisorLetras extends JPanel implements ActionListener, FocusListener
         pcl = new PanelControlLetras(letras);
 
         btnIniciar = pc.btnIniciar;
+
+        // Se añaden los listeners
+
+        setFocusable(true);
+        addKeyListener(letras);
+        addFocusListener(this);
         btnIniciar.addActionListener(this);
+        pcl.selectorIdioma.addFocusListener(this);
+        pcl.selectorIdioma.addActionListener(this);
+
+        // Empieza todo lo relacionado con el GUI
 
         GridBagConstraints constraints = new GridBagConstraints();
 
         constraints.insets = new Insets(5, 10, 5, 10);
+
+        // 2a fila (barra de progreso y botón de pausar/reanudar) (va antes de la primera en el código porque tiene
+        // propiedades especiales como el fill o weight)
 
         constraints.gridy = 1;
         constraints.fill = GridBagConstraints.HORIZONTAL;
@@ -38,6 +51,8 @@ public class VisorLetras extends JPanel implements ActionListener, FocusListener
         constraints.gridx = 1;
         pc.btnPausa.setPreferredSize(new Dimension(105, 25));
         add(pc.btnPausa, constraints);
+
+        // 1a fila (botones de nueva partida, resolver; checkbox de contrarreloj y selector de idioma)
 
         constraints.gridx = 0;
         constraints.gridy = 0;
@@ -55,9 +70,13 @@ public class VisorLetras extends JPanel implements ActionListener, FocusListener
 
         add(panel1, constraints);
 
+        // 3a fila (botones de consonante y vocal) TODO Los cambiaré a la 2a columna cuando ponga la lista de palabras
+
         constraints.gridy = 2;
 
         add(pcl.botonesLetras, constraints);
+
+        // 4a y 5a filas (espacio para las fichas con las que jugar)
 
         constraints.gridy++;
         JPanel panelLetrasDisponibles = new JPanel(new GridLayout(1, letras.numeroLetras, 10, 0));
@@ -75,6 +94,8 @@ public class VisorLetras extends JPanel implements ActionListener, FocusListener
 
         add(panelLetrasPuestas, constraints);
 
+        // 6a fila (botones más relacionados con el juego en sí: limpiar intentos, comprobar palabra y memoria)
+
         JPanel panel2 = new JPanel(new GridBagLayout());
         GridBagConstraints constraints2 = new GridBagConstraints();
 
@@ -86,12 +107,6 @@ public class VisorLetras extends JPanel implements ActionListener, FocusListener
 
         constraints.gridy++;
         add(panel2, constraints);
-
-        setFocusable(true);
-        addKeyListener(letras);
-        addFocusListener(this);
-        pcl.selectorIdioma.addFocusListener(this);
-        pcl.selectorIdioma.addActionListener(this);
     }
 
     @Override
