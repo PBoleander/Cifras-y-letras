@@ -2,12 +2,9 @@ package juegos;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
+import java.awt.event.*;
 
-public class VisorLetras extends JPanel implements ActionListener, FocusListener {
+public class VisorLetras extends JPanel implements ActionListener, FocusListener, MouseListener {
 
     private final JButton btnIniciar;
     private final Letras letras;
@@ -30,6 +27,7 @@ public class VisorLetras extends JPanel implements ActionListener, FocusListener
         btnIniciar.addActionListener(this);
         pcl.selectorIdioma.addFocusListener(this);
         pcl.selectorIdioma.addActionListener(this);
+        pcl.selectorIdioma.addMouseListener(this);
 
         // Empieza todo lo relacionado con el GUI
 
@@ -129,6 +127,29 @@ public class VisorLetras extends JPanel implements ActionListener, FocusListener
         if (focusEvent.getSource().equals(this) && focusEvent.getOppositeComponent() != pcl.selectorIdioma)
             SwingUtilities.invokeLater(this::requestFocusInWindow);
     }
+
+    @Override
+    public void mouseClicked(MouseEvent mouseEvent) {}
+
+    @Override
+    public void mousePressed(MouseEvent mouseEvent) {}
+
+    @Override
+    public void mouseReleased(MouseEvent mouseEvent) {
+        // TODO Hay un bug que no sé cómo arreglar: si se clica la flecha del desplegable no se devuelve el foco a this
+        if (mouseEvent.getSource().equals(pcl.selectorIdioma)) {
+            if (!pcl.selectorIdioma.isPopupVisible()) {
+                if (!isFocusOwner())
+                    requestFocusInWindow();
+            }
+        }
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent mouseEvent) {}
+
+    @Override
+    public void mouseExited(MouseEvent mouseEvent) {}
 
     private void actualizarLabelMemoria() {
         String palabraMemorizada = letras.getPalabraMemorizada();
