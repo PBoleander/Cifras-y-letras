@@ -103,17 +103,19 @@ public class VisorLetras extends JPanel implements ActionListener, FocusListener
         constraints.gridy++;
         columna1.add(panel2, constraints);
 
+        constraints.gridy++;
+        columna1.add(letras.puntuacion, constraints);
+
         // 2a columna
         JPanel columna2 = new JPanel(new GridBagLayout());
         GridBagConstraints constraints3 = new GridBagConstraints();
         constraints3.insets = new Insets(10, 10, 10, 10);
 
-        JScrollPane visorListaSolucion = new JScrollPane();
-        visorListaSolucion.setPreferredSize(new Dimension(110, 200));
-        visorListaSolucion.setViewportView(letras.listaSolucion);
+        JScrollPane visorListaSolucion = new JScrollPane(letras.listaSolucion);
+        visorListaSolucion.setPreferredSize(new Dimension(110, 240));
 
         // Se añaden el panel de los botones consonante y vocal además del visor de la lista de soluciones
-        columna2.add(pcl.botonesLetras);
+        columna2.add(pcl.botonesLetras, constraints3);
         constraints3.gridy = 1;
         columna2.add(visorListaSolucion, constraints3);
 

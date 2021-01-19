@@ -17,6 +17,7 @@ class Letras extends Juego implements KeyListener {
     final ContenedorFicha[] letrasDisponibles, letrasPuestas;
     final int[] memoria;
     final JList<String> listaSolucion;
+    final Puntuacion puntuacion;
     final SolucionadorLetras solucionador;
 
     boolean comprobado, resultadoComprobacion;
@@ -32,6 +33,7 @@ class Letras extends Juego implements KeyListener {
 
         this.memoria = new int[numeroLetras];
         this.listaSolucion = new JList<>();
+        this.puntuacion = new Puntuacion();
         this.solucionador = new SolucionadorLetras();
         this.letrasDisponibles = new ContenedorFicha[numeroLetras];
         this.letrasDisponiblesAux = new Letra[numeroLetras];
@@ -150,6 +152,7 @@ class Letras extends Juego implements KeyListener {
                 e.printStackTrace();
             }
         }
+
         resolver();
     }
 
@@ -232,15 +235,25 @@ class Letras extends Juego implements KeyListener {
     }
 
     @Override
-    void resolver() {
-        super.resolver();
+    synchronized void resolver() {
+        if (!estaBloqueado()) {
+            super.resolver();
 
-        comprobar();
-        DefaultListModel<String> listModel = solucionador.getListaSolucion();
-        listaSolucion.setModel(listModel);
-        listaSolucion.setSelectedValue(getPalabraPuesta(), false);
-        listaSolucion.setEnabled(false);
-        listaSolucion.setCellRenderer(new CellRenderer());
+            comprobar();
+            String palabraPuesta = getPalabraPuesta();
+
+            if (resultadoComprobacion) {
+                puntuacion.actualizar(solucionador.getNumLongitudesMejores(palabraPuesta.length()));
+            } else {
+                puntuacion.actualizar(10); // Así da 0 puntos
+            }
+
+            DefaultListModel<String> listModel = solucionador.getListaSolucion();
+            listaSolucion.setModel(listModel);
+            listaSolucion.setSelectedValue(palabraPuesta, false);
+            listaSolucion.setEnabled(false);
+            listaSolucion.setCellRenderer(new CellRenderer());
+        }
     }
 
     void sacar(Letra.Tipo tipo) {
