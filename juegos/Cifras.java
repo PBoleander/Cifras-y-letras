@@ -36,10 +36,23 @@ class Cifras extends Juego {
     }
 
     @Override
+    public void run() {
+        while (haEmpezado()) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        resolver();
+    }
+
+    @Override
     void iniciar() {
         setTiempoInicial(60);
 
         super.iniciar();
+        new Thread(this).start();
     }
 
     @Override

@@ -4,6 +4,7 @@ import fichas.ContenedorFicha;
 import fichas.Letra;
 import general.Idioma;
 
+import javax.swing.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -11,10 +12,14 @@ import java.util.Arrays;
 
 class Letras extends Juego implements KeyListener {
 
-    final ContenedorFicha[] letrasDisponibles, letrasPuestas;
-    final int numeroLetras = 9;
-    final int[] memoria;
+    final static int numeroLetras = 9;
 
+    final ContenedorFicha[] letrasDisponibles, letrasPuestas;
+    final int[] memoria;
+    final JList<String> listaSolucion;
+    final SolucionadorLetras solucionador;
+
+    boolean comprobado, resultadoComprobacion;
     int longitudMemoria, numeroLetrasSacadas;
 
     private final Letra[] letrasDisponiblesAux;
@@ -26,6 +31,8 @@ class Letras extends Juego implements KeyListener {
         super();
 
         this.memoria = new int[numeroLetras];
+        this.listaSolucion = new JList<>();
+        this.solucionador = new SolucionadorLetras();
         this.letrasDisponibles = new ContenedorFicha[numeroLetras];
         this.letrasDisponiblesAux = new Letra[numeroLetras];
         this.letrasPuestas = new ContenedorFicha[numeroLetras];
@@ -134,6 +141,23 @@ class Letras extends Juego implements KeyListener {
         }
     }
 
+    @Override
+    public void run() {
+        while (haEmpezado()) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        resolver();
+    }
+
+    void comprobar() {
+        resultadoComprobacion = solucionador.contiene(getPalabraPuesta());
+        comprobado = true;
+    }
+
     String getPalabraMemorizada() {
         if (longitudMemoria == 0) return "";
         else {
@@ -149,6 +173,7 @@ class Letras extends Juego implements KeyListener {
 
     @Override
     void iniciar() {
+        listaSolucion.setModel(new DefaultListModel<>());
         Arrays.fill(memoria, -1);
         longitudMemoria = 0;
         numeroLetrasSacadas = 0;
@@ -209,6 +234,13 @@ class Letras extends Juego implements KeyListener {
     @Override
     void resolver() {
         super.resolver();
+
+        comprobar();
+        DefaultListModel<String> listModel = solucionador.getListaSolucion();
+        listaSolucion.setModel(listModel);
+        listaSolucion.setSelectedValue(getPalabraPuesta(), false);
+        listaSolucion.setEnabled(false);
+        listaSolucion.setCellRenderer(new CellRenderer());
     }
 
     void sacar(Letra.Tipo tipo) {
@@ -220,14 +252,18 @@ class Letras extends Juego implements KeyListener {
             numeroLetrasSacadas++;
 
             if (numeroLetrasSacadas == numeroLetras) {
+                solucionador.setLetrasDisponibles(letrasDisponiblesAux);
+                new Thread(solucionador).start();
                 setTiempoInicial(idioma == Idioma.INGLES ? 60 : 45);
                 super.iniciar();
+                new Thread(this).start();
             }
         }
     }
 
     void setIdioma(Idioma idioma) {
         this.idioma = idioma;
+        solucionador.setIdioma(idioma);
         Letra.generador.setIdioma(idioma);
     }
 
@@ -238,6 +274,8 @@ class Letras extends Juego implements KeyListener {
             letrasDisponibles[quePosicionDisponibleOcupa(letra)].setFicha(letra);
             letra.setUsada(false);
             contenedorFicha.setFicha(null);
+
+            if (comprobado) comprobado = false;
         }
     }
 
@@ -247,6 +285,18 @@ class Letras extends Juego implements KeyListener {
             i++;
 
         return i < numeroLetras;
+    }
+
+    private String getPalabraPuesta() {
+        StringBuilder palabraPuesta = new StringBuilder();
+
+        for (ContenedorFicha contenedorFicha: letrasPuestas) {
+            if (contenedorFicha.estaOcupado()) {
+                palabraPuesta.append(((Letra) contenedorFicha.getFicha()).getValor());
+            }
+        }
+
+        return palabraPuesta.toString();
     }
 
     private void memorizar(Letra letra) {
@@ -300,6 +350,8 @@ class Letras extends Juego implements KeyListener {
                 letrasPuestas[i].setFicha(contenedorFicha.getFicha());
                 ((Letra) contenedorFicha.getFicha()).setUsada(true);
                 contenedorFicha.setFicha(null);
+
+                if (comprobado) comprobado = false;
             }
         }
     }

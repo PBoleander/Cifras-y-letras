@@ -7,7 +7,7 @@ import java.util.Random;
 public class GeneradorValorLetra {
 
     private final char[] CONSONANTES_CASTELLANO = "BCDFGHJKLMNÑPQRSTVWXYZ".toCharArray();
-    private final char[] CONSONANTES_CATALAN = "BCÇDFGHJKLMNPQRSTVWXYZ".toCharArray();
+    private final char[] CONSONANTES_CATALAN = "BCDFGHJKLMNPQRSTVWXYZÇ".toCharArray();
     private final char[] CONSONANTES_INGLES = "BCDFGHJKLMNPQRSTVWXYZ".toCharArray();
     private final char[] VOCALES = "AEIOU".toCharArray();
 

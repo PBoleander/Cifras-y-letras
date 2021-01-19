@@ -24,7 +24,7 @@ class PanelControlLetras implements ActionListener {
     PanelControlLetras(Letras letras) {
         this.letras = letras;
 
-        botonesLetras = new JPanel(new GridLayout(1, 2, 10, 0));
+        botonesLetras = new JPanel(new GridLayout(2, 1, 0, 10));
         panelIdioma = new JPanel();
         panelMemoria = new JPanel(new GridBagLayout());
 
@@ -75,7 +75,7 @@ class PanelControlLetras implements ActionListener {
         Object source = actionEvent.getSource();
 
         if (source.equals(btnComprobar)) {
-            // TODO
+            letras.comprobar();
 
         } else if (source.equals(btnConsonante)) {
             letras.sacar(Letra.Tipo.CONSONANTE);

@@ -35,6 +35,9 @@ public class VisorLetras extends JPanel implements ActionListener, FocusListener
 
         constraints.insets = new Insets(5, 10, 5, 10);
 
+        // 1a columna
+        JPanel columna1 = new JPanel(new GridBagLayout());
+
         // 2a fila (barra de progreso y botón de pausar/reanudar) (va antes de la primera en el código porque tiene
         // propiedades especiales como el fill o weight)
 
@@ -42,13 +45,13 @@ public class VisorLetras extends JPanel implements ActionListener, FocusListener
         constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.weightx = 1;
 
-        add(letras.mostradorTiempo, constraints);
+        columna1.add(letras.mostradorTiempo, constraints);
 
         constraints.weightx = 0;
         constraints.fill = GridBagConstraints.NONE; // Reiniciamos el valor de constraints fill al original
         constraints.gridx = 1;
         pc.btnPausa.setPreferredSize(new Dimension(105, 25));
-        add(pc.btnPausa, constraints);
+        columna1.add(pc.btnPausa, constraints);
 
         // 1a fila (botones de nueva partida, resolver; checkbox de contrarreloj y selector de idioma)
 
@@ -66,33 +69,27 @@ public class VisorLetras extends JPanel implements ActionListener, FocusListener
         panel1.add(pc.chkContrarreloj, constraints1);
         panel1.add(pcl.panelIdioma, constraints1);
 
-        add(panel1, constraints);
+        columna1.add(panel1, constraints);
 
-        // 3a fila (botones de consonante y vocal) TODO Los cambiaré a la 2a columna cuando ponga la lista de palabras
+        // 3a y 4a filas (espacio para las fichas con las que jugar)
 
         constraints.gridy = 2;
-
-        add(pcl.botonesLetras, constraints);
-
-        // 4a y 5a filas (espacio para las fichas con las que jugar)
-
-        constraints.gridy++;
-        JPanel panelLetrasDisponibles = new JPanel(new GridLayout(1, letras.numeroLetras, 10, 0));
-        for (int i = 0; i < letras.numeroLetras; i++) {
+        JPanel panelLetrasDisponibles = new JPanel(new GridLayout(1, Letras.numeroLetras, 10, 0));
+        for (int i = 0; i < Letras.numeroLetras; i++) {
             panelLetrasDisponibles.add(letras.letrasDisponibles[i]);
         }
 
-        add(panelLetrasDisponibles, constraints);
+        columna1.add(panelLetrasDisponibles, constraints);
 
         constraints.gridy++;
-        JPanel panelLetrasPuestas = new JPanel(new GridLayout(1, letras.numeroLetras, 10, 0));
-        for (int i = 0; i < letras.numeroLetras; i++) {
+        JPanel panelLetrasPuestas = new JPanel(new GridLayout(1, Letras.numeroLetras, 10, 0));
+        for (int i = 0; i < Letras.numeroLetras; i++) {
             panelLetrasPuestas.add(letras.letrasPuestas[i]);
         }
 
-        add(panelLetrasPuestas, constraints);
+        columna1.add(panelLetrasPuestas, constraints);
 
-        // 6a fila (botones más relacionados con el juego en sí: limpiar intentos, comprobar palabra y memoria)
+        // 5a fila (botones más relacionados con el juego en sí: limpiar intentos, comprobar palabra y memoria)
 
         JPanel panel2 = new JPanel(new GridBagLayout());
         GridBagConstraints constraints2 = new GridBagConstraints();
@@ -104,7 +101,25 @@ public class VisorLetras extends JPanel implements ActionListener, FocusListener
         panel2.add(pcl.panelMemoria, constraints2);
 
         constraints.gridy++;
-        add(panel2, constraints);
+        columna1.add(panel2, constraints);
+
+        // 2a columna
+        JPanel columna2 = new JPanel(new GridBagLayout());
+        GridBagConstraints constraints3 = new GridBagConstraints();
+        constraints3.insets = new Insets(10, 10, 10, 10);
+
+        JScrollPane visorListaSolucion = new JScrollPane();
+        visorListaSolucion.setPreferredSize(new Dimension(110, 200));
+        visorListaSolucion.setViewportView(letras.listaSolucion);
+
+        // Se añaden el panel de los botones consonante y vocal además del visor de la lista de soluciones
+        columna2.add(pcl.botonesLetras);
+        constraints3.gridy = 1;
+        columna2.add(visorListaSolucion, constraints3);
+
+        // Se añaden las dos columnas a this
+        add(columna1);
+        add(columna2);
     }
 
     @Override

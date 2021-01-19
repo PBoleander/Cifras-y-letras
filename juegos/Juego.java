@@ -4,7 +4,7 @@ import controlTiempo.MostradorTiempo;
 
 import java.awt.event.MouseListener;
 
-abstract class Juego implements MouseListener {
+abstract class Juego implements MouseListener, Runnable {
 
     final MostradorTiempo mostradorTiempo;
     private boolean bloqueo, contrarreloj;

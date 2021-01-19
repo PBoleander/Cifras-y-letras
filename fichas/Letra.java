@@ -16,6 +16,12 @@ public class Letra extends Ficha {
         nuevoValor(tipo);
     }
 
+    public Letra(Letra letra) {
+        super();
+
+        valor = letra.getValor();
+    }
+
     public char getValor() {
         return valor;
     }
