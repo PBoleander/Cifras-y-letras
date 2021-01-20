@@ -20,7 +20,7 @@ class Letras extends Juego implements KeyListener {
     final Puntuacion puntuacion;
     final SolucionadorLetras solucionador;
 
-    boolean comprobado, resultadoComprobacion;
+    boolean resultadoComprobacion;
     int longitudMemoria, numeroLetrasSacadas;
 
     private final Letra[] letrasDisponiblesAux;
@@ -49,6 +49,9 @@ class Letras extends Juego implements KeyListener {
 
         this.contenedorBajoPuntero = null;
         this.letraArrastrada = null;
+
+        listaSolucion.setEnabled(false);
+        listaSolucion.setCellRenderer(new CellRenderer());
 
         iniciar();
     }
@@ -158,7 +161,6 @@ class Letras extends Juego implements KeyListener {
 
     void comprobar() {
         resultadoComprobacion = solucionador.contiene(getPalabraPuesta());
-        comprobado = true;
     }
 
     String getPalabraMemorizada() {
@@ -248,11 +250,8 @@ class Letras extends Juego implements KeyListener {
                 puntuacion.actualizar(10); // Así da 0 puntos
             }
 
-            DefaultListModel<String> listModel = solucionador.getListaSolucion();
-            listaSolucion.setModel(listModel);
+            listaSolucion.setModel(solucionador.getListaSolucion());
             listaSolucion.setSelectedValue(palabraPuesta, false);
-            listaSolucion.setEnabled(false);
-            listaSolucion.setCellRenderer(new CellRenderer());
         }
     }
 
@@ -287,8 +286,6 @@ class Letras extends Juego implements KeyListener {
             letrasDisponibles[quePosicionDisponibleOcupa(letra)].setFicha(letra);
             letra.setUsada(false);
             contenedorFicha.setFicha(null);
-
-            if (comprobado) comprobado = false;
         }
     }
 
@@ -363,8 +360,6 @@ class Letras extends Juego implements KeyListener {
                 letrasPuestas[i].setFicha(contenedorFicha.getFicha());
                 ((Letra) contenedorFicha.getFicha()).setUsada(true);
                 contenedorFicha.setFicha(null);
-
-                if (comprobado) comprobado = false;
             }
         }
     }

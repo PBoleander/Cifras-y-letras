@@ -4,14 +4,15 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public class VisorLetras extends JPanel implements ActionListener, FocusListener, MouseListener {
+public class VisorLetras extends JPanel implements ActionListener, ContainerListener, FocusListener, MouseListener {
 
     private final JButton btnIniciar;
+    private final JPanel panelLetrasPuestas;
     private final Letras letras;
     private final PanelControlLetras pcl;
 
     public VisorLetras() {
-        super(new GridBagLayout());
+        super();
 
         letras = new Letras();
         PanelControl pc = new PanelControl(letras);
@@ -25,9 +26,10 @@ public class VisorLetras extends JPanel implements ActionListener, FocusListener
         addKeyListener(letras);
         addFocusListener(this);
         btnIniciar.addActionListener(this);
-        pcl.selectorIdioma.addFocusListener(this);
+        pcl.btnComprobar.addActionListener(this);
         pcl.selectorIdioma.addActionListener(this);
         pcl.selectorIdioma.addMouseListener(this);
+        pcl.selectorIdioma.addFocusListener(this);
 
         // Empieza todo lo relacionado con el GUI
 
@@ -76,13 +78,14 @@ public class VisorLetras extends JPanel implements ActionListener, FocusListener
         constraints.gridy = 2;
         JPanel panelLetrasDisponibles = new JPanel(new GridLayout(1, Letras.numeroLetras, 10, 0));
         for (int i = 0; i < Letras.numeroLetras; i++) {
+            letras.letrasDisponibles[i].addContainerListener(this);
             panelLetrasDisponibles.add(letras.letrasDisponibles[i]);
         }
 
         columna1.add(panelLetrasDisponibles, constraints);
 
         constraints.gridy++;
-        JPanel panelLetrasPuestas = new JPanel(new GridLayout(1, Letras.numeroLetras, 10, 0));
+        panelLetrasPuestas = new JPanel(new GridLayout(1, Letras.numeroLetras, 10, 0));
         for (int i = 0; i < Letras.numeroLetras; i++) {
             panelLetrasPuestas.add(letras.letrasPuestas[i]);
         }
@@ -104,7 +107,7 @@ public class VisorLetras extends JPanel implements ActionListener, FocusListener
         columna1.add(panel2, constraints);
 
         constraints.gridy++;
-        columna1.add(letras.puntuacion, constraints);
+        columna1.add(letras.puntuacion.panelPuntuacion, constraints);
 
         // 2a columna
         JPanel columna2 = new JPanel(new GridBagLayout());
@@ -112,7 +115,7 @@ public class VisorLetras extends JPanel implements ActionListener, FocusListener
         constraints3.insets = new Insets(10, 10, 10, 10);
 
         JScrollPane visorListaSolucion = new JScrollPane(letras.listaSolucion);
-        visorListaSolucion.setPreferredSize(new Dimension(110, 240));
+        visorListaSolucion.setPreferredSize(new Dimension(120, 300));
 
         // Se añaden el panel de los botones consonante y vocal además del visor de la lista de soluciones
         columna2.add(pcl.botonesLetras, constraints3);
@@ -126,14 +129,37 @@ public class VisorLetras extends JPanel implements ActionListener, FocusListener
 
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
-        if (actionEvent.getSource().equals(btnIniciar)) {
+        Object source = actionEvent.getSource();
+        if (source.equals(btnIniciar)) {
             // Para que primero se ejecute el otro propósito de btnIniciar (el de iniciar nueva partida)
             SwingUtilities.invokeLater(this::actualizarLabelMemoria);
+
+        } else if (source.equals(pcl.btnComprobar)) {
+            SwingUtilities.invokeLater(() -> {
+                if (letras.haEmpezado()) {
+                    if (letras.resultadoComprobacion)
+                        panelLetrasPuestas.setBackground(Color.GREEN);
+                    else
+                        panelLetrasPuestas.setBackground(Color.RED);
+                }
+            });
         }
 
         // Cuando el selector de idioma ha hecho su trabajo devuelve el foco al panel
         if (!isFocusOwner())
             SwingUtilities.invokeLater(this::requestFocusInWindow);
+    }
+
+    @Override
+    public void componentAdded(ContainerEvent containerEvent) {
+        if (panelLetrasPuestas.getBackground() != null)
+            panelLetrasPuestas.setBackground(null);
+    }
+
+    @Override
+    public void componentRemoved(ContainerEvent containerEvent) {
+        if (panelLetrasPuestas.getBackground() != null)
+            panelLetrasPuestas.setBackground(null);
     }
 
     @Override
