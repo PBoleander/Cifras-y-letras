@@ -19,7 +19,7 @@ class PanelPuntuacion extends JPanel {
         JLabel etiquetaPuntosTotales = nuevoJLabel("Total puntos:");
         puntosTotales = nuevoJLabel("0");
         JLabel etiquetaPromedio = nuevoJLabel("Puntos por partida:");
-        promedio = nuevoJLabel("0,0");
+        promedio = nuevoJLabel("0,00");
         JLabel etiquetaDerrotas = nuevoJLabel("Derrotas:");
         derrotas = nuevoJLabel("0");
         JLabel etiquetaMejorables = nuevoJLabel("Mejorables:");
@@ -53,7 +53,7 @@ class PanelPuntuacion extends JPanel {
             this.numPartidas.setText(String.valueOf(numPartidas));
             this.puntosTotales.setText(String.valueOf(puntosTotales));
             this.puntosUltimaPartida.setText(String.valueOf(puntosActuales));
-            DecimalFormat df = new DecimalFormat("0.0");
+            DecimalFormat df = new DecimalFormat("0.00");
             this.promedio.setText(df.format(promedio));
         });
     }

@@ -23,7 +23,7 @@ class Letras extends Juego implements KeyListener {
     boolean resultadoComprobacion;
     int longitudMemoria, numeroLetrasSacadas;
 
-    private final Letra[] letrasDisponiblesAux;
+    private final Letra[] letrasDisponiblesAux, letrasDisponiblesPausa, letrasPuestasPausa;
     private ContenedorFicha contenedorBajoPuntero;
     private Idioma idioma;
     private Letra letraArrastrada;
@@ -38,6 +38,11 @@ class Letras extends Juego implements KeyListener {
         this.letrasDisponibles = new ContenedorFicha[numeroLetras];
         this.letrasDisponiblesAux = new Letra[numeroLetras];
         this.letrasPuestas = new ContenedorFicha[numeroLetras];
+        this.letrasDisponiblesPausa = new Letra[numeroLetras];
+        this.letrasPuestasPausa = new Letra[numeroLetras];
+
+        char[] caracteresPausaDisponibles = "  JUEGO  ".toCharArray();
+        char[] caracteresPausaPuestas = " PAUSADO ".toCharArray();
 
         for (int i = 0; i < numeroLetras; i++) {
             letrasDisponibles[i] = new ContenedorFicha(null);
@@ -45,6 +50,9 @@ class Letras extends Juego implements KeyListener {
 
             letrasPuestas[i] = new ContenedorFicha(null);
             letrasPuestas[i].addMouseListener(this);
+
+            letrasDisponiblesPausa[i] = new Letra(caracteresPausaDisponibles[i]);
+            letrasPuestasPausa[i] = new Letra(caracteresPausaPuestas[i]);
         }
 
         this.contenedorBajoPuntero = null;
@@ -216,14 +224,36 @@ class Letras extends Juego implements KeyListener {
     void pausar() {
         super.pausar();
 
-        // TODO Mostrar mensaje
+        Letra letraDisponible, letraPuesta;
+
+        for (int i = 0; i < numeroLetras; i++) {
+            letraDisponible = (Letra) letrasDisponibles[i].getFicha();
+            letraPuesta = (Letra) letrasPuestas[i].getFicha();
+
+            letrasDisponibles[i].setFicha(letrasDisponiblesPausa[i]);
+            letrasPuestas[i].setFicha(letrasPuestasPausa[i]);
+
+            letrasDisponiblesPausa[i] = letraDisponible;
+            letrasPuestasPausa[i] = letraPuesta;
+        }
     }
 
     @Override
     void reanudar() {
         super.reanudar();
 
-        // TODO Quitar mensaje pausa
+        Letra letraDisponiblePausa, letraPuestaPausa;
+
+        for (int i = 0; i < numeroLetras; i++) {
+            letraDisponiblePausa = (Letra) letrasDisponibles[i].getFicha();
+            letraPuestaPausa = (Letra) letrasPuestas[i].getFicha();
+
+            letrasDisponibles[i].setFicha(letrasDisponiblesPausa[i]);
+            letrasPuestas[i].setFicha(letrasPuestasPausa[i]);
+
+            letrasDisponiblesPausa[i] = letraDisponiblePausa;
+            letrasPuestasPausa[i] = letraPuestaPausa;
+        }
     }
 
     void recuperarMemoria() {
@@ -250,8 +280,10 @@ class Letras extends Juego implements KeyListener {
                 puntuacion.actualizar(10); // Así da 0 puntos
             }
 
-            listaSolucion.setModel(solucionador.getListaSolucion());
-            listaSolucion.setSelectedValue(palabraPuesta, false);
+            SwingUtilities.invokeLater(() -> {
+                listaSolucion.setModel(solucionador.getListaSolucion());
+                listaSolucion.setSelectedValue(palabraPuesta, false);
+            });
         }
     }
 

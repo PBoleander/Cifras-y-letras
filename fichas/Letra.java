@@ -22,6 +22,13 @@ public class Letra extends Ficha {
         valor = letra.getValor();
     }
 
+    public Letra(char caracter) {
+        super();
+
+        valor = caracter;
+        setText(String.valueOf(valor));
+    }
+
     public char getValor() {
         return valor;
     }
