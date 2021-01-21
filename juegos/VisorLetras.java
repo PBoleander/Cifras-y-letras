@@ -6,7 +6,7 @@ import java.awt.event.*;
 
 public class VisorLetras extends JPanel implements ActionListener, ContainerListener, FocusListener, MouseListener {
 
-    private final JButton btnIniciar;
+    private final JButton btnIniciar, btnPausar;
     private final JPanel panelLetrasPuestas;
     private final Letras letras;
     private final PanelControlLetras pcl;
@@ -19,6 +19,7 @@ public class VisorLetras extends JPanel implements ActionListener, ContainerList
         pcl = new PanelControlLetras(letras);
 
         btnIniciar = pc.btnIniciar;
+        btnPausar = pc.btnPausa;
 
         // Se añaden los listeners
 
@@ -26,6 +27,7 @@ public class VisorLetras extends JPanel implements ActionListener, ContainerList
         addKeyListener(letras);
         addFocusListener(this);
         btnIniciar.addActionListener(this);
+        btnPausar.addActionListener(this);
         pcl.btnComprobar.addActionListener(this);
         pcl.selectorIdioma.addActionListener(this);
         pcl.selectorIdioma.addMouseListener(this);
@@ -86,6 +88,8 @@ public class VisorLetras extends JPanel implements ActionListener, ContainerList
 
         constraints.gridy++;
         panelLetrasPuestas = new JPanel(new GridLayout(1, Letras.numeroLetras, 10, 0));
+        panelLetrasPuestas.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+
         for (int i = 0; i < Letras.numeroLetras; i++) {
             panelLetrasPuestas.add(letras.letrasPuestas[i]);
         }
@@ -130,7 +134,7 @@ public class VisorLetras extends JPanel implements ActionListener, ContainerList
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         Object source = actionEvent.getSource();
-        if (source.equals(btnIniciar)) {
+        if (source.equals(btnIniciar) || source.equals(btnPausar)) {
             // Para que primero se ejecute el otro propósito de btnIniciar (el de iniciar nueva partida)
             SwingUtilities.invokeLater(this::actualizarLabelMemoria);
 
@@ -173,7 +177,6 @@ public class VisorLetras extends JPanel implements ActionListener, ContainerList
 
     @Override
     public void mouseClicked(MouseEvent mouseEvent) {}
-
     @Override
     public void mousePressed(MouseEvent mouseEvent) {}
 
@@ -190,13 +193,12 @@ public class VisorLetras extends JPanel implements ActionListener, ContainerList
 
     @Override
     public void mouseEntered(MouseEvent mouseEvent) {}
-
     @Override
     public void mouseExited(MouseEvent mouseEvent) {}
 
     private void actualizarLabelMemoria() {
         String palabraMemorizada = letras.getPalabraMemorizada();
-        if (palabraMemorizada.length() > 0) {
+        if (!letras.estaBloqueado() && palabraMemorizada.length() > 0) {
             pcl.labelMemoria.setText("Memoria: " + palabraMemorizada + " (" + palabraMemorizada.length() + ")");
         } else {
             pcl.labelMemoria.setText("Memoria:");
