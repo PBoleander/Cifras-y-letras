@@ -1,8 +1,5 @@
 package juegos;
 
-import javax.swing.*;
-import java.text.DecimalFormat;
-
 class Puntuacion {
 
     final PanelPuntuacion panelPuntuacion;

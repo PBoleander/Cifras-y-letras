@@ -154,19 +154,6 @@ class Letras extends Juego implements KeyListener {
         }
     }
 
-    @Override
-    public void run() {
-        while (haEmpezado()) {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
-        resolver();
-    }
-
     void comprobar() {
         resultadoComprobacion = solucionador.contiene(getPalabraPuesta());
     }
@@ -224,36 +211,14 @@ class Letras extends Juego implements KeyListener {
     void pausar() {
         super.pausar();
 
-        Letra letraDisponible, letraPuesta;
-
-        for (int i = 0; i < numeroLetras; i++) {
-            letraDisponible = (Letra) letrasDisponibles[i].getFicha();
-            letraPuesta = (Letra) letrasPuestas[i].getFicha();
-
-            letrasDisponibles[i].setFicha(letrasDisponiblesPausa[i]);
-            letrasPuestas[i].setFicha(letrasPuestasPausa[i]);
-
-            letrasDisponiblesPausa[i] = letraDisponible;
-            letrasPuestasPausa[i] = letraPuesta;
-        }
+        alternarMensajePausa();
     }
 
     @Override
     void reanudar() {
         super.reanudar();
 
-        Letra letraDisponiblePausa, letraPuestaPausa;
-
-        for (int i = 0; i < numeroLetras; i++) {
-            letraDisponiblePausa = (Letra) letrasDisponibles[i].getFicha();
-            letraPuestaPausa = (Letra) letrasPuestas[i].getFicha();
-
-            letrasDisponibles[i].setFicha(letrasDisponiblesPausa[i]);
-            letrasPuestas[i].setFicha(letrasPuestasPausa[i]);
-
-            letrasDisponiblesPausa[i] = letraDisponiblePausa;
-            letrasPuestasPausa[i] = letraPuestaPausa;
-        }
+        alternarMensajePausa();
     }
 
     void recuperarMemoria() {
@@ -300,7 +265,6 @@ class Letras extends Juego implements KeyListener {
                 new Thread(solucionador).start();
                 setTiempoInicial(idioma == Idioma.INGLES ? 60 : 45);
                 super.iniciar();
-                new Thread(this).start();
             }
         }
     }
@@ -309,6 +273,21 @@ class Letras extends Juego implements KeyListener {
         this.idioma = idioma;
         solucionador.setIdioma(idioma);
         Letra.generador.setIdioma(idioma);
+    }
+
+    private void alternarMensajePausa() {
+        Letra letraDisponible, letraPuesta;
+
+        for (int i = 0; i < numeroLetras; i++) {
+            letraDisponible = (Letra) letrasDisponibles[i].getFicha();
+            letraPuesta = (Letra) letrasPuestas[i].getFicha();
+
+            letrasDisponibles[i].setFicha(letrasDisponiblesPausa[i]);
+            letrasPuestas[i].setFicha(letrasPuestasPausa[i]);
+
+            letrasDisponiblesPausa[i] = letraDisponible;
+            letrasPuestasPausa[i] = letraPuesta;
+        }
     }
 
     private void desusar(ContenedorFicha contenedorFicha) {

@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 class SolucionadorLetras implements Runnable {
 
@@ -40,10 +39,6 @@ class SolucionadorLetras implements Runnable {
 
     DefaultListModel<String> getListaSolucion() {
         return listaSolucion;
-    }
-
-    int getMaxLongitudPosible() {
-        return maxLongitudPosible;
     }
 
     int getNumLongitudesMejores(int longitud) {
@@ -90,15 +85,12 @@ class SolucionadorLetras implements Runnable {
         }
 
         InputStream in = getClass().getResourceAsStream(ruta);
-        BufferedReader bf = new BufferedReader(new InputStreamReader(in));
-        String palabra;
 
-        try {
+        try (BufferedReader bf = new BufferedReader(new InputStreamReader(in))) {
+            String palabra;
             while ((palabra = bf.readLine()) != null) {
                 listaPalabras.add(palabra.toUpperCase());
             }
-
-            bf.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

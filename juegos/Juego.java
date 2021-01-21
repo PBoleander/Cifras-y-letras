@@ -14,6 +14,19 @@ abstract class Juego implements MouseListener, Runnable {
         this.bloqueo = true;
     }
 
+    @Override
+    public void run() {
+        while (haEmpezado()) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        resolver();
+    }
+
     abstract void limpiar();
 
     boolean estaBloqueado() {
@@ -27,6 +40,8 @@ abstract class Juego implements MouseListener, Runnable {
     void iniciar() {
         bloqueo = false;
         mostradorTiempo.iniciar(contrarreloj);
+        if (contrarreloj)
+            new Thread(this).start();
     }
 
     void pausar() {

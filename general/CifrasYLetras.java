@@ -1,6 +1,5 @@
 package general;
 
-import juegos.VisorCifras;
 import juegos.VisorLetras;
 
 import javax.swing.*;
