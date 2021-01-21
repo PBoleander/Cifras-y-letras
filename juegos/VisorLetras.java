@@ -1,5 +1,7 @@
 package juegos;
 
+import general.Colores;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -194,7 +196,7 @@ public class VisorLetras extends JPanel implements ActionListener, ContainerList
         while (letras.estaComprobado()) {
             SwingUtilities.invokeLater(() -> {
                 if (letras.resultadoComprobacion)
-                    panelLetrasPuestas.setBackground(Color.GREEN);
+                    panelLetrasPuestas.setBackground(Colores.VERDE);
                 else
                     panelLetrasPuestas.setBackground(Color.RED);
             });

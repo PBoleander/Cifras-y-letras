@@ -1,5 +1,7 @@
 package controlTiempo;
 
+import general.Colores;
+
 import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
@@ -7,8 +9,6 @@ import java.beans.PropertyChangeListener;
 
 public class MostradorTiempo extends JProgressBar implements PropertyChangeListener {
 
-    private final Color naranja = new Color(255, 100, 0);
-    private final Color verde = new Color(0, 100, 0);
     private final Cronometro cronometro;
 
     private boolean empezado;
@@ -30,7 +30,7 @@ public class MostradorTiempo extends JProgressBar implements PropertyChangeListe
         int progress = lectorTiempo.getProgress();
 
         if (tRestante.equals("00:10")) setForeground(Color.RED);
-        else if (progress <= 50 && getForeground().equals(verde)) setForeground(naranja);
+        else if (progress <= 50 && getForeground().equals(Colores.VERDE)) setForeground(Colores.NARANJA);
 
         setValue(progress);
         setString(tRestante);
@@ -44,7 +44,7 @@ public class MostradorTiempo extends JProgressBar implements PropertyChangeListe
 
     public void iniciar(boolean contrarreloj) {
         empezado = true;
-        setForeground(verde);
+        setForeground(Colores.VERDE);
 
         if (contrarreloj) {
             lectorTiempo = new LectorTiempo(cronometro);

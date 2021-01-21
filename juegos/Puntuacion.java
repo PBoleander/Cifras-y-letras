@@ -4,7 +4,8 @@ class Puntuacion {
 
     final PanelPuntuacion panelPuntuacion;
 
-    private int numPartidas, puntosTotales, puntosUltimaPartida;
+    private int numPartidas;
+    private int puntosTotales;
     private int derrotas, mejorables, perfectas;
 
     Puntuacion() {
@@ -24,7 +25,7 @@ class Puntuacion {
             default -> mejorables++;
         }
 
-        puntosUltimaPartida = 10 - diferenciaPerfeccion;
+        int puntosUltimaPartida = 10 - diferenciaPerfeccion;
         puntosTotales += puntosUltimaPartida;
         numPartidas++;
 

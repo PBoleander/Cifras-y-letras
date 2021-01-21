@@ -17,7 +17,6 @@ class SolucionadorLetras implements Runnable {
     private final Letra[] letrasDisponibles;
 
     private ArrayList<String> listaPalabras;
-    private int maxLongitudPosible;
 
     SolucionadorLetras() {
         this.listaCastellano = new ArrayList<>();
@@ -44,7 +43,7 @@ class SolucionadorLetras implements Runnable {
     int getNumLongitudesMejores(int longitud) {
         int n = 0;
 
-        while (longitud < maxLongitudPosible) {
+        while (longitud < Letras.numeroLetras) {
             if (contiene(String.valueOf(++longitud)))
                 n++;
         }
@@ -97,13 +96,9 @@ class SolucionadorLetras implements Runnable {
     }
 
     private void llenarListaSolucion() {
-        maxLongitudPosible = 0;
-
-        for (String palabra: listaPalabras) {
+       for (String palabra: listaPalabras) {
             if (palabra.length() > 1 && sePuedeFormar(palabra)) {
                 if (cambiaLongitud(palabra)) {
-                    if (maxLongitudPosible == 0) maxLongitudPosible = palabra.length();
-
                     listaSolucion.addElement(String.valueOf(palabra.length()));
                 }
                 listaSolucion.addElement(palabra);
