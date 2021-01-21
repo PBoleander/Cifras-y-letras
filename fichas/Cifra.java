@@ -15,6 +15,19 @@ public class Cifra extends Ficha {
         nuevoValor();
     }
 
+    public Cifra(Cifra cifra) {
+        super();
+
+        valor = cifra.getValor();
+    }
+
+    public Cifra(int valor) {
+        super();
+
+        this.valor = valor;
+        setText(String.valueOf(valor));
+    }
+
     public int getValor() {
         return valor;
     }
