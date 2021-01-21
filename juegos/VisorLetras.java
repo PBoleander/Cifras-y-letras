@@ -4,7 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public class VisorLetras extends JPanel implements ActionListener, ContainerListener, FocusListener, MouseListener {
+public class VisorLetras extends JPanel implements ActionListener, ContainerListener, FocusListener, MouseListener,
+        Runnable {
 
     private final JButton btnIniciar, btnPausar;
     private final JPanel panelLetrasPuestas;
@@ -28,7 +29,6 @@ public class VisorLetras extends JPanel implements ActionListener, ContainerList
         addFocusListener(this);
         btnIniciar.addActionListener(this);
         btnPausar.addActionListener(this);
-        pcl.btnComprobar.addActionListener(this);
         pcl.selectorIdioma.addActionListener(this);
         pcl.selectorIdioma.addMouseListener(this);
         pcl.selectorIdioma.addFocusListener(this);
@@ -129,6 +129,8 @@ public class VisorLetras extends JPanel implements ActionListener, ContainerList
         // Se añaden las dos columnas a this
         add(columna1);
         add(columna2);
+
+        new Thread(this).start();
     }
 
     @Override
@@ -138,15 +140,6 @@ public class VisorLetras extends JPanel implements ActionListener, ContainerList
             // Para que primero se ejecute el otro propósito de btnIniciar (el de iniciar nueva partida)
             SwingUtilities.invokeLater(this::actualizarLabelMemoria);
 
-        } else if (source.equals(pcl.btnComprobar)) {
-            SwingUtilities.invokeLater(() -> {
-                if (letras.haEmpezado()) {
-                    if (letras.resultadoComprobacion)
-                        panelLetrasPuestas.setBackground(Color.GREEN);
-                    else
-                        panelLetrasPuestas.setBackground(Color.RED);
-                }
-            });
         }
 
         // Cuando el selector de idioma ha hecho su trabajo devuelve el foco al panel
@@ -195,6 +188,18 @@ public class VisorLetras extends JPanel implements ActionListener, ContainerList
     public void mouseEntered(MouseEvent mouseEvent) {}
     @Override
     public void mouseExited(MouseEvent mouseEvent) {}
+
+    @Override
+    public void run() {
+        while (letras.estaComprobado()) {
+            SwingUtilities.invokeLater(() -> {
+                if (letras.resultadoComprobacion)
+                    panelLetrasPuestas.setBackground(Color.GREEN);
+                else
+                    panelLetrasPuestas.setBackground(Color.RED);
+            });
+        }
+    }
 
     private void actualizarLabelMemoria() {
         String palabraMemorizada = letras.getPalabraMemorizada();

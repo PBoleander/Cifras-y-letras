@@ -20,7 +20,7 @@ class Letras extends Juego implements KeyListener {
     final Puntuacion puntuacion;
     final SolucionadorLetras solucionador;
 
-    boolean resultadoComprobacion;
+    boolean comprobado, resultadoComprobacion;
     int longitudMemoria, numeroLetrasSacadas;
 
     private final Letra[] letrasDisponiblesAux, letrasDisponiblesPausa, letrasPuestasPausa;
@@ -154,8 +154,23 @@ class Letras extends Juego implements KeyListener {
         }
     }
 
-    void comprobar() {
+    synchronized void comprobar() {
         resultadoComprobacion = solucionador.contiene(getPalabraPuesta());
+        comprobado = true;
+        notifyAll();
+    }
+
+    synchronized boolean estaComprobado() {
+        while (!comprobado) {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        comprobado = false;
+
+        return true;
     }
 
     String getPalabraMemorizada() {
