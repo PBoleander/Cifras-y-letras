@@ -24,8 +24,6 @@ class Letras extends Juego implements KeyListener {
     int longitudMemoria, numeroLetrasSacadas;
 
     private final Letra[] letrasDisponiblesAux, letrasDisponiblesPausa, letrasPuestasPausa;
-    private ContenedorFicha contenedorBajoPuntero;
-    private Idioma idioma;
     private Letra letraArrastrada;
 
     Letras() {
@@ -55,7 +53,6 @@ class Letras extends Juego implements KeyListener {
             letrasPuestasPausa[i] = new Letra(caracteresPausaPuestas[i]);
         }
 
-        this.contenedorBajoPuntero = null;
         this.letraArrastrada = null;
 
         listaSolucion.setEnabled(false);
@@ -131,26 +128,6 @@ class Letras extends Juego implements KeyListener {
             }
         } else { // Se ha hecho clic
             letraArrastrada = null;
-        }
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent mouseEvent) {
-        if (haEmpezado() && ! estaBloqueado()) {
-            Object source = mouseEvent.getSource();
-            if (source instanceof ContenedorFicha) {
-                contenedorBajoPuntero = (ContenedorFicha) source;
-            }
-        }
-    }
-
-    @Override
-    public void mouseExited(MouseEvent mouseEvent) {
-        if (haEmpezado() && ! estaBloqueado()) {
-            Object source = mouseEvent.getSource();
-            if (source instanceof ContenedorFicha) {
-                contenedorBajoPuntero = null;
-            }
         }
     }
 
@@ -278,16 +255,16 @@ class Letras extends Juego implements KeyListener {
             if (numeroLetrasSacadas == numeroLetras) {
                 solucionador.setLetrasDisponibles(letrasDisponiblesAux);
                 new Thread(solucionador).start();
-                setTiempoInicial(idioma == Idioma.INGLES ? 60 : 45);
+
                 super.iniciar();
             }
         }
     }
 
     void setIdioma(Idioma idioma) {
-        this.idioma = idioma;
         solucionador.setIdioma(idioma);
         Letra.generador.setIdioma(idioma);
+        setTiempoInicial(idioma == Idioma.INGLES ? 60 : 45);
     }
 
     private void alternarMensajePausa() {

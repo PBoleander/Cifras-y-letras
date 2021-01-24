@@ -12,6 +12,8 @@ class Cronometro implements Runnable {
         pausa = false;
         parado = false;
 
+        iniciar();
+
         try {
             while (segundosRestantes > 0 && !parado) {
                 // Corren las décimas de segundo (para cuando se pausa no pase un segundo entero en el sleep)
@@ -56,16 +58,19 @@ class Cronometro implements Runnable {
         notifyAll();
     }
 
-    synchronized void setSegundosIniciales(int segundosIniciales) {
+    void setSegundosIniciales(int segundosIniciales) {
         this.segundosIniciales = segundosIniciales;
-        this.segundosRestantes = segundosIniciales;
-        this.decimas = 0;
-        cambio = true;
-        notifyAll();
     }
 
     private synchronized void esperarSiPausa() throws InterruptedException {
         while (!parado && pausa) wait();
+    }
+
+    private synchronized void iniciar() {
+        this.segundosRestantes = segundosIniciales;
+        this.decimas = 0;
+        cambio = true;
+        notifyAll();
     }
 
     private void pasarDecimas() throws InterruptedException {

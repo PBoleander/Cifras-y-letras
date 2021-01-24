@@ -1,7 +1,9 @@
 package juegos;
 
 import controlTiempo.MostradorTiempo;
+import fichas.ContenedorFicha;
 
+import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 abstract class Juego implements MouseListener, Runnable {
@@ -9,9 +11,32 @@ abstract class Juego implements MouseListener, Runnable {
     final MostradorTiempo mostradorTiempo;
     private boolean bloqueo, contrarreloj;
 
+    ContenedorFicha contenedorBajoPuntero;
+
     Juego() {
         this.mostradorTiempo = new MostradorTiempo();
         this.bloqueo = true;
+        this.contenedorBajoPuntero = null;
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent mouseEvent) {
+        if (haEmpezado() && ! estaBloqueado()) {
+            Object source = mouseEvent.getSource();
+            if (source instanceof ContenedorFicha) {
+                contenedorBajoPuntero = (ContenedorFicha) source;
+            }
+        }
+    }
+
+    @Override
+    public void mouseExited(MouseEvent mouseEvent) {
+        if (haEmpezado() && ! estaBloqueado()) {
+            Object source = mouseEvent.getSource();
+            if (source instanceof ContenedorFicha) {
+                contenedorBajoPuntero = null;
+            }
+        }
     }
 
     @Override
