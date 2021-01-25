@@ -1,6 +1,6 @@
 package general;
 
-import java.awt.Color;
+import java.awt.*;
 
 public class Colores {
 

@@ -87,10 +87,10 @@ class Letras extends Juego implements KeyListener {
     public void mouseClicked(MouseEvent mouseEvent) {
         if (haEmpezado() && ! estaBloqueado() && contenedorBajoPuntero != null) {
             if (contenedorBajoPuntero.estaOcupado()) {
-                if (esLetraDisponible(contenedorBajoPuntero)) {
-                    usar(contenedorBajoPuntero);
-                } else { // Es letra puesta
+                if (contenedorBajoPuntero.getFicha().isUsada()) {
                     desusar(contenedorBajoPuntero);
+                } else {
+                    usar(contenedorBajoPuntero);
                 }
             }
         }
@@ -100,7 +100,7 @@ class Letras extends Juego implements KeyListener {
     public void mousePressed(MouseEvent mouseEvent) {
         if (haEmpezado() && ! estaBloqueado() && contenedorBajoPuntero != null) {
             if (contenedorBajoPuntero.estaOcupado()) {
-                if (! esLetraDisponible(contenedorBajoPuntero)) { // Es letra puesta
+                if (esLetraPuesta(contenedorBajoPuntero)) {
                     letraArrastrada = (Letra) contenedorBajoPuntero.getFicha();
                 }
             }
@@ -111,7 +111,7 @@ class Letras extends Juego implements KeyListener {
     public void mouseReleased(MouseEvent mouseEvent) {
         if (mouseEvent.getClickCount() == 0) {
             if (haEmpezado() && !estaBloqueado() && contenedorBajoPuntero != null) {
-                if (!esLetraDisponible(contenedorBajoPuntero)) { // Es letra puesta
+                if (esLetraPuesta(contenedorBajoPuntero)) {
                     if (!contenedorBajoPuntero.estaOcupado()) {
                         if (letraArrastrada != null) {
                             contenedorBajoPuntero.setFicha(letraArrastrada);
@@ -292,12 +292,12 @@ class Letras extends Juego implements KeyListener {
         }
     }
 
-    private boolean esLetraDisponible(ContenedorFicha contenedorFicha) {
+    private boolean esLetraPuesta(ContenedorFicha contenedorFicha) {
         int i = 0;
         while (i < numeroLetras && ! letrasDisponibles[i].equals(contenedorFicha))
             i++;
 
-        return i < numeroLetras;
+        return i == numeroLetras;
     }
 
     private String getPalabraPuesta() {
@@ -361,7 +361,7 @@ class Letras extends Juego implements KeyListener {
 
             if (i < numeroLetras) {
                 letrasPuestas[i].setFicha(contenedorFicha.getFicha());
-                ((Letra) contenedorFicha.getFicha()).setUsada(true);
+                contenedorFicha.getFicha().setUsada(true);
                 contenedorFicha.setFicha(null);
             }
         }

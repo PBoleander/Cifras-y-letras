@@ -4,10 +4,12 @@ import java.util.Random;
 
 public class Cifra extends Ficha {
 
+    public static final Random RANDOM = new Random();
+
     private static final int[] VALORES_POSIBLES = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 25, 50, 75, 100 };
-    private static final Random RANDOM = new Random();
 
     private int valor;
+    private Operacion operacion;
 
     public Cifra() {
         super();
@@ -18,18 +20,40 @@ public class Cifra extends Ficha {
     public Cifra(Cifra cifra) {
         super();
 
-        valor = cifra.getValor();
+        valor = cifra.valor;
+        operacion = cifra.operacion;
     }
 
     public Cifra(int valor) {
+        this(valor, null);
+    }
+
+    public Cifra (int valor, Operacion operacion) {
         super();
 
         this.valor = valor;
+        this.operacion = operacion;
         setText(String.valueOf(valor));
+    }
+
+    @Override
+    public String toString() {
+        return String.valueOf(valor);
+    }
+
+    public Operacion getOperacion() {
+        return operacion;
     }
 
     public int getValor() {
         return valor;
+    }
+
+    @Override
+    public void setUsada(boolean usada) {
+        super.setUsada(usada);
+        if (operacion != null)
+            operacion.setUsada(usada);
     }
 
     private void nuevoValor() {

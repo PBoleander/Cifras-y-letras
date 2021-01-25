@@ -29,6 +29,11 @@ public class Letra extends Ficha {
         setText(String.valueOf(valor));
     }
 
+    @Override
+    public String toString() {
+        return String.valueOf(valor);
+    }
+
     public char getValor() {
         return valor;
     }

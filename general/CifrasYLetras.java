@@ -1,5 +1,6 @@
 package general;
 
+import juegos.VisorCifras;
 import juegos.VisorLetras;
 
 import javax.swing.*;
@@ -18,8 +19,8 @@ class CifrasYLetras extends JFrame {
         VisorLetras visorLetras = new VisorLetras();
 
         JTabbedPane tabbedPane = new JTabbedPane();
-        //tabbedPane.addTab("Cifras", new VisorCifras());
-        tabbedPane.addTab("Letras", visorLetras);
+        tabbedPane.addTab("Cifras", new VisorCifras());
+        //tabbedPane.addTab("Letras", visorLetras);
 
         add(tabbedPane);
 
@@ -27,7 +28,7 @@ class CifrasYLetras extends JFrame {
         setLocationRelativeTo(null);
         setVisible(true);
 
-        visorLetras.requestFocusInWindow();
+        //visorLetras.requestFocusInWindow();
     }
 
     public static void main(String[] args) {
