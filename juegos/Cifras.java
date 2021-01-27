@@ -12,6 +12,7 @@ class Cifras extends Juego {
     final ContenedorFicha cifraObjetivo;
     final ContenedorFicha[] cifrasDisponibles, operadores;
     final ContenedorOperacion[] operacionesRealizadas;
+    final SolucionadorCifras solucionador;
 
     Cifras() {
         super();
@@ -20,6 +21,7 @@ class Cifras extends Juego {
         cifrasDisponibles = new ContenedorFicha[2 * numeroCifras - 1];
         operacionesRealizadas = new ContenedorOperacion[numeroCifras - 1];
         operadores = new ContenedorFicha[4];
+        solucionador = new SolucionadorCifras();
 
         for (int i = 0; i < cifrasDisponibles.length; i++) {
             cifrasDisponibles[i] = new ContenedorFicha(null);
@@ -86,8 +88,11 @@ class Cifras extends Juego {
             operacionRealizada.setFicha(null);
         }
 
+        solucionador.setCifrasDisponibles(cifrasDisponibles);
+
         super.iniciar();
         new Thread(this).start();
+        new Thread(solucionador).start();
     }
 
     @Override

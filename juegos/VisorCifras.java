@@ -10,6 +10,7 @@ public class VisorCifras extends JPanel {
 
         Cifras cifras = new Cifras();
         PanelControl pc = new PanelControl(cifras);
+        PanelControlCifras pcc = new PanelControlCifras(cifras);
 
         GridBagConstraints constraints = new GridBagConstraints();
 
@@ -18,9 +19,13 @@ public class VisorCifras extends JPanel {
         add(cifras.cifraObjetivo, constraints);
 
         constraints.gridx = 1;
-        JPanel panelBotones = new JPanel(new GridLayout(1, 2, 5, 5));
+        JPanel panelBotones = new JPanel(new GridLayout(3, 2, 5, 5));
         panelBotones.add(pc.btnIniciar);
+        panelBotones.add(pc.chkContrarreloj);
+        panelBotones.add(pcc.btnDeshacer);
         panelBotones.add(pc.btnLimpiar);
+        panelBotones.add(pc.btnPausa);
+        panelBotones.add(pc.btnResolver);
         add(panelBotones, constraints);
 
         constraints.gridx = 0;
