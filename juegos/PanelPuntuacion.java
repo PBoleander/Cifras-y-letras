@@ -61,7 +61,7 @@ class PanelPuntuacion extends JPanel {
     private JLabel nuevoJLabel(String texto) {
         JLabel label = new JLabel(texto);
 
-        label.setFont(new Font(Font.DIALOG, Font.BOLD, 15));
+        label.setFont(new Font(Font.DIALOG, Font.BOLD, 13));
 
         return label;
     }

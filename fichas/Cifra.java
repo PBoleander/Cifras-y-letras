@@ -1,5 +1,6 @@
 package fichas;
 
+import java.awt.*;
 import java.util.Random;
 
 public class Cifra extends Ficha {
@@ -15,13 +16,6 @@ public class Cifra extends Ficha {
         super();
 
         nuevoValor();
-    }
-
-    public Cifra(Cifra cifra) {
-        super();
-
-        valor = cifra.valor;
-        operacion = cifra.operacion;
     }
 
     public Cifra(int valor) {
@@ -52,6 +46,10 @@ public class Cifra extends Ficha {
     @Override
     public void setUsada(boolean usada) {
         super.setUsada(usada);
+
+        if (isUsada()) setBackground(Color.GRAY);
+        else setBackground(Ficha.BACKGROUND);
+
         if (operacion != null)
             operacion.setUsada(usada);
     }

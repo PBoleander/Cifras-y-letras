@@ -1,45 +1,60 @@
 package juegos;
 
+import general.Colores;
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 
-public class VisorCifras extends JPanel {
+public class VisorCifras extends JPanel implements ActionListener, ContainerListener, MouseListener, Runnable {
+
+    private final Cifras cifras;
+    private final JLabel mostradorMinDiferencia;
+    private final JPanel panelOperaciones;
+    private final JTextField mostradorSolucion;
+    private final PanelControl pc;
 
     public VisorCifras() {
         super(new GridBagLayout());
 
-        Cifras cifras = new Cifras();
-        PanelControl pc = new PanelControl(cifras);
+        cifras = new Cifras();
+        pc = new PanelControl(cifras);
         PanelControlCifras pcc = new PanelControlCifras(cifras);
+
+        cifras.cifraObjetivo.addContainerListener(this); // Basta para que al iniciar nueva partida cambie el fondo
+        pc.btnResolver.addActionListener(this);
+        pc.btnIniciar.addActionListener(this);
 
         GridBagConstraints constraints = new GridBagConstraints();
 
         constraints.insets = new Insets(5, 10, 5, 10);
 
-        add(cifras.cifraObjetivo, constraints);
+        JPanel panelTiempo = new JPanel(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
+        c.insets = new Insets(0, 0, 0, 10);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 1;
+        panelTiempo.add(cifras.mostradorTiempo, c);
 
-        constraints.gridx = 1;
-        JPanel panelBotones = new JPanel(new GridLayout(3, 2, 5, 5));
-        panelBotones.add(pc.btnIniciar);
-        panelBotones.add(pc.chkContrarreloj);
-        panelBotones.add(pcc.btnDeshacer);
-        panelBotones.add(pc.btnLimpiar);
-        panelBotones.add(pc.btnPausa);
-        panelBotones.add(pc.btnResolver);
-        add(panelBotones, constraints);
+        c.gridx = 1;
+        c.fill = GridBagConstraints.NONE;
+        c.weightx = 0;
+        c.insets = new Insets(0, 0, 0, 0);
+        pc.btnPausa.setPreferredSize(new Dimension(110, 25));
+        panelTiempo.add(pc.btnPausa, c);
 
-        constraints.gridx = 0;
-        constraints.gridy = 1;
-        constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.gridwidth = GridBagConstraints.REMAINDER;
-        add(cifras.mostradorTiempo, constraints);
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        add(panelTiempo, constraints);
 
-        constraints.fill = GridBagConstraints.NONE; // Reiniciamos el valor de constraints fill al original
         constraints.gridwidth = 1;
-        constraints.gridy++;
+        constraints.fill = GridBagConstraints.NONE;
+
+        constraints.gridy = 1;
 
         JPanel panelCifras = new JPanel(new GridLayout(2, 3, 5, 5));
         for (int i = 0; i < Cifras.numeroCifras; i++) {
+            cifras.cifrasDisponibles[i].addMouseListener(this);
             panelCifras.add(cifras.cifrasDisponibles[i]);
         }
 
@@ -48,18 +63,131 @@ public class VisorCifras extends JPanel {
             panelOperadores.add(cifras.operadores[i]);
         }
 
-        JPanel panelOperaciones = new JPanel(new GridLayout(5, 1, 5, 5));
+        panelOperaciones = new JPanel(new GridLayout(5, 1, 5, 5));
+        panelOperaciones.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         for (int i = 0; i < 5; i++) {
+            cifras.operacionesRealizadas[i].addMouseListener(this);
             panelOperaciones.add(cifras.operacionesRealizadas[i]);
         }
 
-        add(panelCifras, constraints);
+        JPanel panelFichas = new JPanel(new GridBagLayout());
+        GridBagConstraints fichasConstraints = new GridBagConstraints();
+        fichasConstraints.insets = new Insets(0, 0, 5, 5);
+
+        panelFichas.add(panelCifras, fichasConstraints);
+        fichasConstraints.gridx = 1;
+        panelFichas.add(panelOperadores, fichasConstraints);
+        fichasConstraints.gridy = 1;
+        fichasConstraints.gridx = 0;
+        fichasConstraints.gridwidth = 2;
+        panelFichas.add(panelOperaciones, fichasConstraints);
+
+        add(panelFichas, constraints);
+
+        JPanel columna2 = new JPanel(new GridBagLayout());
+        GridBagConstraints columna2Constraints = new GridBagConstraints();
+        columna2Constraints.insets = new Insets(0, 0, 20, 5);
+
+        columna2.add(cifras.cifraObjetivo, columna2Constraints);
+
+        columna2Constraints.gridx = 1;
+        JPanel panelBotones = new JPanel(new GridLayout(1, 2, 10, 10));
+        panelBotones.add(pc.btnIniciar);
+        panelBotones.add(pc.chkContrarreloj);
+        columna2.add(panelBotones, columna2Constraints);
+
+        columna2Constraints.gridx = 0;
+        columna2Constraints.gridwidth = GridBagConstraints.REMAINDER;
+        JPanel panelBotonesCifras = new JPanel(new GridLayout(1, 3, 10, 10));
+        panelBotonesCifras.add(pcc.btnDeshacer);
+        panelBotonesCifras.add(pc.btnLimpiar);
+        panelBotonesCifras.add(pc.btnResolver);
+        columna2.add(panelBotonesCifras, columna2Constraints);
+
+        mostradorSolucion = new JTextField();
+        mostradorSolucion.setFont(new Font(Font.DIALOG, Font.BOLD, 16));
+        mostradorSolucion.setEditable(false);
+        mostradorSolucion.setBackground(Color.WHITE);
+        mostradorSolucion.setHorizontalAlignment(SwingConstants.CENTER);
+        mostradorSolucion.setPreferredSize(new Dimension(460, 50));
+        mostradorSolucion.setBorder(BorderFactory.createLineBorder(getForeground()));
+        columna2.add(mostradorSolucion, columna2Constraints);
+
+        mostradorMinDiferencia = new JLabel("Mínima diferencia conseguida:");
+        columna2.add(mostradorMinDiferencia, columna2Constraints);
+
+        cifras.puntuacion.panelPuntuacion.setPreferredSize(new Dimension(460, 120));
+        columna2.add(cifras.puntuacion.panelPuntuacion, columna2Constraints);
+
         constraints.gridx = 1;
-        add(panelOperadores, constraints);
-        constraints.gridy++;
-        constraints.gridx = 0;
-        constraints.gridwidth = 2;
-        add(panelOperaciones, constraints);
-        constraints.gridwidth = 1;
+        constraints.anchor = GridBagConstraints.NORTH;
+        constraints.gridheight = GridBagConstraints.REMAINDER;
+        add(columna2, constraints);
+
+        new Thread(this).start();
     }
+
+    @Override
+    public void run() {
+        while (cifras.estaResuelto()) {
+            SwingUtilities.invokeLater(() -> {
+                switch (cifras.resultadoPartida) {
+                    case DERROTA -> panelOperaciones.setBackground(Color.RED);
+                    case PERFECTO -> panelOperaciones.setBackground(Colores.VERDE);
+                    case MEJORABLE -> panelOperaciones.setBackground(Colores.NARANJA);
+                }
+
+                if (cifras.solucionador.getMinDiferencia() == 0) {
+                    if (mostradorSolucion.getForeground() != getForeground())
+                        mostradorSolucion.setForeground(getForeground());
+                } else {
+                    if (mostradorSolucion.getForeground() != Colores.NARANJA)
+                        mostradorSolucion.setForeground(Colores.NARANJA);
+                }
+
+                mostradorSolucion.setText(cifras.solucionador.toString());
+            });
+        }
+    }
+
+    @Override
+    public void componentAdded(ContainerEvent containerEvent) {
+        if (panelOperaciones.getBackground() != null)
+            panelOperaciones.setBackground(null);
+
+        mostradorSolucion.setText("");
+    }
+
+    @Override
+    public void componentRemoved(ContainerEvent containerEvent) {}
+
+    @Override
+    public void actionPerformed(ActionEvent actionEvent) {
+        Object source = actionEvent.getSource();
+        if (source.equals(pc.btnIniciar)) {
+            SwingUtilities.invokeLater(() ->
+                    mostradorMinDiferencia.setText("Mínima diferencia conseguida: " + cifras.minDiferenciaConseguida));
+        } else if (source.equals(pc.btnResolver)) {
+            if (!cifras.estaSolucionado())
+                mostradorSolucion.setText("Calculando...");
+        }
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent mouseEvent) {
+        SwingUtilities.invokeLater(() ->
+                mostradorMinDiferencia.setText("Mínima diferencia conseguida: " + cifras.minDiferenciaConseguida));
+    }
+
+    @Override
+    public void mousePressed(MouseEvent mouseEvent) {}
+
+    @Override
+    public void mouseReleased(MouseEvent mouseEvent) {}
+
+    @Override
+    public void mouseEntered(MouseEvent mouseEvent) {}
+
+    @Override
+    public void mouseExited(MouseEvent mouseEvent) {}
 }

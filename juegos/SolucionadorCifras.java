@@ -7,6 +7,7 @@ class SolucionadorCifras implements Runnable {
     private final CifraSolucionador[] cifrasDisponibles;
     private final StringBuilder stringBuilder;
 
+    private boolean solucionado;
     private CifraSolucionador cifraObjetivo;
     private int minDiferencia, minCifrasUsadas, minCifrasUsadasInexacto, numCifrasUsadas;
 
@@ -17,26 +18,38 @@ class SolucionadorCifras implements Runnable {
 
     @Override
     public void run() {
+        solucionado = false;
         buscarMejorSolucion();
+        solucionado = true;
     }
 
     @Override
-    public String toString() {
+    public synchronized String toString() {
         return stringBuilder.toString();
     }
 
-    boolean esBuenResultado(int valor) {
-        return Math.abs(valor - cifraObjetivo.getValor()) == minDiferencia;
-    }
-
-    boolean esElMejorResultado(int valor, int cifrasUsadas) {
+    synchronized int getDistanciaPerfeccion(int diferenciaConseguida, int cifrasUsadas) {
         int minCifrasUtilizadas = (minDiferencia == 0) ? minCifrasUsadas : minCifrasUsadasInexacto;
-        return esBuenResultado(valor) && cifrasUsadas == minCifrasUtilizadas;
+        if (diferenciaConseguida == minDiferencia) {
+            return cifrasUsadas - minCifrasUtilizadas;
+        } else {
+            // Si te quedas a uno del número exacto tiene que haber una distancia de la perfección de 5, etc. (por
+            // eso el + 4)
+            return Math.abs(minDiferencia - diferenciaConseguida) + 4;
+        }
     }
 
-    void setCifraObjetivo(Cifra cifraObjetivo) {
-        this.cifraObjetivo = new CifraSolucionador(cifraObjetivo.getValor());
-        minDiferencia = cifraObjetivo.getValor();
+    synchronized int getMinDiferencia() {
+        return minDiferencia;
+    }
+
+    boolean estaSolucionado() {
+        return solucionado;
+    }
+
+    void setCifraObjetivo(ContenedorFicha cifraObjetivo) {
+        this.cifraObjetivo = new CifraSolucionador(((Cifra) cifraObjetivo.getFicha()).getValor());
+        minDiferencia = this.cifraObjetivo.getValor();
     }
 
     void setCifrasDisponibles(ContenedorFicha[] cifrasDisponibles) {
@@ -96,7 +109,7 @@ class SolucionadorCifras implements Runnable {
             cifrasDisponibles[i] = null;
     }
 
-    private void buscarMejorSolucion() {
+    private synchronized void buscarMejorSolucion() {
         minCifrasUsadas = Cifras.numeroCifras + 1;
         minCifrasUsadasInexacto = minCifrasUsadas;
         stringBuilder.delete(0, stringBuilder.length());
@@ -106,6 +119,7 @@ class SolucionadorCifras implements Runnable {
             if (cifra != null && esValorNuevo(cifra))
                 combinar(cifra);
         }
+
     }
 
     private void combinar(CifraSolucionador cifra) {

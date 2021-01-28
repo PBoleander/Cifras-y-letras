@@ -7,20 +7,31 @@ import java.awt.event.MouseEvent;
 
 class Cifras extends Juego {
 
+    enum resultado {
+        DERROTA, MEJORABLE, PERFECTO
+    }
+
     final static int numeroCifras = 6;
 
     final ContenedorFicha cifraObjetivo;
     final ContenedorFicha[] cifrasDisponibles, operadores;
     final ContenedorOperacion[] operacionesRealizadas;
+    final Puntuacion puntuacion;
     final SolucionadorCifras solucionador;
+
+    int minDiferenciaConseguida;
+    resultado resultadoPartida;
+
+    private boolean comprobando, resuelto;
 
     Cifras() {
         super();
 
         cifraObjetivo = new ContenedorFicha(null);
-        cifrasDisponibles = new ContenedorFicha[2 * numeroCifras - 1];
+        cifrasDisponibles = new ContenedorFicha[numeroCifras];
         operacionesRealizadas = new ContenedorOperacion[numeroCifras - 1];
         operadores = new ContenedorFicha[4];
+        puntuacion = new Puntuacion();
         solucionador = new SolucionadorCifras();
 
         for (int i = 0; i < cifrasDisponibles.length; i++) {
@@ -74,20 +85,41 @@ class Cifras extends Juego {
         return false;
     }
 
+    synchronized boolean estaResuelto() {
+        while (!resuelto) {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        resuelto = false; // Para que visorCifras no establezca el fondo del panel de operaciones continuamente
+
+        return true;
+    }
+
+    boolean estaSolucionado() {
+        return solucionador.estaSolucionado();
+    }
+
     @Override
     void iniciar() {
-        cifraObjetivo.setFicha(new Cifra(101 + Cifra.RANDOM.nextInt(899)));
+        minDiferenciaConseguida = 101 + Cifra.RANDOM.nextInt(899);
+        resultadoPartida = null;
+
+        cifraObjetivo.setFicha(new Cifra(minDiferenciaConseguida));
         cifraObjetivo.getFicha().setBackground(new Color(51, 51, 51));
         cifraObjetivo.getFicha().setForeground(Color.WHITE);
 
-        for (int i = 0; i < cifrasDisponibles.length; i++) {
-            cifrasDisponibles[i].setFicha(i < numeroCifras ? new Cifra() : null);
+        for (ContenedorFicha cifrasDisponible : cifrasDisponibles) {
+            cifrasDisponible.setFicha(new Cifra());
         }
 
         for (ContenedorOperacion operacionRealizada : operacionesRealizadas) {
             operacionRealizada.setFicha(null);
         }
 
+        solucionador.setCifraObjetivo(cifraObjetivo);
         solucionador.setCifrasDisponibles(cifrasDisponibles);
 
         super.iniciar();
@@ -115,8 +147,68 @@ class Cifras extends Juego {
     }
 
     @Override
-    void resolver() {
-        super.resolver();
+    synchronized void resolver() {
+        if (!estaBloqueado()) { // Junto con el synchronized para que sólo se pueda resolver una vez
+            super.resolver();
+
+            if (!comprobando) {
+                ContenedorOperacion operacion = getUltimaOperacionOcupada();
+                if (operacion != null && operacion.estaCompleto()) {
+                    comprobarResultado((Operacion) operacion.getFicha());
+
+                } else {
+                    if (resultadoPartida == null) {
+                        resultadoPartida = resultado.DERROTA;
+                        puntuacion.actualizar(10, false);
+                    }
+                }
+            }
+
+            resuelto = true;
+            notifyAll();
+        }
+    }
+
+    private void calcularDiferenciaConseguida(Operacion operacion) {
+        int resultadoOperacion = operacion.getResultado().getValor();
+        int valorObjetivo = ((Cifra) cifraObjetivo.getFicha()).getValor();
+        int diferenciaConseguida = Math.abs(valorObjetivo - resultadoOperacion);
+
+        if (diferenciaConseguida < minDiferenciaConseguida)
+            minDiferenciaConseguida = diferenciaConseguida;
+    }
+
+    private void comprobarResultado(Operacion operacion) {
+        comprobando = true;
+
+        calcularDiferenciaConseguida(operacion);
+
+        int diferenciaPerfeccion = solucionador.getDistanciaPerfeccion(minDiferenciaConseguida, getNumeroCifrasUsadas());
+
+        if (diferenciaPerfeccion == 0) {
+            resultadoPartida = resultado.PERFECTO;
+            resolver();
+        } else if (diferenciaPerfeccion < 5) {
+            resultadoPartida = resultado.MEJORABLE;
+            resolver();
+        } else {
+            resultadoPartida = resultado.DERROTA;
+        }
+
+        if (estaBloqueado())
+            puntuacion.actualizar(diferenciaPerfeccion < 11 ? diferenciaPerfeccion : 10, false);
+
+        comprobando = false;
+    }
+
+    private int getNumeroCifrasUsadas() {
+        int numCifrasUsadas = 0;
+
+        for (ContenedorFicha contenedorFicha: cifrasDisponibles) {
+            if (contenedorFicha.getFicha().isUsada())
+                numCifrasUsadas++;
+        }
+        return numCifrasUsadas;
     }
 
     private ContenedorOperacion getPrimeraOperacionNoCompleta() {
@@ -164,6 +256,8 @@ class Cifras extends Juego {
 
             if (ficha.getFicha() instanceof Cifra) {
                 operacion.setOperando((Cifra) ficha.getFicha());
+                if (operacion.getResultado() != null)
+                    comprobarResultado(operacion);
 
             } else {
                 if (!operacion.setOperador(operacionElegida())) {
@@ -171,6 +265,10 @@ class Cifras extends Juego {
                     if (contenedorOperacion != null && contenedorOperacion.estaCompleto()) {
                         usar(contenedorOperacion);
                         operacion.setOperador(operacionElegida());
+                    } else { // Si la primera ficha que se elige es un operador (antes que haya cualquier operación)
+                        // al ser la operación un extends de Cifra, se saca un número al azar, por tanto, se ha de
+                        // quitar
+                        contenedor.setFicha(null);
                     }
                 }
             }

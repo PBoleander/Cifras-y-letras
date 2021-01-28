@@ -18,11 +18,19 @@ class Puntuacion {
         perfectas = 0;
     }
 
-    void actualizar(int diferenciaPerfeccion) {
-        switch (diferenciaPerfeccion) {
-            case 0 -> perfectas++;
-            case 10 -> derrotas++;
-            default -> mejorables++;
+    void actualizar(int diferenciaPerfeccion, boolean partidaLetras) {
+        if (partidaLetras) {
+            switch (diferenciaPerfeccion) {
+                case 0 -> perfectas++;
+                case 10 -> derrotas++;
+                default -> mejorables++;
+            }
+        } else {
+            switch (diferenciaPerfeccion) {
+                case 0 -> perfectas++;
+                case 1, 2, 3, 4 -> mejorables++;
+                default -> derrotas++;
+            }
         }
 
         int puntosUltimaPartida = 10 - diferenciaPerfeccion;

@@ -35,8 +35,5 @@ public abstract class Ficha extends JLabel {
 
     public void setUsada(boolean usada) {
         this.usada = usada;
-
-        if (isUsada()) setBackground(Color.GRAY);
-        else setBackground(Ficha.BACKGROUND);
     }
 }
