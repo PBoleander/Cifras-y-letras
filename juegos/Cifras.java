@@ -19,10 +19,10 @@ class Cifras extends Juego {
     final Puntuacion puntuacion;
     final SolucionadorCifras solucionador;
 
-    int minDiferenciaConseguida;
+    int diferenciaPerfeccion, minDiferenciaConseguida;
     resultado resultadoPartida;
 
-    private boolean comprobando, resuelto;
+    private boolean haCambiadoMinDiferencia, resuelto;
 
     Cifras() {
         super();
@@ -102,10 +102,23 @@ class Cifras extends Juego {
         return solucionador.estaSolucionado();
     }
 
+    synchronized boolean haCambiadoMinDiferencia() {
+        while (!haCambiadoMinDiferencia) {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        haCambiadoMinDiferencia = false;
+        return true;
+    }
+
     @Override
     void iniciar() {
-        minDiferenciaConseguida = 101 + Cifra.RANDOM.nextInt(899);
+        setMinDiferenciaConseguida(101 + Cifra.RANDOM.nextInt(899));
         resultadoPartida = null;
+        diferenciaPerfeccion = 10;
 
         cifraObjetivo.setFicha(new Cifra(minDiferenciaConseguida));
         cifraObjetivo.getFicha().setBackground(new Color(51, 51, 51));
@@ -151,18 +164,10 @@ class Cifras extends Juego {
         if (!estaBloqueado()) { // Junto con el synchronized para que sólo se pueda resolver una vez
             super.resolver();
 
-            if (!comprobando) {
-                ContenedorOperacion operacion = getUltimaOperacionOcupada();
-                if (operacion != null && operacion.estaCompleto()) {
-                    comprobarResultado((Operacion) operacion.getFicha());
+            if (resultadoPartida == null)
+                resultadoPartida = resultado.DERROTA;
 
-                } else {
-                    if (resultadoPartida == null) {
-                        resultadoPartida = resultado.DERROTA;
-                        puntuacion.actualizar(10, false);
-                    }
-                }
-            }
+            puntuacion.actualizar(diferenciaPerfeccion, false);
 
             resuelto = true;
             notifyAll();
@@ -175,30 +180,21 @@ class Cifras extends Juego {
         int diferenciaConseguida = Math.abs(valorObjetivo - resultadoOperacion);
 
         if (diferenciaConseguida < minDiferenciaConseguida)
-            minDiferenciaConseguida = diferenciaConseguida;
+            setMinDiferenciaConseguida(diferenciaConseguida);
     }
 
-    private void comprobarResultado(Operacion operacion) {
-        comprobando = true;
-
+    private int comprobarResultado(Operacion operacion) {
         calcularDiferenciaConseguida(operacion);
 
         int diferenciaPerfeccion = solucionador.getDistanciaPerfeccion(minDiferenciaConseguida, getNumeroCifrasUsadas());
 
         if (diferenciaPerfeccion == 0) {
             resultadoPartida = resultado.PERFECTO;
-            resolver();
         } else if (diferenciaPerfeccion < 5) {
             resultadoPartida = resultado.MEJORABLE;
-            resolver();
-        } else {
-            resultadoPartida = resultado.DERROTA;
         }
 
-        if (estaBloqueado())
-            puntuacion.actualizar(diferenciaPerfeccion < 11 ? diferenciaPerfeccion : 10, false);
-
-        comprobando = false;
+        return Math.min(10, diferenciaPerfeccion);
     }
 
     private int getNumeroCifrasUsadas() {
@@ -245,7 +241,13 @@ class Cifras extends Juego {
         return null;
     }
 
-    private void usar(ContenedorFicha ficha) {
+    private synchronized void setMinDiferenciaConseguida(int nuevoValor) {
+        minDiferenciaConseguida = nuevoValor;
+        haCambiadoMinDiferencia = true;
+        notifyAll();
+    }
+
+    private synchronized void usar(ContenedorFicha ficha) {
         ContenedorOperacion contenedor = getPrimeraOperacionNoCompleta();
 
         if (contenedor != null) {
@@ -256,8 +258,10 @@ class Cifras extends Juego {
 
             if (ficha.getFicha() instanceof Cifra) {
                 operacion.setOperando((Cifra) ficha.getFicha());
-                if (operacion.getResultado() != null)
-                    comprobarResultado(operacion);
+                if (operacion.getResultado() != null) {
+                    diferenciaPerfeccion = comprobarResultado(operacion);
+                    if (diferenciaPerfeccion < 5) resolver(); // Perfecto o mejorable
+                }
 
             } else {
                 if (!operacion.setOperador(operacionElegida())) {

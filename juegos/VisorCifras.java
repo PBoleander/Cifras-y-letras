@@ -6,13 +6,15 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public class VisorCifras extends JPanel implements ActionListener, ContainerListener, MouseListener, Runnable {
+public class VisorCifras extends JPanel implements ActionListener, ContainerListener, Runnable {
 
     private final Cifras cifras;
     private final JLabel mostradorMinDiferencia;
     private final JPanel panelOperaciones;
     private final JTextField mostradorSolucion;
     private final PanelControl pc;
+
+    private boolean primerRun;
 
     public VisorCifras() {
         super(new GridBagLayout());
@@ -23,7 +25,6 @@ public class VisorCifras extends JPanel implements ActionListener, ContainerList
 
         cifras.cifraObjetivo.addContainerListener(this); // Basta para que al iniciar nueva partida cambie el fondo
         pc.btnResolver.addActionListener(this);
-        pc.btnIniciar.addActionListener(this);
 
         GridBagConstraints constraints = new GridBagConstraints();
 
@@ -54,7 +55,6 @@ public class VisorCifras extends JPanel implements ActionListener, ContainerList
 
         JPanel panelCifras = new JPanel(new GridLayout(2, 3, 5, 5));
         for (int i = 0; i < Cifras.numeroCifras; i++) {
-            cifras.cifrasDisponibles[i].addMouseListener(this);
             panelCifras.add(cifras.cifrasDisponibles[i]);
         }
 
@@ -66,7 +66,6 @@ public class VisorCifras extends JPanel implements ActionListener, ContainerList
         panelOperaciones = new JPanel(new GridLayout(5, 1, 5, 5));
         panelOperaciones.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         for (int i = 0; i < 5; i++) {
-            cifras.operacionesRealizadas[i].addMouseListener(this);
             panelOperaciones.add(cifras.operacionesRealizadas[i]);
         }
 
@@ -124,29 +123,48 @@ public class VisorCifras extends JPanel implements ActionListener, ContainerList
         constraints.gridheight = GridBagConstraints.REMAINDER;
         add(columna2, constraints);
 
+        primerRun = true;
         new Thread(this).start();
     }
 
     @Override
     public void run() {
-        while (cifras.estaResuelto()) {
-            SwingUtilities.invokeLater(() -> {
-                switch (cifras.resultadoPartida) {
-                    case DERROTA -> panelOperaciones.setBackground(Color.RED);
-                    case PERFECTO -> panelOperaciones.setBackground(Colores.VERDE);
-                    case MEJORABLE -> panelOperaciones.setBackground(Colores.NARANJA);
-                }
+        if (primerRun) {
+            primerRun = false;
+            new Thread(this).start();
 
-                if (cifras.solucionador.getMinDiferencia() == 0) {
-                    if (mostradorSolucion.getForeground() != getForeground())
-                        mostradorSolucion.setForeground(getForeground());
-                } else {
-                    if (mostradorSolucion.getForeground() != Colores.NARANJA)
-                        mostradorSolucion.setForeground(Colores.NARANJA);
-                }
+            while (cifras.estaResuelto()) {
+                SwingUtilities.invokeLater(() -> {
+                    switch (cifras.resultadoPartida) {
+                        case DERROTA -> panelOperaciones.setBackground(Color.RED);
+                        case PERFECTO -> panelOperaciones.setBackground(Colores.VERDE);
+                        case MEJORABLE -> panelOperaciones.setBackground(Colores.NARANJA);
+                    }
 
-                mostradorSolucion.setText(cifras.solucionador.toString());
-            });
+                    if (cifras.solucionador.getMinDiferencia() == 0) {
+                        if (mostradorSolucion.getForeground() != getForeground())
+                            mostradorSolucion.setForeground(getForeground());
+                    } else {
+                        if (mostradorSolucion.getForeground() != Colores.NARANJA)
+                            mostradorSolucion.setForeground(Colores.NARANJA);
+                    }
+
+                    mostradorSolucion.setText(cifras.solucionador.toString());
+                });
+            }
+        } else { // Se ejecuta el run desde el propio run (así se consigue poder hacer dos starts que hagan cosas dif)
+            while (cifras.haCambiadoMinDiferencia()) {
+                SwingUtilities.invokeLater(() -> mostradorMinDiferencia.setText(
+                        "Mínima diferencia conseguida: " + cifras.minDiferenciaConseguida));
+            }
+        }
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent actionEvent) {
+        if (actionEvent.getSource().equals(pc.btnResolver)) {
+            if (!cifras.estaSolucionado())
+                mostradorSolucion.setText("Calculando...");
         }
     }
 
@@ -160,34 +178,4 @@ public class VisorCifras extends JPanel implements ActionListener, ContainerList
 
     @Override
     public void componentRemoved(ContainerEvent containerEvent) {}
-
-    @Override
-    public void actionPerformed(ActionEvent actionEvent) {
-        Object source = actionEvent.getSource();
-        if (source.equals(pc.btnIniciar)) {
-            SwingUtilities.invokeLater(() ->
-                    mostradorMinDiferencia.setText("Mínima diferencia conseguida: " + cifras.minDiferenciaConseguida));
-        } else if (source.equals(pc.btnResolver)) {
-            if (!cifras.estaSolucionado())
-                mostradorSolucion.setText("Calculando...");
-        }
-    }
-
-    @Override
-    public void mouseClicked(MouseEvent mouseEvent) {
-        SwingUtilities.invokeLater(() ->
-                mostradorMinDiferencia.setText("Mínima diferencia conseguida: " + cifras.minDiferenciaConseguida));
-    }
-
-    @Override
-    public void mousePressed(MouseEvent mouseEvent) {}
-
-    @Override
-    public void mouseReleased(MouseEvent mouseEvent) {}
-
-    @Override
-    public void mouseEntered(MouseEvent mouseEvent) {}
-
-    @Override
-    public void mouseExited(MouseEvent mouseEvent) {}
 }
