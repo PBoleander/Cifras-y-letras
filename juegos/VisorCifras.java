@@ -25,6 +25,7 @@ public class VisorCifras extends JPanel implements ActionListener, ContainerList
 
         cifras.cifraObjetivo.addContainerListener(this); // Basta para que al iniciar nueva partida cambie el fondo
         pc.btnResolver.addActionListener(this);
+        pc.btnPausa.addActionListener(this);
 
         GridBagConstraints constraints = new GridBagConstraints();
 
@@ -162,9 +163,24 @@ public class VisorCifras extends JPanel implements ActionListener, ContainerList
 
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
-        if (actionEvent.getSource().equals(pc.btnResolver)) {
+        Object source = actionEvent.getSource();
+
+        if (source.equals(pc.btnResolver)) {
             if (!cifras.estaSolucionado())
                 mostradorSolucion.setText("Calculando...");
+
+        } else if (source.equals(pc.btnPausa)) {
+            if (cifras.haEmpezado()) {
+                if (mostradorSolucion.getText().isBlank()) {
+                    if (mostradorSolucion.getForeground() != getForeground()) {
+                        mostradorSolucion.setForeground(getForeground());
+                    }
+                    mostradorSolucion.setText("JUEGO PAUSADO");
+
+                } else {
+                    mostradorSolucion.setText("");
+                }
+            }
         }
     }
 

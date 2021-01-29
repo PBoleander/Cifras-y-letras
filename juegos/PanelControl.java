@@ -62,10 +62,7 @@ class PanelControl implements ActionListener {
             }
 
         } else if (source.equals(btnResolver)) {
-            SwingUtilities.invokeLater(() -> { // Para que en cifras se pueda escribir "Calculando..." si todavía se
-                // buscan soluciones
-                if (juego.haEmpezado() && !juego.estaBloqueado()) juego.resolver();
-            });
+            if (juego.haEmpezado() && !juego.estaBloqueado()) juego.resolver();
 
         } else if (source.equals(chkContrarreloj)) {
             if (!juego.haEmpezado()) {

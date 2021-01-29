@@ -22,6 +22,8 @@ class Cifras extends Juego {
     int diferenciaPerfeccion, minDiferenciaConseguida;
     resultado resultadoPartida;
 
+    private final ContenedorFicha[] contenedorFichasEnPausa;
+
     private boolean haCambiadoMinDiferencia, resuelto;
 
     Cifras() {
@@ -30,6 +32,7 @@ class Cifras extends Juego {
         cifraObjetivo = new ContenedorFicha(null);
         cifrasDisponibles = new ContenedorFicha[numeroCifras];
         operacionesRealizadas = new ContenedorOperacion[numeroCifras - 1];
+        contenedorFichasEnPausa = new ContenedorFicha[cifrasDisponibles.length + operacionesRealizadas.length];
         operadores = new ContenedorFicha[4];
         puntuacion = new Puntuacion();
         solucionador = new SolucionadorCifras();
@@ -37,11 +40,15 @@ class Cifras extends Juego {
         for (int i = 0; i < cifrasDisponibles.length; i++) {
             cifrasDisponibles[i] = new ContenedorFicha(null);
             cifrasDisponibles[i].addMouseListener(this);
+
+            contenedorFichasEnPausa[i] = new ContenedorFicha(null);
         }
 
         for (int i = 0; i < operacionesRealizadas.length; i++) {
             operacionesRealizadas[i] = new ContenedorOperacion(null);
             operacionesRealizadas[i].addMouseListener(this);
+
+            contenedorFichasEnPausa[i + cifrasDisponibles.length] = new ContenedorOperacion(null);
         }
 
         char[] operador = {'+', '-', '×', '÷'};
@@ -149,14 +156,14 @@ class Cifras extends Juego {
     void pausar() {
         super.pausar();
 
-        // TODO Mostrar mensaje
+        alternarMensajePausa();
     }
 
     @Override
     void reanudar() {
-        super.reanudar();
+        alternarMensajePausa();
 
-        // TODO Quitar mensaje pausa
+        super.reanudar();
     }
 
     @Override
@@ -171,6 +178,26 @@ class Cifras extends Juego {
 
             resuelto = true;
             notifyAll();
+        }
+    }
+
+    private void alternarMensajePausa() {
+        Ficha fichaDisponible, fichaPausa;
+
+        for (int i = 0; i < cifrasDisponibles.length; i++) {
+            fichaDisponible = cifrasDisponibles[i].getFicha();
+            fichaPausa = contenedorFichasEnPausa[i].getFicha();
+
+            cifrasDisponibles[i].setFicha(fichaPausa);
+            contenedorFichasEnPausa[i].setFicha(fichaDisponible);
+        }
+
+        for (int i = 0; i < operacionesRealizadas.length; i++) {
+            fichaDisponible = operacionesRealizadas[i].getFicha();
+            fichaPausa = contenedorFichasEnPausa[i + cifrasDisponibles.length].getFicha();
+
+            operacionesRealizadas[i].setFicha(fichaPausa);
+            contenedorFichasEnPausa[i + cifrasDisponibles.length].setFicha(fichaDisponible);
         }
     }
 
