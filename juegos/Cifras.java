@@ -36,7 +36,7 @@ class Cifras extends Juego {
         contenedorFichasEnPausa = new ContenedorFicha[cifrasDisponibles.length + operacionesRealizadas.length];
         contenedorFichasMejorDiferencia = new ContenedorFicha[cifrasDisponibles.length + operacionesRealizadas.length];
         operadores = new ContenedorFicha[4];
-        puntuacion = new Puntuacion();
+        puntuacion = new Puntuacion(false);
         solucionador = new SolucionadorCifras();
 
         for (int i = 0; i < cifrasDisponibles.length; i++) {
@@ -185,7 +185,7 @@ class Cifras extends Juego {
                 intercambiarFichasConGuardadas(contenedorFichasMejorDiferencia);
             }
 
-            puntuacion.actualizar(diferenciaPerfeccion, false);
+            puntuacion.actualizar(diferenciaPerfeccion);
 
             resuelto = true;
             notifyAll();

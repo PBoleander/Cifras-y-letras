@@ -31,7 +31,7 @@ class Letras extends Juego implements KeyListener {
 
         this.memoria = new int[numeroLetras];
         this.listaSolucion = new JList<>();
-        this.puntuacion = new Puntuacion();
+        this.puntuacion = new Puntuacion(true);
         this.solucionador = new SolucionadorLetras();
         this.letrasDisponibles = new ContenedorFicha[numeroLetras];
         this.letrasDisponiblesAux = new Letra[numeroLetras];
@@ -232,9 +232,9 @@ class Letras extends Juego implements KeyListener {
             String palabraPuesta = getPalabraPuesta();
 
             if (resultadoComprobacion) {
-                puntuacion.actualizar(solucionador.getNumLongitudesMejores(palabraPuesta.length()), true);
+                puntuacion.actualizar(solucionador.getNumLongitudesMejores(palabraPuesta.length()));
             } else {
-                puntuacion.actualizar(10, true); // Así da 0 puntos
+                puntuacion.actualizar(10); // Así da 0 puntos
             }
 
             SwingUtilities.invokeLater(() -> {
