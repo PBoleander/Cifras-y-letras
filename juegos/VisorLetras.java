@@ -88,7 +88,7 @@ public class VisorLetras extends JPanel implements ActionListener, ContainerList
 
         columna1.add(panelLetrasDisponibles, constraints);
 
-        constraints.gridy++;
+        constraints.gridy = GridBagConstraints.RELATIVE;
         panelLetrasPuestas = new JPanel(new GridLayout(1, Letras.numeroLetras, 10, 0));
         panelLetrasPuestas.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
@@ -109,23 +109,20 @@ public class VisorLetras extends JPanel implements ActionListener, ContainerList
         panel2.add(pcl.btnComprobar, constraints2);
         panel2.add(pcl.panelMemoria, constraints2);
 
-        constraints.gridy++;
         columna1.add(panel2, constraints);
-
-        constraints.gridy++;
         columna1.add(letras.puntuacion.panelPuntuacion, constraints);
 
         // 2a columna
         JPanel columna2 = new JPanel(new GridBagLayout());
         GridBagConstraints constraints3 = new GridBagConstraints();
         constraints3.insets = new Insets(10, 10, 10, 10);
+        constraints3.gridx = 0;
 
         JScrollPane visorListaSolucion = new JScrollPane(letras.listaSolucion);
         visorListaSolucion.setPreferredSize(new Dimension(120, 300));
 
         // Se añaden el panel de los botones consonante y vocal además del visor de la lista de soluciones
         columna2.add(pcl.botonesLetras, constraints3);
-        constraints3.gridy = 1;
         columna2.add(visorListaSolucion, constraints3);
 
         // Se añaden las dos columnas a this
@@ -207,6 +204,7 @@ public class VisorLetras extends JPanel implements ActionListener, ContainerList
                         case MEJORABLE -> panelLetrasPuestas.setBackground(Colores.NARANJA);
                         case DERROTA -> panelLetrasPuestas.setBackground(Color.RED);
                     }
+
                 }
             });
         }

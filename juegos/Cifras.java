@@ -16,7 +16,6 @@ class Cifras extends Juego {
     final SolucionadorCifras solucionador;
 
     int diferenciaPerfeccion, minDiferenciaConseguida;
-    resultado resultadoPartida;
 
     private final ContenedorFicha[] contenedorFichasEnPausa, contenedorFichasMejorDiferencia;
 

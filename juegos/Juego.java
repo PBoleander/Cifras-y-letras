@@ -13,9 +13,11 @@ abstract class Juego implements MouseListener, Runnable {
     }
 
     final MostradorTiempo mostradorTiempo;
-    private boolean bloqueo, contrarreloj;
 
     ContenedorFicha contenedorBajoPuntero;
+    resultado resultadoPartida;
+
+    private boolean bloqueo, contrarreloj;
 
     Juego() {
         this.mostradorTiempo = new MostradorTiempo();

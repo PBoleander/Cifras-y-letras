@@ -22,7 +22,6 @@ class Letras extends Juego implements KeyListener {
 
     boolean comprobado, resultadoComprobacion;
     int longitudMemoria, numeroLetrasSacadas;
-    resultado resultadoPartida;
 
     private final Letra[] letrasDisponiblesAux, letrasDisponiblesPausa, letrasPuestasPausa;
     private Letra letraArrastrada;
