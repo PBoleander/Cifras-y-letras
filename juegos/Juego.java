@@ -8,6 +8,10 @@ import java.awt.event.MouseListener;
 
 abstract class Juego implements MouseListener, Runnable {
 
+    enum resultado {
+        DERROTA, MEJORABLE, PERFECTO
+    }
+
     final MostradorTiempo mostradorTiempo;
     private boolean bloqueo, contrarreloj;
 

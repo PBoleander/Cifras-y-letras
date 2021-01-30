@@ -22,6 +22,7 @@ class Letras extends Juego implements KeyListener {
 
     boolean comprobado, resultadoComprobacion;
     int longitudMemoria, numeroLetrasSacadas;
+    resultado resultadoPartida;
 
     private final Letra[] letrasDisponiblesAux, letrasDisponiblesPausa, letrasPuestasPausa;
     private Letra letraArrastrada;
@@ -132,7 +133,21 @@ class Letras extends Juego implements KeyListener {
     }
 
     synchronized void comprobar() {
-        resultadoComprobacion = solucionador.contiene(getPalabraPuesta());
+        String palabraPuesta = getPalabraPuesta();
+        resultadoComprobacion = solucionador.contiene(palabraPuesta);
+
+        if (!haEmpezado()) { // Se ha procedido a resolver (en otro caso, no es necesario)
+            if (resultadoComprobacion) {
+                if (solucionador.getNumLongitudesMejores(palabraPuesta.length()) == 0)
+                    resultadoPartida = resultado.PERFECTO;
+                else
+                    resultadoPartida = resultado.MEJORABLE;
+
+            } else {
+                resultadoPartida = resultado.DERROTA;
+            }
+        }
+
         comprobado = true;
         notifyAll();
     }
@@ -165,6 +180,7 @@ class Letras extends Juego implements KeyListener {
 
     @Override
     void iniciar() {
+        resultadoPartida = null;
         listaSolucion.setModel(new DefaultListModel<>());
         Arrays.fill(memoria, -1);
         longitudMemoria = 0;

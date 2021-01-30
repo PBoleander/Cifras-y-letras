@@ -195,10 +195,19 @@ public class VisorLetras extends JPanel implements ActionListener, ContainerList
     public void run() {
         while (letras.estaComprobado()) {
             SwingUtilities.invokeLater(() -> {
-                if (letras.resultadoComprobacion)
-                    panelLetrasPuestas.setBackground(Colores.VERDE);
-                else
-                    panelLetrasPuestas.setBackground(Color.RED);
+                if (letras.haEmpezado()) {
+                    if (letras.resultadoComprobacion)
+                        panelLetrasPuestas.setBackground(Colores.VERDE);
+                    else
+                        panelLetrasPuestas.setBackground(Color.RED);
+
+                } else {
+                    switch (letras.resultadoPartida) {
+                        case PERFECTO -> panelLetrasPuestas.setBackground(Colores.VERDE);
+                        case MEJORABLE -> panelLetrasPuestas.setBackground(Colores.NARANJA);
+                        case DERROTA -> panelLetrasPuestas.setBackground(Color.RED);
+                    }
+                }
             });
         }
     }

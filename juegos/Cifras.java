@@ -7,10 +7,6 @@ import java.awt.event.MouseEvent;
 
 class Cifras extends Juego {
 
-    enum resultado {
-        DERROTA, MEJORABLE, PERFECTO
-    }
-
     final static int numeroCifras = 6;
 
     final ContenedorFicha cifraObjetivo;
