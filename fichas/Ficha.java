@@ -29,6 +29,12 @@ public abstract class Ficha extends JLabel {
         this.usada = false;
     }
 
+    Ficha(Ficha ficha) {
+        this();
+
+        this.usada = ficha.usada;
+    }
+
     public boolean isUsada() {
         return usada;
     }

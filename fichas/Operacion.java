@@ -41,6 +41,17 @@ public class Operacion extends Cifra {
         setPreferredSize(new Dimension(5 * Ficha.ANCHO, Ficha.ALTO));
     }
 
+    public Operacion(Operacion operacion) {
+        super(operacion);
+
+        operando1 = operacion.operando1;
+        operando2 = operacion.operando2;
+        operador = operacion.operador;
+        resultado = operacion.resultado;
+
+        setText(toString());
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();

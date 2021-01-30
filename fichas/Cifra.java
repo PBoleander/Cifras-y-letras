@@ -18,6 +18,16 @@ public class Cifra extends Ficha {
         nuevoValor();
     }
 
+    public Cifra(Cifra cifra) {
+        super(cifra);
+
+        valor = cifra.valor;
+        operacion = cifra.operacion;
+
+        setUsada(cifra.isUsada());
+        setText(toString());
+    }
+
     public Cifra(int valor) {
         this(valor, null);
     }
@@ -27,7 +37,7 @@ public class Cifra extends Ficha {
 
         this.valor = valor;
         this.operacion = operacion;
-        setText(String.valueOf(valor));
+        setText(toString());
     }
 
     @Override
@@ -58,6 +68,6 @@ public class Cifra extends Ficha {
         int indiceAleatorio = RANDOM.nextInt(VALORES_POSIBLES.length);
         this.valor = VALORES_POSIBLES[indiceAleatorio];
 
-        setText(String.valueOf(valor));
+        setText(toString());
     }
 }
