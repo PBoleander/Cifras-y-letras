@@ -19,7 +19,7 @@ class CifrasYLetras extends JFrame implements ChangeListener {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
         setTitle("Cifras y letras");
-        setIconImage(Toolkit.getDefaultToolkit().getImage(this.getClass().getResource("/iconos/blackboard.png")));
+        setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/iconos/blackboard.png")));
 
         visorLetras = new VisorLetras();
 

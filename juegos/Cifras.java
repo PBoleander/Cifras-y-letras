@@ -178,6 +178,7 @@ class Cifras extends Juego {
 
             if (resultadoPartida == null) {
                 resultadoPartida = resultado.DERROTA;
+                // TODO Mostrar mensaje de que se ha recuperado la memoria porque la solución puesta no era la mejor
                 intercambiarFichasConGuardadas(contenedorFichasMejorDiferencia);
             }
 

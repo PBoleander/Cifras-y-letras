@@ -137,6 +137,15 @@ class Letras extends Juego implements KeyListener {
         resultadoComprobacion = solucionador.contiene(palabraPuesta);
 
         if (!haEmpezado()) { // Se ha procedido a resolver (en otro caso, no es necesario)
+            if ((!resultadoComprobacion && longitudMemoria > 0) ||
+                    (longitudMemoria > palabraPuesta.length() && solucionador.contiene(getPalabraMemorizada()))) {
+                recuperarMemoria();
+                // TODO Mostrar mensaje de que se ha recuperado la memoria porque la palabra puesta era incorrecta o
+                //  demasiado corta
+                palabraPuesta = getPalabraPuesta();
+                resultadoComprobacion = solucionador.contiene(palabraPuesta);
+            }
+
             if (resultadoComprobacion) {
                 if (solucionador.getNumLongitudesMejores(palabraPuesta.length()) == 0)
                     resultadoPartida = resultado.PERFECTO;
