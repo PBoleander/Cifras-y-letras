@@ -4,7 +4,10 @@ import general.Colores;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ContainerEvent;
+import java.awt.event.ContainerListener;
 
 public class VisorCifras extends JPanel implements ActionListener, ContainerListener, Runnable {
 
@@ -116,7 +119,6 @@ public class VisorCifras extends JPanel implements ActionListener, ContainerList
         mostradorMinDiferencia = new JLabel("Mínima diferencia conseguida:");
         columna2.add(mostradorMinDiferencia, columna2Constraints);
 
-        cifras.puntuacion.panelPuntuacion.setPreferredSize(new Dimension(460, 120));
         columna2.add(cifras.puntuacion.panelPuntuacion, columna2Constraints);
 
         constraints.gridx = 1;

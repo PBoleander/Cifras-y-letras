@@ -15,7 +15,7 @@ public class VisorLetras extends JPanel implements ActionListener, ContainerList
     private final PanelControlLetras pcl;
 
     public VisorLetras() {
-        super();
+        super(new GridBagLayout());
 
         letras = new Letras();
         PanelControl pc = new PanelControl(letras);
@@ -120,15 +120,24 @@ public class VisorLetras extends JPanel implements ActionListener, ContainerList
         constraints3.gridx = 0;
 
         JScrollPane visorListaSolucion = new JScrollPane(letras.listaSolucion);
-        visorListaSolucion.setPreferredSize(new Dimension(120, 300));
+        visorListaSolucion.setPreferredSize(new Dimension(120, 0));
 
         // Se añaden el panel de los botones consonante y vocal además del visor de la lista de soluciones
         columna2.add(pcl.botonesLetras, constraints3);
+        constraints3.weighty = 1;
+        constraints3.fill = GridBagConstraints.VERTICAL;
+        constraints3.gridheight = GridBagConstraints.REMAINDER;
         columna2.add(visorListaSolucion, constraints3);
 
         // Se añaden las dos columnas a this
-        add(columna1);
-        add(columna2);
+        GridBagConstraints c = new GridBagConstraints();
+        c.gridy = 0;
+        add(columna1, c);
+
+        c.weighty = 1;
+        c.fill = GridBagConstraints.VERTICAL;
+        c.gridheight = GridBagConstraints.REMAINDER;
+        add(columna2, c);
 
         new Thread(this).start();
     }
@@ -175,7 +184,7 @@ public class VisorLetras extends JPanel implements ActionListener, ContainerList
 
     @Override
     public void mouseReleased(MouseEvent mouseEvent) {
-        // TODO Hay un bug que no sé cómo arreglar: si se clica la flecha del desplegable no se devuelve el foco a this
+        // FIXME Hay un bug que no sé cómo arreglar: si se clica la flecha del desplegable no se devuelve el foco a this
         if (mouseEvent.getSource().equals(pcl.selectorIdioma)) {
             if (!pcl.selectorIdioma.isPopupVisible()) {
                 if (!isFocusOwner())
