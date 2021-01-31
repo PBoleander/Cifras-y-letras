@@ -190,9 +190,8 @@ class Letras extends Juego implements KeyListener {
     void iniciar() {
         resultadoPartida = null;
         listaSolucion.setModel(new DefaultListModel<>());
-        Arrays.fill(memoria, -1);
-        longitudMemoria = 0;
         numeroLetrasSacadas = 0;
+        vaciarMemoria();
 
         for (int i = 0; i < numeroLetras; i++) {
             letrasDisponibles[i].setFicha(null);
@@ -210,15 +209,18 @@ class Letras extends Juego implements KeyListener {
     }
 
     void memorizar() {
-        Letra letra;
-        Arrays.fill(memoria, -1);
-        longitudMemoria = 0;
+        if (seQuiereMemorizar()) { // Controla si se pretende memorizar una palabra incorrecta o más corta de la ya
+            // memorizada
+            if (longitudMemoria > 0)
+                vaciarMemoria();
 
-        for (ContenedorFicha contenedorFicha: letrasPuestas) {
-            if (contenedorFicha.estaOcupado()) {
-                letra = (Letra) contenedorFicha.getFicha();
-                memorizar(letra);
-                longitudMemoria++;
+            Letra letra;
+            for (ContenedorFicha contenedorFicha : letrasPuestas) {
+                if (contenedorFicha.estaOcupado()) {
+                    letra = (Letra) contenedorFicha.getFicha();
+                    memorizar(letra);
+                    longitudMemoria++;
+                }
             }
         }
     }
@@ -344,6 +346,12 @@ class Letras extends Juego implements KeyListener {
         memoria[i] = quePosicionDisponibleOcupa(letra);
     }
 
+    private int mostrarAvisoDeMemorizadoIlogico() {
+        String mensaje = "La palabra a memorizar es incorrecta o de menor longitud a la ya guardada. ¿Seguro que " +
+                "quieres continuar?";
+        return JOptionPane.showConfirmDialog(null, mensaje, "Aviso", JOptionPane.YES_NO_OPTION);
+    }
+
     private int quePosicionDisponibleOcupa(char letra) {
         for (int i = 0; i < numeroLetras; i++) {
             if (!letrasDisponiblesAux[i].isUsada() && letrasDisponiblesAux[i].getValor() == letra) {
@@ -360,6 +368,21 @@ class Letras extends Juego implements KeyListener {
             }
         }
         return -1; // Aquí no debe llegar
+    }
+
+    private boolean seQuiereMemorizar() {
+        if (!solucionador.contiene(getPalabraPuesta()) ||
+                (longitudMemoria > 0 &&
+                solucionador.contiene(getPalabraMemorizada()) && getPalabraPuesta().length() < longitudMemoria)) {
+
+            pausar();
+            if (mostrarAvisoDeMemorizadoIlogico() != JOptionPane.YES_OPTION) {
+                reanudar();
+                return false;
+            }
+            reanudar();
+        }
+        return true; // Si la palabra a memorizar no es una palabra ilógica o se elige que sí a memorizar una ilógica
     }
 
     private int ultimaPosicionPuesta() {
@@ -389,5 +412,10 @@ class Letras extends Juego implements KeyListener {
                 contenedorFicha.setFicha(null);
             }
         }
+    }
+
+    private void vaciarMemoria() {
+        Arrays.fill(memoria, -1);
+        longitudMemoria = 0;
     }
 }

@@ -93,6 +93,7 @@ public class VisorLetras extends JPanel implements ActionListener, ContainerList
         panelLetrasPuestas.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
         for (int i = 0; i < Letras.numeroLetras; i++) {
+            letras.letrasPuestas[i].addContainerListener(this);
             panelLetrasPuestas.add(letras.letrasPuestas[i]);
         }
 
