@@ -107,6 +107,13 @@ public class VisorCifras extends JPanel implements ActionListener, ContainerList
         panelBotonesCifras.add(pc.btnResolver);
         columna2.add(panelBotonesCifras, columna2Constraints);
 
+        JPanel solucionario = new JPanel(new GridBagLayout());
+        GridBagConstraints solucionarioConstraints = new GridBagConstraints();
+        solucionarioConstraints.gridx = 0;
+
+        JLabel tituloSolucion = new JLabel("Mejor solución:");
+        solucionario.add(tituloSolucion, solucionarioConstraints);
+
         mostradorSolucion = new JTextField();
         mostradorSolucion.setFont(new Font(Font.DIALOG, Font.BOLD, 16));
         mostradorSolucion.setEditable(false);
@@ -114,7 +121,9 @@ public class VisorCifras extends JPanel implements ActionListener, ContainerList
         mostradorSolucion.setHorizontalAlignment(SwingConstants.CENTER);
         mostradorSolucion.setPreferredSize(new Dimension(460, 50));
         mostradorSolucion.setBorder(BorderFactory.createLineBorder(getForeground()));
-        columna2.add(mostradorSolucion, columna2Constraints);
+        solucionario.add(mostradorSolucion, solucionarioConstraints);
+
+        columna2.add(solucionario, columna2Constraints);
 
         mostradorMinDiferencia = new JLabel("Mínima diferencia conseguida:");
         columna2.add(mostradorMinDiferencia, columna2Constraints);

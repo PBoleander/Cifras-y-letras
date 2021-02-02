@@ -124,14 +124,27 @@ public class VisorLetras extends JPanel implements ActionListener, ContainerList
 
         // Se añaden el panel de los botones consonante y vocal además del visor de la lista de soluciones
         columna2.add(pcl.botonesLetras, constraints3);
+
+        JPanel solucionario = new JPanel(new GridBagLayout());
+        GridBagConstraints solucionarioConstraints = new GridBagConstraints();
+        solucionarioConstraints.gridx = 0;
+
+        JLabel labelSoluciones = new JLabel("Soluciones:");
+        solucionario.add(labelSoluciones, solucionarioConstraints);
+
+        solucionarioConstraints.weighty = 1;
+        solucionarioConstraints.fill = GridBagConstraints.VERTICAL;
+        solucionario.add(visorListaSolucion, solucionarioConstraints);
+
         constraints3.weighty = 1;
         constraints3.fill = GridBagConstraints.VERTICAL;
         constraints3.gridheight = GridBagConstraints.REMAINDER;
-        columna2.add(visorListaSolucion, constraints3);
+        columna2.add(solucionario, constraints3);
 
         // Se añaden las dos columnas a this
         GridBagConstraints c = new GridBagConstraints();
         c.gridy = 0;
+        c.anchor = GridBagConstraints.NORTH;
         add(columna1, c);
 
         c.weighty = 1;

@@ -52,7 +52,7 @@ class PanelPuntuacion extends JPanel {
         columna2.add(panelTotal, c);
         columna2.add(panelPartidas, c);
 
-        c.insets = new Insets(20, 30, 0, 0);
+        c.insets = new Insets(20, 20, 0, 20);
         add(columna1, c);
         c.gridx = 1;
         add(columna2, c);

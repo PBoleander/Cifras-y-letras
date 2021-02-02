@@ -214,7 +214,8 @@ class Cifras extends Juego {
         int diferenciaConseguida = Math.abs(valorObjetivo - resultadoOperacion);
 
         if (diferenciaConseguida < minDiferenciaConseguida ||
-                (diferenciaConseguida == minDiferenciaConseguida && numeroCifrasUsadas < minCifrasUsadasMejorDiferencia)) {
+                (diferenciaConseguida == minDiferenciaConseguida && numeroCifrasUsadas < minCifrasUsadasMejorDiferencia))
+        {
             setMinDiferenciaConseguida(diferenciaConseguida);
             minCifrasUsadasMejorDiferencia = numeroCifrasUsadas;
         }
