@@ -139,10 +139,10 @@ class Letras extends Juego implements KeyListener {
             if ((!resultadoComprobacion && longitudMemoria > 0) ||
                     (longitudMemoria > palabraPuesta.length() && solucionador.contiene(getPalabraMemorizada()))) {
                 recuperarMemoria();
-                // TODO Mostrar mensaje de que se ha recuperado la memoria porque la palabra puesta era incorrecta o
-                //  demasiado corta
                 palabraPuesta = getPalabraPuesta();
                 resultadoComprobacion = solucionador.contiene(palabraPuesta);
+                // TODO ¿Mostrar mensaje de que se ha recuperado la memoria porque la palabra puesta era incorrecta o
+                //  demasiado corta?
             }
 
             if (resultadoComprobacion) {
@@ -189,7 +189,7 @@ class Letras extends Juego implements KeyListener {
     @Override
     void iniciar() {
         resultadoPartida = null;
-        listaSolucion.setModel(new DefaultListModel<>());
+        listaSolucion.setModel(new DefaultListModel<>()); // Vacía la lista solución
         numeroLetrasSacadas = 0;
         vaciarMemoria();
 
@@ -234,9 +234,9 @@ class Letras extends Juego implements KeyListener {
 
     @Override
     void reanudar() {
-        super.reanudar();
-
         alternarMensajePausa();
+
+        super.reanudar();
     }
 
     void recuperarMemoria() {

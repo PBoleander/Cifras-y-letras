@@ -143,14 +143,17 @@ class SolucionadorCifras implements Runnable {
                                 CifraSolucionador resultado = operar(cifra, siguienteCifra, operador);
                                 if (resultado != null) {
                                     actualizarDiferencias(resultado);
-                                    addToCifrasDisponibles(resultado);
-                                    for (CifraSolucionador otraCifra : cifrasDisponibles) {
-                                        if (otraCifra != null && !otraCifra.isUsada())
-                                            combinar(otraCifra);
+                                    if (resultado.getValor() != cifraObjetivo.getValor()) {
+                                        addToCifrasDisponibles(resultado);
+                                        for (CifraSolucionador otraCifra : cifrasDisponibles) {
+                                            if (otraCifra != null && !otraCifra.isUsada())
+                                                combinar(otraCifra);
+                                        }
+                                        borrarDeCifrasDisponibles(resultado);
                                     }
-                                    borrarDeCifrasDisponibles(resultado);
                                 }
                             }
+
                             siguienteCifra.setUsada(false);
                         }
                         if (esCifraInicial(siguienteCifra)) numCifrasUsadas--;

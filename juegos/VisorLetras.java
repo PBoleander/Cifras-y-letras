@@ -9,28 +9,26 @@ import java.awt.event.*;
 public class VisorLetras extends JPanel implements ActionListener, ContainerListener, FocusListener, MouseListener,
         Runnable {
 
-    private final JButton btnIniciar, btnPausar;
     private final JPanel panelLetrasPuestas;
     private final Letras letras;
+    private final PanelControl pc;
     private final PanelControlLetras pcl;
 
     public VisorLetras() {
         super(new GridBagLayout());
 
         letras = new Letras();
-        PanelControl pc = new PanelControl(letras);
+        pc = new PanelControl(letras);
         pcl = new PanelControlLetras(letras);
-
-        btnIniciar = pc.btnIniciar;
-        btnPausar = pc.btnPausa;
 
         // Se añaden los listeners
 
         setFocusable(true);
         addKeyListener(letras);
         addFocusListener(this);
-        btnIniciar.addActionListener(this);
-        btnPausar.addActionListener(this);
+        pc.btnIniciar.addActionListener(this);
+        pc.btnPausa.addActionListener(this);
+        pc.chkContrarreloj.addActionListener(this);
         pcl.selectorIdioma.addActionListener(this);
         pcl.selectorIdioma.addMouseListener(this);
         pcl.selectorIdioma.addFocusListener(this);
@@ -158,7 +156,7 @@ public class VisorLetras extends JPanel implements ActionListener, ContainerList
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         Object source = actionEvent.getSource();
-        if (source.equals(btnIniciar) || source.equals(btnPausar)) {
+        if (source.equals(pc.btnIniciar) || source.equals(pc.btnPausa) || source.equals(pc.chkContrarreloj)) {
             // Para que primero se ejecute el otro propósito de btnIniciar (el de iniciar nueva partida)
             SwingUtilities.invokeLater(this::actualizarLabelMemoria);
 
@@ -201,7 +199,7 @@ public class VisorLetras extends JPanel implements ActionListener, ContainerList
         if (mouseEvent.getSource().equals(pcl.selectorIdioma)) {
             if (!pcl.selectorIdioma.isPopupVisible()) {
                 if (!isFocusOwner())
-                    requestFocusInWindow();
+                    SwingUtilities.invokeLater(this::requestFocusInWindow);
             }
         }
     }

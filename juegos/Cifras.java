@@ -71,7 +71,6 @@ class Cifras extends Juego {
 
     @Override
     public void mousePressed(MouseEvent mouseEvent) {}
-
     @Override
     public void mouseReleased(MouseEvent mouseEvent) {}
 
@@ -123,11 +122,11 @@ class Cifras extends Juego {
     @Override
     void iniciar() {
         resultadoPartida = null;
-        diferenciaPerfeccion = 10;
+        diferenciaPerfeccion = 10; // Te da 0 puntos al resolver
         minCifrasUsadasMejorDiferencia = numeroCifras + 1;
 
         for (ContenedorFicha cifrasDisponible : cifrasDisponibles) {
-            cifrasDisponible.setFicha(new Cifra());
+            cifrasDisponible.setFicha(new Cifra()); // Saca nuevas cifras al azar
         }
 
         for (ContenedorOperacion operacionRealizada : operacionesRealizadas) {
@@ -138,7 +137,7 @@ class Cifras extends Juego {
             contenedorFicha.setFicha(null);
         }
 
-        setMinDiferenciaConseguida(101 + Cifra.RANDOM.nextInt(899));
+        setMinDiferenciaConseguida(101 + Cifra.RANDOM.nextInt(899)); // Valor de cifra objetivo
         cifraObjetivo.setFicha(new Cifra(minDiferenciaConseguida));
         cifraObjetivo.getFicha().setBackground(new Color(51, 51, 51));
         cifraObjetivo.getFicha().setForeground(Color.WHITE);
@@ -146,9 +145,8 @@ class Cifras extends Juego {
         solucionador.setCifraObjetivo(cifraObjetivo);
         solucionador.setCifrasDisponibles(cifrasDisponibles);
 
+        new Thread(solucionador).start(); // Busca la mejor solución
         super.iniciar();
-        new Thread(this).start();
-        new Thread(solucionador).start();
     }
 
     @Override
@@ -175,10 +173,11 @@ class Cifras extends Juego {
         if (!estaBloqueado()) { // Junto con el synchronized para que sólo se pueda resolver una vez
             super.resolver();
 
-            if (resultadoPartida == null) {
+            if (resultadoPartida == null) { // Si se ha perdido, muestra las operaciones que te han llevado a la
+                // mejor aproximación
                 resultadoPartida = resultado.DERROTA;
-                // TODO Mostrar mensaje de que se ha recuperado la memoria porque la solución puesta no era la mejor
                 intercambiarFichasConGuardadas(contenedorFichasMejorDiferencia);
+                // TODO ¿Mostrar mensaje de que se ha recuperado la memoria porque la solución puesta no era la mejor?
             }
 
             puntuacion.actualizar(diferenciaPerfeccion);
@@ -188,6 +187,7 @@ class Cifras extends Juego {
         }
     }
 
+    // Intercambia las fichas en contenedorFichasGuardadas con las de cifrasDisponibles y operacionesRealizadas
     private void intercambiarFichasConGuardadas(ContenedorFicha[] contenedorFichasGuardadas) {
         Ficha fichaDisponible, fichaGuardada;
 
@@ -221,6 +221,7 @@ class Cifras extends Juego {
         }
     }
 
+    // Comprueba si el resultado obtenido es el mejor y devuelve la diferencia respecto a la perfección
     private int comprobarResultado(Operacion operacion) {
         int numCifrasUsadas = getNumeroCifrasUsadas();
 
@@ -234,7 +235,7 @@ class Cifras extends Juego {
             resultadoPartida = resultado.MEJORABLE;
         }
 
-        return Math.min(10, diferenciaPerfeccion);
+        return Math.min(10, diferenciaPerfeccion); // diferenciaPerfeccion ha de estar entre 0 y 10
     }
 
     private int getNumeroCifrasUsadas() {
@@ -256,14 +257,14 @@ class Cifras extends Juego {
     }
 
     private ContenedorOperacion getUltimaOperacionOcupada() {
-        int i = operacionesRealizadas.length - 1;
-        while (i >= 0 && !operacionesRealizadas[i].estaEmpezado())
-            i--;
-
-        if (i < 0) return null;
-        else return operacionesRealizadas[i];
+        for (int i = operacionesRealizadas.length; i > 0; i--) {
+            if (operacionesRealizadas[i - 1].estaEmpezado())
+                return operacionesRealizadas[i - 1];
+        }
+        return null;
     }
 
+    // Guarda la situación de las cifras disponibles y las operaciones realizadas en contenedorFichasMejorDiferencia
     private void guardarSituacionFichas() {
         for (int i = 0; i < cifrasDisponibles.length; i++) {
             contenedorFichasMejorDiferencia[i].setFicha(new Cifra((Cifra) cifrasDisponibles[i].getFicha()));
@@ -279,13 +280,12 @@ class Cifras extends Juego {
     }
 
     private Operacion.operacion operacionElegida() {
-        char operador;
         int i = 0;
         while (i < operadores.length && !contenedorBajoPuntero.equals(operadores[i]))
             i++;
 
         if (i < operadores.length) {
-            operador = ((Letra) operadores[i].getFicha()).getValor();
+            char operador = ((Letra) operadores[i].getFicha()).getValor();
             for (Operacion.operacion operacion: Operacion.operacion.values()) {
                 if (operacion.toString().equals(String.valueOf(operador)))
                     return operacion;
@@ -311,14 +311,16 @@ class Cifras extends Juego {
 
             Operacion operacion = (Operacion) contenedor.getFicha();
 
-            if (ficha.getFicha() instanceof Cifra) {
+            if (ficha.getFicha() instanceof Cifra) { // Ficha es Cifra u Operacion
                 operacion.setOperando((Cifra) ficha.getFicha());
                 if (operacion.getResultado() != null) {
                     diferenciaPerfeccion = comprobarResultado(operacion);
                     if (diferenciaPerfeccion < 5) resolver(); // Perfecto o mejorable
                 }
 
-            } else {
+            } else { // La ficha es un operador
+                // Si el operador no se puede poner (la operación no está empezada) se coge el último resultado
+                // obtenido como primer operando
                 if (!operacion.setOperador(operacionElegida())) {
                     ContenedorOperacion contenedorOperacion = getUltimaOperacionOcupada();
                     if (contenedorOperacion != null && contenedorOperacion.estaCompleto()) {
@@ -326,7 +328,7 @@ class Cifras extends Juego {
                         operacion.setOperador(operacionElegida());
                     } else { // Si la primera ficha que se elige es un operador (antes que haya cualquier operación)
                         // al ser la operación un extends de Cifra, se saca un número al azar, por tanto, se ha de
-                        // quitar
+                        // quitar, además de que una operación vacía tiene un fondo que no queda bien estéticamente
                         contenedor.setFicha(null);
                     }
                 }

@@ -147,12 +147,6 @@ public class VisorCifras extends JPanel implements ActionListener, ContainerList
 
             while (cifras.estaResuelto()) {
                 SwingUtilities.invokeLater(() -> {
-                    switch (cifras.resultadoPartida) {
-                        case DERROTA -> panelOperaciones.setBackground(Color.RED);
-                        case PERFECTO -> panelOperaciones.setBackground(Colores.VERDE);
-                        case MEJORABLE -> panelOperaciones.setBackground(Colores.NARANJA);
-                    }
-
                     if (cifras.solucionador.getMinDiferencia() == 0) {
                         if (mostradorSolucion.getForeground() != getForeground())
                             mostradorSolucion.setForeground(getForeground());
@@ -162,6 +156,12 @@ public class VisorCifras extends JPanel implements ActionListener, ContainerList
                     }
 
                     mostradorSolucion.setText(cifras.solucionador.toString());
+
+                    switch (cifras.resultadoPartida) {
+                        case DERROTA -> panelOperaciones.setBackground(Color.RED);
+                        case PERFECTO -> panelOperaciones.setBackground(Colores.VERDE);
+                        case MEJORABLE -> panelOperaciones.setBackground(Colores.NARANJA);
+                    }
                 });
             }
         } else { // Se ejecuta el run desde el propio run (así se consigue poder hacer dos starts que hagan cosas dif)

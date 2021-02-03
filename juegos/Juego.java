@@ -46,6 +46,7 @@ abstract class Juego implements MouseListener, Runnable {
     }
 
     @Override
+    // Resuelve la partida al acabar el tiempo
     public void run() {
         while (haEmpezado()) {
             try {
