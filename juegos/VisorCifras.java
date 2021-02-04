@@ -23,6 +23,7 @@ public class VisorCifras extends JPanel implements ActionListener, ContainerList
         super();
 
         GridBagLayout gridBagLayout = new GridBagLayout();
+        setLayout(gridBagLayout);
 
         cifras = new Cifras();
         pc = new PanelControl(cifras);
