@@ -41,6 +41,7 @@ class Puntuacion {
         puntosTotales += puntosUltimaPartida;
         numPartidas++;
 
+        // Muestra los cambios al usuario
         panelPuntuacion.actualizar(perfectas, mejorables, derrotas, numPartidas, puntosTotales, puntosUltimaPartida,
                 promedio());
     }

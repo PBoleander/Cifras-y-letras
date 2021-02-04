@@ -28,6 +28,10 @@ class SolucionadorLetras implements Runnable {
         this.letrasDisponibles = new Letra[Letras.numeroLetras];
     }
 
+    //***************************************************************************************************************//
+    //******************************************* MÉTODOS PÚBLICOS **************************************************//
+    //***************************************************************************************************************//
+
     @Override
     public void run() {
         if (!listaSolucion.isEmpty())
@@ -36,10 +40,15 @@ class SolucionadorLetras implements Runnable {
         llenarListaSolucion();
     }
 
+    //***************************************************************************************************************//
+    //******************************************* MÉTODOS PACKAGE ***************************************************//
+    //***************************************************************************************************************//
+
     DefaultListModel<String> getListaSolucion() {
         return listaSolucion;
     }
 
+    // Devuelve el nº de longitudes mejores que hay en la lista solución dada una longitud inicial
     int getNumLongitudesMejores(int longitud) {
         int n = 0;
 
@@ -71,19 +80,24 @@ class SolucionadorLetras implements Runnable {
         return listaSolucion.contains(palabra);
     }
 
+    //***************************************************************************************************************//
+    //******************************************* MÉTODOS PRIVADOS **************************************************//
+    //***************************************************************************************************************//
+
+    // Devuelve si la palabra es de longitud diferente a las presentes en la lista solución
     private boolean cambiaLongitud(String palabra) {
         return listaSolucion.isEmpty() || palabra.length() != listaSolucion.lastElement().length();
     }
 
     private void cargarDiccionario(Idioma idioma) {
-        String ruta = "/diccionarios/";
+        StringBuilder ruta = new StringBuilder("/diccionarios/dicc_");
         switch (idioma) {
-            case CASTELLANO -> ruta += "dicc_es.txt";
-            case CATALAN -> ruta += "dicc_ca.txt";
-            case INGLES -> ruta += "dicc_en.txt";
+            case CASTELLANO -> ruta.append("es.txt");
+            case CATALAN -> ruta.append("ca.txt");
+            case INGLES -> ruta.append("en.txt");
         }
 
-        InputStream in = getClass().getResourceAsStream(ruta);
+        InputStream in = getClass().getResourceAsStream(ruta.toString());
 
         try (BufferedReader bf = new BufferedReader(new InputStreamReader(in))) {
             String palabra;
@@ -99,7 +113,8 @@ class SolucionadorLetras implements Runnable {
        for (String palabra: listaPalabras) {
             if (palabra.length() > 1 && sePuedeFormar(palabra)) {
                 if (cambiaLongitud(palabra)) {
-                    listaSolucion.addElement(String.valueOf(palabra.length()));
+                    listaSolucion.addElement(String.valueOf(palabra.length())); // Se añade a la lista solución el nº
+                    // de letras que tendrán las siguientes palabras
                 }
                 listaSolucion.addElement(palabra);
             }

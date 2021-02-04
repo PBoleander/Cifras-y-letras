@@ -79,6 +79,7 @@ class PanelControl implements ActionListener {
         }
     }
 
+    // Muestra confirmación antes de empezar una nueva partida sin haber acabado la actual
     private int mostrarConfirmacion() {
         if (juego.haEmpezado() && !juego.estaBloqueado()) {
             juego.pausar();

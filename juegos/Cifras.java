@@ -59,6 +59,10 @@ class Cifras extends Juego {
         setTiempoInicial(60);
     }
 
+    //***************************************************************************************************************//
+    //******************************************* MÉTODOS PÚBLICOS **************************************************//
+    //***************************************************************************************************************//
+
     @Override
     public void mouseClicked(MouseEvent mouseEvent) {
         if (haEmpezado() && !estaBloqueado() && contenedorBajoPuntero != null) {
@@ -73,6 +77,10 @@ class Cifras extends Juego {
     public void mousePressed(MouseEvent mouseEvent) {}
     @Override
     public void mouseReleased(MouseEvent mouseEvent) {}
+
+    //***************************************************************************************************************//
+    //******************************************* MÉTODOS PACKAGE ***************************************************//
+    //***************************************************************************************************************//
 
     boolean deshacer() {
         boolean resultado;
@@ -186,6 +194,10 @@ class Cifras extends Juego {
             notifyAll();
         }
     }
+
+    //***************************************************************************************************************//
+    //******************************************* MÉTODOS PRIVADOS **************************************************//
+    //***************************************************************************************************************//
 
     // Intercambia las fichas en contenedorFichasGuardadas con las de cifrasDisponibles y operacionesRealizadas
     private void intercambiarFichasConGuardadas(ContenedorFicha[] contenedorFichasGuardadas) {

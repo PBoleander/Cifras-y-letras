@@ -54,6 +54,7 @@ public class GeneradorValorLetra {
         }
     }
 
+    // Devuelve un carácter aleatorio según el tipo especificado
     char getValor(Letra.Tipo tipo) {
         int indiceAleatorio = obtenerIndiceFrecuencias(tipo);
 
@@ -73,6 +74,7 @@ public class GeneradorValorLetra {
         return '\u0000'; // Aquí no debe llegar
     }
 
+    // Devuelve el índice (aleatorio) con el cual obtener el carácter de la letra
     private int obtenerIndiceFrecuencias(Letra.Tipo tipo) {
         int numAleatorio;
 

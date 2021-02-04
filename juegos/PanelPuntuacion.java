@@ -13,7 +13,10 @@ class PanelPuntuacion extends JPanel {
     private final JTextField promedio, puntosUltimaPartida;
 
     PanelPuntuacion() {
-        super(new GridBagLayout());
+        super();
+
+        GridBagLayout layout = new GridBagLayout();
+        setLayout(layout);
 
         JLabel etiquetaPartidas = nuevoJLabel("Nº partidas:");
         numPartidas = nuevoJLabel("0");
@@ -39,8 +42,8 @@ class PanelPuntuacion extends JPanel {
         JPanel panelPromedio = nuevoPanel(etiquetaPromedio, promedio);
 
         GridBagConstraints c = new GridBagConstraints();
-        JPanel columna1 = new JPanel(new GridBagLayout());
-        JPanel columna2 = new JPanel(new GridBagLayout());
+        JPanel columna1 = new JPanel(layout);
+        JPanel columna2 = new JPanel(layout);
 
         c.gridx = 0;
         c.weightx = 1;
@@ -62,6 +65,10 @@ class PanelPuntuacion extends JPanel {
         add(panelPromedio, c);
     }
 
+    //***************************************************************************************************************//
+    //******************************************* MÉTODOS PACKAGE ***************************************************//
+    //***************************************************************************************************************//
+
     void actualizar(int perfectas, int mejorables, int derrotas, int numPartidas, int puntosTotales,
                     int puntosActuales, double promedio) {
         DecimalFormat df = new DecimalFormat("0.00");
@@ -75,6 +82,10 @@ class PanelPuntuacion extends JPanel {
             this.promedio.setText(df.format(promedio));
         });
     }
+
+    //***************************************************************************************************************//
+    //******************************************* MÉTODOS PRIVADOS **************************************************//
+    //***************************************************************************************************************//
 
     private JLabel nuevoJLabel(String texto) {
         return nuevoJLabel(texto, getForeground());

@@ -13,11 +13,17 @@ public class OperacionSolucionador {
         this.resultado = calcular();
     }
 
+    //***************************************************************************************************************//
+    //******************************************* MÉTODOS PÚBLICOS **************************************************//
+    //***************************************************************************************************************//
+
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
         OperacionSolucionador operacion1 = operando1.getOperacion();
         OperacionSolucionador operacion2 = operando2.getOperacion();
+
+        /* Si alguno de los operandos viene de una operación anterior, se escribirá ésta */
 
         if (operacion1 != null) stringOperacion(stringBuilder, operacion1, false);
         else stringBuilder.append(operando1.getValor());
@@ -38,6 +44,10 @@ public class OperacionSolucionador {
         return resultado;
     }
 
+    //***************************************************************************************************************//
+    //******************************************* MÉTODOS PRIVADOS **************************************************//
+    //***************************************************************************************************************//
+
     private CifraSolucionador calcular() {
         return switch (operador) {
             case SUMA -> suma();
@@ -55,6 +65,7 @@ public class OperacionSolucionador {
         return null;
     }
 
+    // Indica si la operación ha de ir entre paréntesis
     private boolean llevaParentesis(Operacion.operacion elOtroOperador, boolean segundoOperando) {
         if (!this.operador.equals(Operacion.operacion.SUMA)) {
             if (segundoOperando || !this.operador.equals(Operacion.operacion.RESTA)) {
@@ -74,8 +85,9 @@ public class OperacionSolucionador {
         return (resultado > 0) ? new CifraSolucionador(resultado, this) : null;
     }
 
-    private void stringOperacion(StringBuilder stringBuilder, OperacionSolucionador operacion,
-                                 boolean segundoOperando) {
+    // Añade al stringBuilder la operación
+    private void stringOperacion(StringBuilder stringBuilder, OperacionSolucionador operacion, boolean segundoOperando)
+    {
         if (llevaParentesis(operacion.getOperador(), segundoOperando))
             stringBuilder.append("(").append(operacion).append(")");
         else

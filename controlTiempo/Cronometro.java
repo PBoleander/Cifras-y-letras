@@ -7,12 +7,16 @@ class Cronometro implements Runnable {
 
     Cronometro() {}
 
+    //***************************************************************************************************************//
+    //******************************************* MÉTODOS PÚBLICOS **************************************************//
+    //***************************************************************************************************************//
+
     @Override
     public void run() {
         pausa = false;
         parado = false;
 
-        iniciar();
+        setup();
 
         try {
             while (segundosRestantes > 0 && !parado) {
@@ -32,6 +36,10 @@ class Cronometro implements Runnable {
 
         return (min < 10 ? "0" : "") + min + ":" + (seg < 10 ? "0" : "") + seg;
     }
+
+    //***************************************************************************************************************//
+    //******************************************* MÉTODOS PACKAGE ***************************************************//
+    //***************************************************************************************************************//
 
     int getSegundosIniciales() {
         return segundosIniciales;
@@ -62,15 +70,12 @@ class Cronometro implements Runnable {
         this.segundosIniciales = segundosIniciales;
     }
 
+    //***************************************************************************************************************//
+    //******************************************* MÉTODOS PRIVADOS **************************************************//
+    //***************************************************************************************************************//
+
     private synchronized void esperarSiPausa() throws InterruptedException {
         while (!parado && pausa) wait();
-    }
-
-    private synchronized void iniciar() {
-        this.segundosRestantes = segundosIniciales;
-        this.decimas = 0;
-        cambio = true;
-        notifyAll();
     }
 
     private void pasarDecimas() throws InterruptedException {
@@ -84,6 +89,13 @@ class Cronometro implements Runnable {
 
     private synchronized void pasarSegundos() {
         segundosRestantes--;
+        cambio = true;
+        notifyAll();
+    }
+
+    private synchronized void setup() {
+        this.segundosRestantes = segundosIniciales;
+        this.decimas = 0;
         cambio = true;
         notifyAll();
     }

@@ -150,8 +150,12 @@ public class VisorLetras extends JPanel implements ActionListener, ContainerList
         c.gridheight = GridBagConstraints.REMAINDER;
         add(columna2, c);
 
-        new Thread(this).start();
+        new Thread(this).start(); // Actualiza el fondo del panel de letras puestas
     }
+
+    //***************************************************************************************************************//
+    //******************************************* MÉTODOS PÚBLICOS **************************************************//
+    //***************************************************************************************************************//
 
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
@@ -230,6 +234,10 @@ public class VisorLetras extends JPanel implements ActionListener, ContainerList
             });
         }
     }
+
+    //***************************************************************************************************************//
+    //******************************************* MÉTODOS PRIVADOS **************************************************//
+    //***************************************************************************************************************//
 
     private void actualizarLabelMemoria() {
         String palabraMemorizada = letras.getPalabraMemorizada();

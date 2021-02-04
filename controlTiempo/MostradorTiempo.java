@@ -25,6 +25,7 @@ public class MostradorTiempo extends JProgressBar implements PropertyChangeListe
     }
 
     @Override
+    // El progreso de lectorTiempo cambia
     public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
         String tRestante = cronometro.toString();
         int progress = lectorTiempo.getProgress();
@@ -49,7 +50,7 @@ public class MostradorTiempo extends JProgressBar implements PropertyChangeListe
         if (contrarreloj) {
             lectorTiempo = new LectorTiempo(cronometro);
             lectorTiempo.addPropertyChangeListener(this);
-            lectorTiempo.execute();
+            lectorTiempo.execute(); // Ejecuta su doInBackground()
         } else {
             setString("Infinito");
             setValue(100);

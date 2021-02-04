@@ -20,21 +20,24 @@ public class VisorCifras extends JPanel implements ActionListener, ContainerList
     private boolean primerRun;
 
     public VisorCifras() {
-        super(new GridBagLayout());
+        super();
+
+        GridBagLayout gridBagLayout = new GridBagLayout();
 
         cifras = new Cifras();
         pc = new PanelControl(cifras);
         PanelControlCifras pcc = new PanelControlCifras(cifras);
 
-        cifras.cifraObjetivo.addContainerListener(this); // Basta para que al iniciar nueva partida cambie el fondo
         pc.btnResolver.addActionListener(this);
         pc.btnPausa.addActionListener(this);
+        cifras.cifraObjetivo.addContainerListener(this); // Sirve para que al iniciar nueva partida cambie el fondo
+        // del panel de operaciones
 
         GridBagConstraints constraints = new GridBagConstraints();
 
         constraints.insets = new Insets(5, 10, 5, 10);
 
-        JPanel panelTiempo = new JPanel(new GridBagLayout());
+        JPanel panelTiempo = new JPanel(gridBagLayout);
         GridBagConstraints c = new GridBagConstraints();
         c.insets = new Insets(0, 0, 0, 10);
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -73,7 +76,7 @@ public class VisorCifras extends JPanel implements ActionListener, ContainerList
             panelOperaciones.add(cifras.operacionesRealizadas[i]);
         }
 
-        JPanel panelFichas = new JPanel(new GridBagLayout());
+        JPanel panelFichas = new JPanel(gridBagLayout);
         GridBagConstraints fichasConstraints = new GridBagConstraints();
         fichasConstraints.insets = new Insets(0, 0, 5, 5);
 
@@ -87,7 +90,7 @@ public class VisorCifras extends JPanel implements ActionListener, ContainerList
 
         add(panelFichas, constraints);
 
-        JPanel columna2 = new JPanel(new GridBagLayout());
+        JPanel columna2 = new JPanel(gridBagLayout);
         GridBagConstraints columna2Constraints = new GridBagConstraints();
         columna2Constraints.insets = new Insets(0, 0, 20, 5);
 
@@ -107,7 +110,7 @@ public class VisorCifras extends JPanel implements ActionListener, ContainerList
         panelBotonesCifras.add(pc.btnResolver);
         columna2.add(panelBotonesCifras, columna2Constraints);
 
-        JPanel solucionario = new JPanel(new GridBagLayout());
+        JPanel solucionario = new JPanel(gridBagLayout);
         GridBagConstraints solucionarioConstraints = new GridBagConstraints();
         solucionarioConstraints.gridx = 0;
 
@@ -139,11 +142,15 @@ public class VisorCifras extends JPanel implements ActionListener, ContainerList
         new Thread(this).start();
     }
 
+    //***************************************************************************************************************//
+    //******************************************* MÉTODOS PÚBLICOS **************************************************//
+    //***************************************************************************************************************//
+
     @Override
     public void run() {
         if (primerRun) {
             primerRun = false;
-            new Thread(this).start();
+            new Thread(this).start(); // Realizará la otra tarea de este run() (el else)
 
             while (cifras.estaResuelto()) {
                 SwingUtilities.invokeLater(() -> {

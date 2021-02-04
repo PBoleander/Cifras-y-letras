@@ -5,7 +5,7 @@ import fichas.*;
 class SolucionadorCifras implements Runnable {
 
     private final CifraSolucionador[] cifrasDisponibles;
-    private final StringBuilder stringBuilder;
+    private final StringBuilder stringBuilderOperacion;
 
     private boolean solucionado;
     private CifraSolucionador cifraObjetivo;
@@ -13,8 +13,12 @@ class SolucionadorCifras implements Runnable {
 
     SolucionadorCifras() {
         cifrasDisponibles = new CifraSolucionador[2 * Cifras.numeroCifras - 1];
-        stringBuilder = new StringBuilder();
+        stringBuilderOperacion = new StringBuilder();
     }
+
+    //***************************************************************************************************************//
+    //******************************************* MÉTODOS PÚBLICOS **************************************************//
+    //***************************************************************************************************************//
 
     @Override
     public void run() {
@@ -25,13 +29,19 @@ class SolucionadorCifras implements Runnable {
 
     @Override
     public synchronized String toString() {
-        return stringBuilder.toString();
+        return stringBuilderOperacion.toString();
     }
 
+    //***************************************************************************************************************//
+    //******************************************* MÉTODOS PACKAGE ***************************************************//
+    //***************************************************************************************************************//
+
+    // Devuelve la distancia a la que el usuario ha quedado de la perfección
     synchronized int getDistanciaPerfeccion(int diferenciaConseguida, int cifrasUsadas) {
-        int minCifrasUtilizadas = (minDiferencia == 0) ? minCifrasUsadas : minCifrasUsadasInexacto;
-        if (diferenciaConseguida == minDiferencia) {
-            return cifrasUsadas - minCifrasUtilizadas;
+        int minCifrasRequeridas = (minDiferencia == 0) ? minCifrasUsadas : minCifrasUsadasInexacto;
+        if (diferenciaConseguida == minDiferencia) { // Si se ha conseguido la mejor aproximación posible
+            return cifrasUsadas - minCifrasRequeridas;
+
         } else {
             // Si te quedas a uno del número exacto tiene que haber una distancia de la perfección de 5, etc. (por
             // eso el + 4)
@@ -61,17 +71,24 @@ class SolucionadorCifras implements Runnable {
         }
     }
 
+    //***************************************************************************************************************//
+    //******************************************* MÉTODOS PRIVADOS **************************************************//
+    //***************************************************************************************************************//
+
     private void actualizarDiferencias(CifraSolucionador resultado) {
         int difActual = Math.abs(cifraObjetivo.getValor() - resultado.getValor());
         if (difActual <= minDiferencia) {
-            if (difActual == 0) {
+            if (difActual == 0) { // Se ha conseguido el resultado exacto
                 if (numCifrasUsadas < minCifrasUsadas) {
                     minCifrasUsadas = numCifrasUsadas;
-                    actualizarString(resultado);
+                    actualizarString(resultado); // Se actualiza la operación a la que da el mejor resultado con las
+                    // menos cifras
                     if (minDiferencia > 0)
                         minDiferencia = 0;
                 }
-            } else {
+
+            } else { // Todavía no se ha llegado a la cifra objetivo (se utiliza minCifrasInexacto para no interferir
+                // con minCifrasUsadas que es sólo para el valor exacto)
                 if (difActual < minDiferencia) {
                     minDiferencia = difActual;
                     minCifrasUsadasInexacto = numCifrasUsadas;
@@ -87,10 +104,11 @@ class SolucionadorCifras implements Runnable {
     }
 
     private void actualizarString(CifraSolucionador resultado) {
-        stringBuilder.delete(0, stringBuilder.length());
-        stringBuilder.append(resultado.getOperacion()).append(" = ").append(resultado.getValor());
+        stringBuilderOperacion.delete(0, stringBuilderOperacion.length());
+        stringBuilderOperacion.append(resultado.getOperacion()).append(" = ").append(resultado.getValor());
     }
 
+    // Añade cifra a las cifras disponibles para que el solucionador pueda utilizarla para realizar sus cálculos
     private void addToCifrasDisponibles(CifraSolucionador cifra) {
         int i = Cifras.numeroCifras;
         while (i < cifrasDisponibles.length && cifrasDisponibles[i] != null)
@@ -110,9 +128,11 @@ class SolucionadorCifras implements Runnable {
     }
 
     private synchronized void buscarMejorSolucion() {
+        // minCifrasUsadas(Inexacto) tienen que valer un nº grande para que se pueda ir bajando al irse encontrando
+        // soluciones
         minCifrasUsadas = Cifras.numeroCifras + 1;
         minCifrasUsadasInexacto = minCifrasUsadas;
-        stringBuilder.delete(0, stringBuilder.length());
+        stringBuilderOperacion.delete(0, stringBuilderOperacion.length());
 
         for (CifraSolucionador cifra: cifrasDisponibles) {
             numCifrasUsadas = 0;
@@ -122,20 +142,25 @@ class SolucionadorCifras implements Runnable {
 
     }
 
+    // Realiza todas las combinaciones de operaciones que existen para cifra
     private void combinar(CifraSolucionador cifra) {
+        // Sólo si la cifra es de las iniciales, cuenta como usada en el conteo (las que vienen de resultados, no)
         if (esCifraInicial(cifra))
             numCifrasUsadas++;
 
         if (numCifrasUsadas < minCifrasUsadas) {
             cifra.setUsada(true);
+
             for (CifraSolucionador siguienteCifra : cifrasDisponibles) {
                 if (siguienteCifra != null && !siguienteCifra.isUsada()) {
+                    // Sólo importa realizar las operaciones que cumplan la siguiente condición (el resto es redundante)
                     if (cifra.getValor() >= siguienteCifra.getValor()) {
                         if (esCifraInicial(siguienteCifra)) numCifrasUsadas++;
 
                         if (numCifrasUsadas < minCifrasUsadas) {
                             siguienteCifra.setUsada(true);
 
+                            // Se realizan todas las operaciones posibles entre cifra y siguienteCifra
                             for (Operacion.operacion operador : Operacion.operacion.values()) {
                                 if (esOperacionInnecesaria(operador, cifra, siguienteCifra))
                                     continue;
@@ -143,12 +168,16 @@ class SolucionadorCifras implements Runnable {
                                 CifraSolucionador resultado = operar(cifra, siguienteCifra, operador);
                                 if (resultado != null) {
                                     actualizarDiferencias(resultado);
-                                    if (resultado.getValor() != cifraObjetivo.getValor()) {
+                                    if (resultado.getValor() != cifraObjetivo.getValor()) { // No es solución exacta
                                         addToCifrasDisponibles(resultado);
+
+                                        // Se realizan todas las combinaciones posibles habiendo añadido el nuevo
+                                        // resultado al pool de cifras disponibles
                                         for (CifraSolucionador otraCifra : cifrasDisponibles) {
                                             if (otraCifra != null && !otraCifra.isUsada())
                                                 combinar(otraCifra);
                                         }
+
                                         borrarDeCifrasDisponibles(resultado);
                                     }
                                 }
@@ -156,16 +185,19 @@ class SolucionadorCifras implements Runnable {
 
                             siguienteCifra.setUsada(false);
                         }
+
                         if (esCifraInicial(siguienteCifra)) numCifrasUsadas--;
                     }
                 }
             }
+
             cifra.setUsada(false);
         }
         if (esCifraInicial(cifra))
             numCifrasUsadas--;
     }
 
+    // Devuelve si cifra es una de las cifras disponibles al inicio, es decir, no es un resultado
     private boolean esCifraInicial(CifraSolucionador cifra) {
         int i = 0;
         while (i < cifrasDisponibles.length && !cifrasDisponibles[i].equals(cifra))
@@ -184,6 +216,7 @@ class SolucionadorCifras implements Runnable {
         return false;
     }
 
+    // Devuelve si el valor de cifra no lo tiene una cifra inicial anterior
     private boolean esValorNuevo(CifraSolucionador cifra) {
         int i = 0;
         if (esCifraInicial(cifra)) {

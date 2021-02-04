@@ -61,15 +61,20 @@ class Letras extends Juego implements KeyListener {
         iniciar();
     }
 
+    //***************************************************************************************************************//
+    //******************************************* MÉTODOS PÚBLICOS **************************************************//
+    //***************************************************************************************************************//
+
     @Override
     public void keyTyped(KeyEvent keyEvent) {
         if (haEmpezado() && !estaBloqueado() && !keyEvent.isAltDown()) {
-            if (keyEvent.getKeyChar() == KeyEvent.VK_BACK_SPACE) {
+            if (keyEvent.getKeyChar() == KeyEvent.VK_BACK_SPACE) { // Borra la última letra puesta
                 int ultimaPosicionPuesta = ultimaPosicionPuesta();
                 if (ultimaPosicionPuesta > -1) {
                     desusar(letrasPuestas[ultimaPosicionPuesta]);
                 }
-            } else {
+
+            } else { // La tecla pulsada no es la de retroceso (usa la letra si está disponible)
                 char letraEscrita = keyEvent.getKeyChar();
                 letraEscrita = String.valueOf(letraEscrita).toUpperCase().charAt(0);
                 usar(letraEscrita);
@@ -84,6 +89,7 @@ class Letras extends Juego implements KeyListener {
     public void keyReleased(KeyEvent keyEvent) {}
 
     @Override
+    // Usa/desusa letras
     public void mouseClicked(MouseEvent mouseEvent) {
         if (haEmpezado() && ! estaBloqueado() && contenedorBajoPuntero != null) {
             if (contenedorBajoPuntero.estaOcupado()) {
@@ -97,6 +103,7 @@ class Letras extends Juego implements KeyListener {
     }
 
     @Override
+    // Arrastra las letras puestas para cambiarlas de posición
     public void mousePressed(MouseEvent mouseEvent) {
         if (haEmpezado() && ! estaBloqueado() && contenedorBajoPuntero != null) {
             if (contenedorBajoPuntero.estaOcupado()) {
@@ -108,6 +115,7 @@ class Letras extends Juego implements KeyListener {
     }
 
     @Override
+    // Suelta la letra arrastrada en el lugar indicado
     public void mouseReleased(MouseEvent mouseEvent) {
         if (mouseEvent.getClickCount() == 0) {
             if (haEmpezado() && !estaBloqueado() && contenedorBajoPuntero != null) {
@@ -131,11 +139,19 @@ class Letras extends Juego implements KeyListener {
         }
     }
 
+    //***************************************************************************************************************//
+    //******************************************* MÉTODOS PACKAGE ***************************************************//
+    //***************************************************************************************************************//
+
+    // Comprueba si la palabra puesta está en el diccionario. Si la partida ha terminado, actualiza el resultado de
+    // la partida
     synchronized void comprobar() {
         String palabraPuesta = getPalabraPuesta();
         resultadoComprobacion = solucionador.contiene(palabraPuesta);
 
         if (!haEmpezado()) { // Se ha procedido a resolver (en otro caso, no es necesario)
+            // Si la palabra puesta al terminar la partida ofrece un resultado peor que la de la memoria, la cambia
+            // por ésta
             if ((!resultadoComprobacion && longitudMemoria > 0) ||
                     (longitudMemoria > palabraPuesta.length() && solucionador.contiene(getPalabraMemorizada()))) {
                 recuperarMemoria();
@@ -257,7 +273,7 @@ class Letras extends Juego implements KeyListener {
             comprobar();
             String palabraPuesta = getPalabraPuesta();
 
-            if (resultadoComprobacion) {
+            if (resultadoComprobacion) { // La palabra puesta es correcta
                 puntuacion.actualizar(solucionador.getNumLongitudesMejores(palabraPuesta.length()));
             } else {
                 puntuacion.actualizar(10); // Así da 0 puntos
@@ -278,7 +294,7 @@ class Letras extends Juego implements KeyListener {
 
             numeroLetrasSacadas++;
 
-            if (numeroLetrasSacadas == numeroLetras) {
+            if (numeroLetrasSacadas == numeroLetras) { // Ya no quedan letras por sacar
                 solucionador.setLetrasDisponibles(letrasDisponiblesAux);
                 new Thread(solucionador).start();
 
@@ -292,6 +308,10 @@ class Letras extends Juego implements KeyListener {
         Letra.generador.setIdioma(idioma);
         setTiempoInicial(idioma == Idioma.INGLES ? 60 : 45);
     }
+
+    //***************************************************************************************************************//
+    //******************************************* MÉTODOS PRIVADOS **************************************************//
+    //***************************************************************************************************************//
 
     private void alternarMensajePausa() {
         Letra letraDisponible, letraPuesta;
@@ -318,6 +338,7 @@ class Letras extends Juego implements KeyListener {
         }
     }
 
+    // Indica si el contenedorFicha pertenece a las letras puestas
     private boolean esLetraPuesta(ContenedorFicha contenedorFicha) {
         int i = 0;
         while (i < numeroLetras && ! letrasDisponibles[i].equals(contenedorFicha))
@@ -352,6 +373,7 @@ class Letras extends Juego implements KeyListener {
         return JOptionPane.showConfirmDialog(null, mensaje, "Aviso", JOptionPane.YES_NO_OPTION);
     }
 
+    // Devuelve el índice que ocupa el carácter letra en las letras disponibles si no está usada, -1 en caso contrario
     private int quePosicionDisponibleOcupa(char letra) {
         for (int i = 0; i < numeroLetras; i++) {
             if (!letrasDisponiblesAux[i].isUsada() && letrasDisponiblesAux[i].getValor() == letra) {
@@ -361,6 +383,7 @@ class Letras extends Juego implements KeyListener {
         return -1;
     }
 
+    // Devuelve el índice que ocupa letra en letras disponibles
     private int quePosicionDisponibleOcupa(Letra letra) {
         for (int i = 0; i < numeroLetras; i++) {
             if (letrasDisponiblesAux[i].equals(letra)) {
@@ -370,6 +393,8 @@ class Letras extends Juego implements KeyListener {
         return -1; // Aquí no debe llegar
     }
 
+    // Indica si la palabra que se quiere memorizar es correcta y más larga o igual a la ya memorizada, en caso
+    // contrario, pregunta si se quiere proceder a memorizarla
     private boolean seQuiereMemorizar() {
         if (!solucionador.contiene(getPalabraPuesta()) ||
                 (longitudMemoria > 0 &&
