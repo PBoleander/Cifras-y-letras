@@ -169,16 +169,7 @@ class SolucionadorCifras implements Runnable {
                                 if (resultado != null) {
                                     actualizarDiferencias(resultado);
                                     if (resultado.getValor() != cifraObjetivo.getValor()) { // No es solución exacta
-                                        addToCifrasDisponibles(resultado);
-
-                                        // Se realizan todas las combinaciones posibles habiendo añadido el nuevo
-                                        // resultado al pool de cifras disponibles
-                                        for (CifraSolucionador otraCifra : cifrasDisponibles) {
-                                            if (otraCifra != null && !otraCifra.isUsada())
-                                                combinar(otraCifra);
-                                        }
-
-                                        borrarDeCifrasDisponibles(resultado);
+                                        combinarIncluyendo(resultado);
                                     }
                                 }
                             }
@@ -197,6 +188,20 @@ class SolucionadorCifras implements Runnable {
             numCifrasUsadas--;
     }
 
+    // Añade resultado a las cifras disponibles y realiza las nuevas combinaciones
+    private void combinarIncluyendo(CifraSolucionador resultado) {
+        addToCifrasDisponibles(resultado);
+
+        // Se realizan todas las combinaciones posibles habiendo añadido el nuevo
+        // resultado al pool de cifras disponibles
+        for (CifraSolucionador otraCifra : cifrasDisponibles) {
+            if (otraCifra != null && !otraCifra.isUsada())
+                combinar(otraCifra);
+        }
+
+        borrarDeCifrasDisponibles(resultado);
+    }
+
     // Devuelve si cifra es una de las cifras disponibles al inicio, es decir, no es un resultado
     private boolean esCifraInicial(CifraSolucionador cifra) {
         int i = 0;
@@ -208,6 +213,7 @@ class SolucionadorCifras implements Runnable {
 
     private boolean esOperacionInnecesaria(Operacion.operacion operador, CifraSolucionador cifra1,
                                            CifraSolucionador cifra2) {
+        // Cuando se quiere mirar si la/s cifra/s son 1, basta mirar cifra2 ya que cifra2 <= cifra1 siempre
         if (operador.equals(Operacion.operacion.PRODUCTO)) {
             return (cifra2.getValor() == 1) || (cifra1.getValor() == 2 && cifra2.getValor() == 2);
         } else if (operador.equals(Operacion.operacion.DIVISION)) {
