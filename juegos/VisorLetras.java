@@ -15,9 +15,13 @@ public class VisorLetras extends JPanel implements ActionListener, ContainerList
     private final PanelControlLetras pcl;
 
     public VisorLetras() {
-        super(new GridBagLayout());
+        super();
+
+        GridBagLayout gridBagLayout = new GridBagLayout();
+        setLayout(gridBagLayout);
 
         letras = new Letras();
+        panelLetrasPuestas = new JPanel();
         pc = new PanelControl(letras);
         pcl = new PanelControlLetras(letras);
 
@@ -34,113 +38,12 @@ public class VisorLetras extends JPanel implements ActionListener, ContainerList
         pcl.selectorIdioma.addFocusListener(this);
 
         // Empieza todo lo relacionado con el GUI
+        GridBagConstraints c = new GridBagConstraints();
 
-        GridBagConstraints constraints = new GridBagConstraints();
-
-        constraints.insets = new Insets(5, 10, 5, 10);
-
-        // 1a columna
-        JPanel columna1 = new JPanel(new GridBagLayout());
-
-        // 2a fila (barra de progreso y botón de pausar/reanudar) (va antes de la primera en el código porque tiene
-        // propiedades especiales como el fill o weight)
-
-        constraints.gridy = 1;
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        constraints.weightx = 1;
-
-        columna1.add(letras.mostradorTiempo, constraints);
-
-        constraints.weightx = 0;
-        constraints.fill = GridBagConstraints.NONE; // Reiniciamos el valor de constraints fill al original
-        constraints.gridx = 1;
-        pc.btnPausa.setPreferredSize(new Dimension(105, 25));
-        columna1.add(pc.btnPausa, constraints);
-
-        // 1a fila (botones de nueva partida, resolver; checkbox de contrarreloj y selector de idioma)
-
-        constraints.gridx = 0;
-        constraints.gridy = 0;
-        constraints.gridwidth = GridBagConstraints.REMAINDER;
-
-        JPanel panel1 = new JPanel(new GridBagLayout());
-        GridBagConstraints constraints1 = new GridBagConstraints();
-
-        constraints1.insets = new Insets(0, 10, 0, 10);
-
-        panel1.add(pc.btnIniciar, constraints1);
-        panel1.add(pc.btnResolver, constraints1);
-        panel1.add(pc.chkContrarreloj, constraints1);
-        panel1.add(pcl.panelIdioma, constraints1);
-
-        columna1.add(panel1, constraints);
-
-        // 3a y 4a filas (espacio para las fichas con las que jugar)
-
-        constraints.gridy = 2;
-        JPanel panelLetrasDisponibles = new JPanel(new GridLayout(1, Letras.numeroLetras, 10, 0));
-        for (int i = 0; i < Letras.numeroLetras; i++) {
-            letras.letrasDisponibles[i].addContainerListener(this);
-            panelLetrasDisponibles.add(letras.letrasDisponibles[i]);
-        }
-
-        columna1.add(panelLetrasDisponibles, constraints);
-
-        constraints.gridy = GridBagConstraints.RELATIVE;
-        panelLetrasPuestas = new JPanel(new GridLayout(1, Letras.numeroLetras, 10, 0));
-        panelLetrasPuestas.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-
-        for (int i = 0; i < Letras.numeroLetras; i++) {
-            letras.letrasPuestas[i].addContainerListener(this);
-            panelLetrasPuestas.add(letras.letrasPuestas[i]);
-        }
-
-        columna1.add(panelLetrasPuestas, constraints);
-
-        // 5a fila (botones más relacionados con el juego en sí: limpiar intentos, comprobar palabra y memoria)
-
-        JPanel panel2 = new JPanel(new GridBagLayout());
-        GridBagConstraints constraints2 = new GridBagConstraints();
-
-        constraints2.insets = new Insets(0, 10, 0, 10);
-
-        panel2.add(pc.btnLimpiar, constraints2);
-        panel2.add(pcl.btnComprobar, constraints2);
-        panel2.add(pcl.panelMemoria, constraints2);
-
-        columna1.add(panel2, constraints);
-        columna1.add(letras.puntuacion.panelPuntuacion, constraints);
-
-        // 2a columna
-        JPanel columna2 = new JPanel(new GridBagLayout());
-        GridBagConstraints constraints3 = new GridBagConstraints();
-        constraints3.insets = new Insets(10, 10, 10, 10);
-        constraints3.gridx = 0;
-
-        JScrollPane visorListaSolucion = new JScrollPane(letras.listaSolucion);
-        visorListaSolucion.setPreferredSize(new Dimension(120, 0));
-
-        // Se añaden el panel de los botones consonante y vocal además del visor de la lista de soluciones
-        columna2.add(pcl.botonesLetras, constraints3);
-
-        JPanel solucionario = new JPanel(new GridBagLayout());
-        GridBagConstraints solucionarioConstraints = new GridBagConstraints();
-        solucionarioConstraints.gridx = 0;
-
-        JLabel labelSoluciones = new JLabel("Soluciones:");
-        solucionario.add(labelSoluciones, solucionarioConstraints);
-
-        solucionarioConstraints.weighty = 1;
-        solucionarioConstraints.fill = GridBagConstraints.VERTICAL;
-        solucionario.add(visorListaSolucion, solucionarioConstraints);
-
-        constraints3.weighty = 1;
-        constraints3.fill = GridBagConstraints.VERTICAL;
-        constraints3.gridheight = GridBagConstraints.REMAINDER;
-        columna2.add(solucionario, constraints3);
+        JPanel columna1 = crearPanelColumna1(gridBagLayout);
+        JPanel columna2 = crearPanelColumna2(gridBagLayout);
 
         // Se añaden las dos columnas a this
-        GridBagConstraints c = new GridBagConstraints();
         c.gridy = 0;
         c.anchor = GridBagConstraints.NORTH;
         add(columna1, c);
@@ -246,5 +149,113 @@ public class VisorLetras extends JPanel implements ActionListener, ContainerList
         } else {
             pcl.labelMemoria.setText("Memoria:");
         }
+    }
+
+    private JPanel crearPanelColumna1(GridBagLayout gridBagLayout) {
+        JPanel columna1 = new JPanel(gridBagLayout);
+
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.insets = new Insets(5, 10, 5, 10);
+
+        // 2a fila (barra de progreso y botón de pausar/reanudar) (va antes de la primera en el código porque tiene
+        // propiedades especiales como el fill o weight)
+        constraints.gridy = 1;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.weightx = 1;
+        columna1.add(letras.mostradorTiempo, constraints);
+
+        constraints.weightx = 0;
+        constraints.fill = GridBagConstraints.NONE; // Reiniciamos el valor de constraints fill al original
+        constraints.gridx = 1;
+        columna1.add(pc.btnPausa, constraints);
+
+        // 1a fila (botones de nueva partida, resolver; checkbox de contrarreloj y selector de idioma)
+        JPanel panelBotonesGenerales = new JPanel(gridBagLayout);
+
+        GridBagConstraints botonesGeneralesConstraints = new GridBagConstraints();
+        botonesGeneralesConstraints.insets = new Insets(0, 10, 0, 10);
+
+        panelBotonesGenerales.add(pc.btnIniciar, botonesGeneralesConstraints);
+        panelBotonesGenerales.add(pc.btnResolver, botonesGeneralesConstraints);
+        panelBotonesGenerales.add(pc.chkContrarreloj, botonesGeneralesConstraints);
+        panelBotonesGenerales.add(pcl.panelIdioma, botonesGeneralesConstraints);
+
+        constraints.gridx = 0;
+        constraints.gridy = 0;
+        constraints.gridwidth = GridBagConstraints.REMAINDER;
+        columna1.add(panelBotonesGenerales, constraints);
+
+        /* 3a y 4a filas (espacio para las fichas con las que jugar) */
+        // 3a fila
+        JPanel panelLetrasDisponibles = new JPanel(new GridLayout(1, Letras.numeroLetras, 10, 0));
+        for (int i = 0; i < Letras.numeroLetras; i++) {
+            letras.letrasDisponibles[i].addContainerListener(this);
+            panelLetrasDisponibles.add(letras.letrasDisponibles[i]);
+        }
+
+        constraints.gridy = 2;
+        columna1.add(panelLetrasDisponibles, constraints);
+
+        // 4a fila
+        panelLetrasPuestas.setLayout(new GridLayout(1, Letras.numeroLetras, 10, 0));
+        panelLetrasPuestas.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+
+        for (int i = 0; i < Letras.numeroLetras; i++) {
+            letras.letrasPuestas[i].addContainerListener(this);
+            panelLetrasPuestas.add(letras.letrasPuestas[i]);
+        }
+
+        constraints.gridy = GridBagConstraints.RELATIVE;
+        columna1.add(panelLetrasPuestas, constraints);
+
+        // 5a fila (botones más relacionados con el juego en sí: limpiar intentos, comprobar palabra y memoria)
+        JPanel panelControlesPartidaActual = new JPanel(gridBagLayout);
+
+        GridBagConstraints controlesPartidaActualConstraints = new GridBagConstraints();
+        controlesPartidaActualConstraints.insets = new Insets(0, 10, 0, 10);
+
+        panelControlesPartidaActual.add(pc.btnLimpiar, controlesPartidaActualConstraints);
+        panelControlesPartidaActual.add(pcl.btnComprobar, controlesPartidaActualConstraints);
+        panelControlesPartidaActual.add(pcl.panelMemoria, controlesPartidaActualConstraints);
+
+        columna1.add(panelControlesPartidaActual, constraints);
+        columna1.add(letras.puntuacion.panelPuntuacion, constraints);
+
+        return columna1;
+    }
+
+    private JPanel crearPanelColumna2(GridBagLayout gridBagLayout) {
+        JPanel columna2 = new JPanel(gridBagLayout);
+
+        JPanel solucionario = new JPanel(gridBagLayout);
+
+        // Se crean el label y el scrollPane
+        JLabel labelSoluciones = new JLabel("Soluciones:");
+        JScrollPane visorListaSolucion = new JScrollPane(letras.listaSolucion);
+        visorListaSolucion.setPreferredSize(new Dimension(120, 0));
+
+        // Se añaden al panel solucionario
+        GridBagConstraints solucionarioConstraints = new GridBagConstraints();
+        solucionarioConstraints.gridx = 0;
+
+        solucionario.add(labelSoluciones, solucionarioConstraints);
+
+        solucionarioConstraints.weighty = 1;
+        solucionarioConstraints.fill = GridBagConstraints.VERTICAL;
+        solucionario.add(visorListaSolucion, solucionarioConstraints);
+
+        // Se añade todo al panel columna2
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.insets = new Insets(10, 10, 10, 10);
+        constraints.gridx = 0;
+
+        columna2.add(pcl.botonesLetras, constraints); // Botones consonante y vocal
+
+        constraints.weighty = 1;
+        constraints.fill = GridBagConstraints.VERTICAL;
+        constraints.gridheight = GridBagConstraints.REMAINDER;
+        columna2.add(solucionario, constraints);
+
+        return columna2;
     }
 }

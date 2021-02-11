@@ -50,9 +50,9 @@ class Cifras extends Juego {
             contenedorFichasMejorDiferencia[i + cifrasDisponibles.length] = new ContenedorOperacion(null);
         }
 
-        char[] operador = {'+', '-', '×', '÷'};
+        Operacion.operacion[] operador = Operacion.operacion.values();
         for (int i = 0; i < operadores.length; i++) {
-            operadores[i] = new ContenedorFicha(new Letra(operador[i]));
+            operadores[i] = new ContenedorFicha(new Letra(operador[i].toString().charAt(0)));
             operadores[i].addMouseListener(this);
         }
 
@@ -99,12 +99,10 @@ class Cifras extends Juego {
     }
 
     synchronized boolean estaResuelto() {
-        while (!resuelto) {
-            try {
-                wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        try {
+            while (!resuelto) wait();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
         resuelto = false; // Para que visorCifras no establezca el fondo del panel de operaciones continuamente
 
@@ -116,12 +114,10 @@ class Cifras extends Juego {
     }
 
     synchronized boolean haCambiadoMinDiferencia() {
-        while (!haCambiadoMinDiferencia) {
-            try {
-                wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        try {
+            while (!haCambiadoMinDiferencia) wait();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
         haCambiadoMinDiferencia = false;
         return true;

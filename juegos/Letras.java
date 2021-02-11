@@ -152,8 +152,7 @@ class Letras extends Juego implements KeyListener {
         if (!haEmpezado()) { // Se ha procedido a resolver (en otro caso, no es necesario)
             // Si la palabra puesta al terminar la partida ofrece un resultado peor que la de la memoria, la cambia
             // por ésta
-            if ((!resultadoComprobacion && longitudMemoria > 0) ||
-                    (longitudMemoria > palabraPuesta.length() && solucionador.contiene(getPalabraMemorizada()))) {
+            if (resultadoPeorAlDeMemoria(palabraPuesta)) {
                 recuperarMemoria();
                 palabraPuesta = getPalabraPuesta();
                 resultadoComprobacion = solucionador.contiene(palabraPuesta);
@@ -161,15 +160,7 @@ class Letras extends Juego implements KeyListener {
                 //  demasiado corta?
             }
 
-            if (resultadoComprobacion) {
-                if (solucionador.getNumLongitudesMejores(palabraPuesta.length()) == 0)
-                    resultadoPartida = resultado.PERFECTO;
-                else
-                    resultadoPartida = resultado.MEJORABLE;
-
-            } else {
-                resultadoPartida = resultado.DERROTA;
-            }
+            actualizarResultadoPartida(palabraPuesta);
         }
 
         comprobado = true;
@@ -177,12 +168,10 @@ class Letras extends Juego implements KeyListener {
     }
 
     synchronized boolean estaComprobado() {
-        while (!comprobado) {
-            try {
-                wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        try {
+            while (!comprobado) wait();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
         comprobado = false;
 
@@ -313,6 +302,18 @@ class Letras extends Juego implements KeyListener {
     //******************************************* MÉTODOS PRIVADOS **************************************************//
     //***************************************************************************************************************//
 
+    private void actualizarResultadoPartida(String palabraPuesta) {
+        if (resultadoComprobacion) {
+            if (solucionador.getNumLongitudesMejores(palabraPuesta.length()) == 0)
+                resultadoPartida = resultado.PERFECTO;
+            else
+                resultadoPartida = resultado.MEJORABLE;
+
+        } else {
+            resultadoPartida = resultado.DERROTA;
+        }
+    }
+
     private void alternarMensajePausa() {
         Letra letraDisponible, letraPuesta;
 
@@ -373,6 +374,12 @@ class Letras extends Juego implements KeyListener {
         return JOptionPane.showConfirmDialog(null, mensaje, "Aviso", JOptionPane.YES_NO_OPTION);
     }
 
+    private boolean palabraAMemorizarEsIlogica(String palabraPuesta) {
+        return !solucionador.contiene(palabraPuesta) ||
+                (longitudMemoria > 0 &&
+                        solucionador.contiene(getPalabraMemorizada()) && palabraPuesta.length() < longitudMemoria);
+    }
+
     // Devuelve el índice que ocupa el carácter letra en las letras disponibles si no está usada, -1 en caso contrario
     private int quePosicionDisponibleOcupa(char letra) {
         for (int i = 0; i < numeroLetras; i++) {
@@ -396,10 +403,7 @@ class Letras extends Juego implements KeyListener {
     // Indica si la palabra que se quiere memorizar es correcta y más larga o igual a la ya memorizada, en caso
     // contrario, pregunta si se quiere proceder a memorizarla
     private boolean seQuiereMemorizar() {
-        if (!solucionador.contiene(getPalabraPuesta()) ||
-                (longitudMemoria > 0 &&
-                solucionador.contiene(getPalabraMemorizada()) && getPalabraPuesta().length() < longitudMemoria)) {
-
+        if (palabraAMemorizarEsIlogica(getPalabraPuesta())) {
             pausar();
             if (mostrarAvisoDeMemorizadoIlogico() != JOptionPane.YES_OPTION) {
                 reanudar();
@@ -408,6 +412,11 @@ class Letras extends Juego implements KeyListener {
             reanudar();
         }
         return true; // Si la palabra a memorizar no es una palabra ilógica o se elige que sí a memorizar una ilógica
+    }
+
+    private boolean resultadoPeorAlDeMemoria(String palabraPuesta) {
+        return (!resultadoComprobacion && longitudMemoria > 0) ||
+                (longitudMemoria > palabraPuesta.length() && solucionador.contiene(getPalabraMemorizada()));
     }
 
     private int ultimaPosicionPuesta() {
