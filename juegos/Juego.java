@@ -52,15 +52,12 @@ abstract class Juego implements MouseListener, Runnable {
     @Override
     // Resuelve la partida al acabar el tiempo
     public void run() {
-        while (haEmpezado()) {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        try {
+            mostradorTiempo.esperarHastaFin();
+            resolver();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-
-        resolver();
     }
 
     //***************************************************************************************************************//

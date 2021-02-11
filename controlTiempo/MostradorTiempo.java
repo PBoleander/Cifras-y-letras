@@ -18,7 +18,7 @@ public class MostradorTiempo extends JProgressBar implements PropertyChangeListe
         super();
 
         this.cronometro = new Cronometro();
-        this.empezado = false;
+        setEmpezado(false);
 
         setStringPainted(true);
         setString(cronometro.toString());
@@ -36,7 +36,11 @@ public class MostradorTiempo extends JProgressBar implements PropertyChangeListe
         setValue(progress);
         setString(tRestante);
 
-        if (lectorTiempo.isDone()) empezado = false;
+        if (lectorTiempo.isDone()) setEmpezado(false);
+    }
+
+    public synchronized void esperarHastaFin() throws InterruptedException {
+        while (haEmpezado()) wait();
     }
 
     public boolean haEmpezado() {
@@ -44,7 +48,7 @@ public class MostradorTiempo extends JProgressBar implements PropertyChangeListe
     }
 
     public void iniciar(boolean contrarreloj) {
-        empezado = true;
+        setEmpezado(true);
         setForeground(Colores.VERDE);
 
         if (contrarreloj) {
@@ -63,7 +67,7 @@ public class MostradorTiempo extends JProgressBar implements PropertyChangeListe
             lectorTiempo.cancel(true);
         }
 
-        empezado = false;
+        setEmpezado(false);
     }
 
     public void setPausa(boolean pausa) {
@@ -72,5 +76,10 @@ public class MostradorTiempo extends JProgressBar implements PropertyChangeListe
 
     public void setSegundosIniciales(int segundosIniciales) {
         cronometro.setSegundosIniciales(segundosIniciales);
+    }
+
+    private synchronized void setEmpezado(boolean empezado) {
+        this.empezado = empezado;
+        notifyAll();
     }
 }
