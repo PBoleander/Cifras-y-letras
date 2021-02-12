@@ -112,7 +112,7 @@ public class VisorCifras extends JPanel implements ActionListener, ContainerList
         Object source = actionEvent.getSource();
 
         if (source.equals(pc.btnResolver)) {
-            if (!cifras.estaSolucionado())
+            if (cifras.haEmpezado() && !cifras.estaSolucionado())
                 mostradorSolucion.setText("Calculando...");
 
         } else if (source.equals(pc.btnPausa)) {
