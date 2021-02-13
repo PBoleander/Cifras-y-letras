@@ -24,6 +24,7 @@ class Letras extends Juego implements KeyListener {
     int longitudMemoria, numeroLetrasSacadas;
 
     private final Letra[] letrasDisponiblesAux, letrasDisponiblesPausa, letrasPuestasPausa;
+    private boolean cambioMensajePausa;
     private Letra letraArrastrada;
 
     Letras() {
@@ -143,6 +144,16 @@ class Letras extends Juego implements KeyListener {
     //******************************************* MÉTODOS PACKAGE ***************************************************//
     //***************************************************************************************************************//
 
+    synchronized boolean cambioEnMensajePausa() {
+        try {
+            while (!cambioMensajePausa) wait();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        cambioMensajePausa = false;
+        return true;
+    }
     // Comprueba si la palabra puesta está en el diccionario. Si la partida ha terminado, actualiza el resultado de
     // la partida
     synchronized void comprobar() {
@@ -227,6 +238,7 @@ class Letras extends Juego implements KeyListener {
                     longitudMemoria++;
                 }
             }
+            setCambioMensajePausa();
         }
     }
 
@@ -235,11 +247,13 @@ class Letras extends Juego implements KeyListener {
         super.pausar();
 
         alternarMensajePausa();
+        setCambioMensajePausa();
     }
 
     @Override
     void reanudar() {
         alternarMensajePausa();
+        setCambioMensajePausa();
 
         super.reanudar();
     }
@@ -327,6 +341,11 @@ class Letras extends Juego implements KeyListener {
             letrasDisponiblesPausa[i] = letraDisponible;
             letrasPuestasPausa[i] = letraPuesta;
         }
+    }
+
+    private synchronized void setCambioMensajePausa() {
+        cambioMensajePausa = true;
+        notifyAll();
     }
 
     private void desusar(ContenedorFicha contenedorFicha) {
@@ -451,5 +470,6 @@ class Letras extends Juego implements KeyListener {
     private void vaciarMemoria() {
         Arrays.fill(memoria, -1);
         longitudMemoria = 0;
+        setCambioMensajePausa();
     }
 }

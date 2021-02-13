@@ -14,6 +14,8 @@ public class VisorLetras extends JPanel implements ActionListener, ContainerList
     private final PanelControl pc;
     private final PanelControlLetras pcl;
 
+    private boolean primerRun;
+
     public VisorLetras() {
         super();
 
@@ -53,6 +55,7 @@ public class VisorLetras extends JPanel implements ActionListener, ContainerList
         c.gridheight = GridBagConstraints.REMAINDER;
         add(columna2, c);
 
+        primerRun = true;
         new Thread(this).start(); // Actualiza el fondo del panel de letras puestas
     }
 
@@ -62,13 +65,6 @@ public class VisorLetras extends JPanel implements ActionListener, ContainerList
 
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
-        Object source = actionEvent.getSource();
-        if (source.equals(pc.btnIniciar) || source.equals(pc.btnPausa) || source.equals(pc.chkContrarreloj)) {
-            // Para que primero se ejecute el otro propósito de btnIniciar (el de iniciar nueva partida)
-            SwingUtilities.invokeLater(this::actualizarLabelMemoria);
-
-        }
-
         // Cuando el selector de idioma ha hecho su trabajo devuelve el foco al panel
         if (!isFocusOwner())
             SwingUtilities.invokeLater(this::requestFocusInWindow);
@@ -118,23 +114,32 @@ public class VisorLetras extends JPanel implements ActionListener, ContainerList
 
     @Override
     public void run() {
-        while (letras.estaComprobado()) {
-            SwingUtilities.invokeLater(() -> {
-                if (letras.haEmpezado()) {
-                    if (letras.resultadoComprobacion)
-                        panelLetrasPuestas.setBackground(Colores.VERDE);
-                    else
-                        panelLetrasPuestas.setBackground(Color.RED);
+        if (primerRun) {
+            primerRun = false;
+            new Thread(this).start(); // Actualiza el label de memoria
 
-                } else {
-                    switch (letras.resultadoPartida) {
-                        case PERFECTO -> panelLetrasPuestas.setBackground(Colores.VERDE);
-                        case MEJORABLE -> panelLetrasPuestas.setBackground(Colores.NARANJA);
-                        case DERROTA -> panelLetrasPuestas.setBackground(Color.RED);
+            while (letras.estaComprobado()) {
+                SwingUtilities.invokeLater(() -> {
+                    if (letras.haEmpezado()) {
+                        if (letras.resultadoComprobacion)
+                            panelLetrasPuestas.setBackground(Colores.VERDE);
+                        else
+                            panelLetrasPuestas.setBackground(Color.RED);
+
+                    } else {
+                        switch (letras.resultadoPartida) {
+                            case PERFECTO -> panelLetrasPuestas.setBackground(Colores.VERDE);
+                            case MEJORABLE -> panelLetrasPuestas.setBackground(Colores.NARANJA);
+                            case DERROTA -> panelLetrasPuestas.setBackground(Color.RED);
+                        }
+
                     }
-
-                }
-            });
+                });
+            }
+        } else {
+            while (letras.cambioEnMensajePausa()) {
+                SwingUtilities.invokeLater(this::actualizarLabelMemoria);
+            }
         }
     }
 
