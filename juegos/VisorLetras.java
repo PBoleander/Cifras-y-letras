@@ -32,9 +32,6 @@ public class VisorLetras extends JPanel implements ActionListener, ContainerList
         setFocusable(true);
         addKeyListener(letras);
         addFocusListener(this);
-        pc.btnIniciar.addActionListener(this);
-        pc.btnPausa.addActionListener(this);
-        pc.chkContrarreloj.addActionListener(this);
         pcl.selectorIdioma.addActionListener(this);
         pcl.selectorIdioma.addMouseListener(this);
         pcl.selectorIdioma.addFocusListener(this);
