@@ -51,7 +51,9 @@ class PanelControlLetras implements ActionListener {
         selectorIdioma.addActionListener(this);
 
         labelIdioma.setHorizontalAlignment(SwingConstants.RIGHT);
-        labelMemoria.setPreferredSize(new Dimension(200, 15));
+        // Mejor de este modo ya que si se deja a GridBagLayout ajustarlo y el nº de letras fuese menor podría no
+        // caber la palabra más larga (poco probable que se cambien el nº de letras pero más vale prevenir)
+        labelMemoria.setPreferredSize(new Dimension(240, 15));
 
         botonesLetras.add(btnConsonante);
         botonesLetras.add(btnVocal);

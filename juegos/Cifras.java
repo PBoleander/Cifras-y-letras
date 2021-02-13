@@ -181,7 +181,6 @@ class Cifras extends Juego {
                 // mejor aproximación
                 resultadoPartida = resultado.DERROTA;
                 intercambiarFichasConGuardadas(contenedorFichasMejorDiferencia);
-                // TODO ¿Mostrar mensaje de que se ha recuperado la memoria porque la solución puesta no era la mejor?
             }
 
             puntuacion.actualizar(diferenciaPerfeccion);

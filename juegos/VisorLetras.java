@@ -133,7 +133,7 @@ public class VisorLetras extends JPanel implements ActionListener, ContainerList
                     }
                 });
             }
-        } else {
+        } else { // 2º run
             while (letras.cambioEnMensajePausa()) {
                 SwingUtilities.invokeLater(this::actualizarLabelMemoria);
             }
@@ -146,11 +146,13 @@ public class VisorLetras extends JPanel implements ActionListener, ContainerList
 
     private void actualizarLabelMemoria() {
         String palabraMemorizada = letras.getPalabraMemorizada();
+        StringBuilder sb = new StringBuilder("Memoria: ");
+
         if (!letras.estaBloqueado() && palabraMemorizada.length() > 0) {
-            pcl.labelMemoria.setText("Memoria: " + palabraMemorizada + " (" + palabraMemorizada.length() + ")");
-        } else {
-            pcl.labelMemoria.setText("Memoria:");
+            sb.append(palabraMemorizada).append(" (").append(palabraMemorizada.length()).append(" letras").append(")");
         }
+
+        pcl.labelMemoria.setText(sb.toString());
     }
 
     private JPanel crearPanelColumna1(GridBagLayout gridBagLayout) {
@@ -221,6 +223,8 @@ public class VisorLetras extends JPanel implements ActionListener, ContainerList
         panelControlesPartidaActual.add(pcl.panelMemoria, controlesPartidaActualConstraints);
 
         columna1.add(panelControlesPartidaActual, constraints);
+
+        // 6a fila (panel puntuación)
         columna1.add(letras.puntuacion.panelPuntuacion, constraints);
 
         return columna1;

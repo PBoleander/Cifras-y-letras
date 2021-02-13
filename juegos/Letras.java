@@ -167,8 +167,6 @@ class Letras extends Juego implements KeyListener {
                 recuperarMemoria();
                 palabraPuesta = getPalabraPuesta();
                 resultadoComprobacion = solucionador.contiene(palabraPuesta);
-                // TODO ¿Mostrar mensaje de que se ha recuperado la memoria porque la palabra puesta era incorrecta o
-                //  demasiado corta?
             }
 
             actualizarResultadoPartida(palabraPuesta);
