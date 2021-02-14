@@ -192,8 +192,8 @@ class SolucionadorCifras implements Runnable {
     private void combinarIncluyendo(CifraSolucionador resultado) {
         addToCifrasDisponibles(resultado);
 
-        // Se realizan todas las combinaciones posibles habiendo añadido el nuevo
-        // resultado al pool de cifras disponibles
+        // Se realizan todas las combinaciones posibles habiendo añadido el nuevo resultado al pool de cifras
+        // disponibles
         for (CifraSolucionador otraCifra : cifrasDisponibles) {
             if (otraCifra != null && !otraCifra.isUsada())
                 combinar(otraCifra);

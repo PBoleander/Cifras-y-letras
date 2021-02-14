@@ -33,7 +33,7 @@ class SolucionadorLetras implements Runnable {
     //***************************************************************************************************************//
 
     @Override
-    public void run() {
+    public synchronized void run() {
         if (!listaSolucion.isEmpty())
             listaSolucion.clear();
 
@@ -44,12 +44,12 @@ class SolucionadorLetras implements Runnable {
     //******************************************* MÉTODOS PACKAGE ***************************************************//
     //***************************************************************************************************************//
 
-    DefaultListModel<String> getListaSolucion() {
+    synchronized DefaultListModel<String> getListaSolucion() {
         return listaSolucion;
     }
 
     // Devuelve el nº de longitudes mejores que hay en la lista solución dada una longitud inicial
-    int getNumLongitudesMejores(int longitud) {
+    synchronized int getNumLongitudesMejores(int longitud) {
         int n = 0;
 
         while (longitud < Letras.numeroLetras) {
@@ -76,7 +76,7 @@ class SolucionadorLetras implements Runnable {
         }
     }
 
-    boolean contiene(String palabra) {
+    synchronized boolean contiene(String palabra) {
         return listaSolucion.contains(palabra);
     }
 
