@@ -135,9 +135,8 @@ public class VisorLetras extends JPanel implements ActionListener, ContainerList
                 });
             }
         } else { // 2º run
-            while (letras.cambioEnMensajePausa()) {
-                SwingUtilities.invokeLater(this::actualizarLabelMemoria);
-            }
+            while (letras.cambioEnMensajePausa())
+                actualizarLabelMemoria();
         }
     }
 
@@ -153,7 +152,7 @@ public class VisorLetras extends JPanel implements ActionListener, ContainerList
             sb.append(palabraMemorizada).append(" (").append(palabraMemorizada.length()).append(" letras)");
         }
 
-        pcl.labelMemoria.setText(sb.toString());
+        SwingUtilities.invokeLater(() -> pcl.labelMemoria.setText(sb.toString()));
     }
 
     private JPanel crearPanelColumna1(GridBagLayout gridBagLayout) {

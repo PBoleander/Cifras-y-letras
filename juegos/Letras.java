@@ -85,7 +85,6 @@ public class Letras extends Juego implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent keyEvent) {}
-
     @Override
     public void keyReleased(KeyEvent keyEvent) {}
 
@@ -176,6 +175,7 @@ public class Letras extends Juego implements KeyListener {
         cambioMensajePausa = false;
         return true;
     }
+
     // Comprueba si la palabra puesta está en el diccionario. Si la partida ha terminado, actualiza el resultado de
     // la partida
     synchronized void comprobar() {

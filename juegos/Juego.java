@@ -70,7 +70,7 @@ abstract class Juego implements MouseListener, Runnable {
         return !bloqueo;
     }
 
-    public boolean estaPausado() {
+    boolean estaPausado() {
         return pausado;
     }
 
