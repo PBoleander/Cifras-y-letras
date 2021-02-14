@@ -341,11 +341,6 @@ class Letras extends Juego implements KeyListener {
         }
     }
 
-    private synchronized void setCambioMensajePausa() {
-        cambioMensajePausa = true;
-        notifyAll();
-    }
-
     private void desusar(ContenedorFicha contenedorFicha) {
         if (contenedorFicha.estaOcupado()) {
             Letra letra = (Letra) contenedorFicha.getFicha();
@@ -432,8 +427,15 @@ class Letras extends Juego implements KeyListener {
     }
 
     private boolean resultadoPeorAlDeMemoria(String palabraPuesta) {
-        return (!resultadoComprobacion && longitudMemoria > 0) ||
-                (longitudMemoria > palabraPuesta.length() && solucionador.contiene(getPalabraMemorizada()));
+        return longitudMemoria > 0 && solucionador.contiene(getPalabraMemorizada()) &&
+                (
+                    !resultadoComprobacion || longitudMemoria > palabraPuesta.length()
+                );
+    }
+
+    private synchronized void setCambioMensajePausa() {
+        cambioMensajePausa = true;
+        notifyAll();
     }
 
     private int ultimaPosicionPuesta() {
