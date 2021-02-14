@@ -117,7 +117,7 @@ public class VisorCifras extends JPanel implements ActionListener, ContainerList
                 mostradorSolucion.setText("Calculando...");
 
         } else if (source.equals(pc.btnPausa)) {
-            if (cifras.haEmpezado()) {
+            if (cifras.haEmpezado() && pc.chkContrarreloj.isSelected()) {
                 if (mostradorSolucion.getText().isBlank()) {
                     if (mostradorSolucion.getForeground() != getForeground()) {
                         mostradorSolucion.setForeground(getForeground());

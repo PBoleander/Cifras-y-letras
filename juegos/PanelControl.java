@@ -55,12 +55,12 @@ class PanelControl implements ActionListener {
         } else if (source.equals(btnPausa)) {
             if (juego.haEmpezado()) {
                 if (juego.estaPausado()) {
-                    btnPausa.setText("Pausar");
-                    juego.reanudar();
+                    if (juego.reanudar())
+                        btnPausa.setText("Pausar");
 
                 } else {
-                    juego.pausar();
-                    btnPausa.setText("Reanudar");
+                    if (juego.pausar())
+                        btnPausa.setText("Reanudar");
                 }
             }
 
