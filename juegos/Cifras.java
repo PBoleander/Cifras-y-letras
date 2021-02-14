@@ -5,7 +5,7 @@ import fichas.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 
-class Cifras extends Juego {
+public class Cifras extends Juego {
 
     final static int numeroCifras = 6;
 
@@ -65,7 +65,7 @@ class Cifras extends Juego {
 
     @Override
     public void mouseClicked(MouseEvent mouseEvent) {
-        if (haEmpezado() && !estaBloqueado() && contenedorBajoPuntero != null) {
+        if (haEmpezado() && estaDesbloqueado() && contenedorBajoPuntero != null) {
             if (contenedorBajoPuntero.estaOcupado()) {
                 if (!contenedorBajoPuntero.getFicha().isUsada())
                     usar(contenedorBajoPuntero);
@@ -77,6 +77,26 @@ class Cifras extends Juego {
     public void mousePressed(MouseEvent mouseEvent) {}
     @Override
     public void mouseReleased(MouseEvent mouseEvent) {}
+
+    @Override
+    public boolean pausar() {
+        if (super.pausar()) {
+            intercambiarFichasConGuardadas(contenedorFichasEnPausa);
+
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean reanudar() {
+        if (super.reanudar()) {
+            intercambiarFichasConGuardadas(contenedorFichasEnPausa);
+
+            return true;
+        }
+        return false;
+    }
 
     //***************************************************************************************************************//
     //******************************************* MÉTODOS PACKAGE ***************************************************//
@@ -159,22 +179,8 @@ class Cifras extends Juego {
     }
 
     @Override
-    void pausar() {
-        super.pausar();
-
-        intercambiarFichasConGuardadas(contenedorFichasEnPausa);
-    }
-
-    @Override
-    void reanudar() {
-        intercambiarFichasConGuardadas(contenedorFichasEnPausa);
-
-        super.reanudar();
-    }
-
-    @Override
     synchronized void resolver() {
-        if (!estaBloqueado()) { // Junto con el synchronized para que sólo se pueda resolver una vez
+        if (estaDesbloqueado()) { // Junto con el synchronized para que sólo se pueda resolver una vez
             super.resolver();
 
             if (resultadoPartida == null) { // Si se ha perdido, muestra las operaciones que te han llevado a la

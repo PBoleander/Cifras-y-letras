@@ -22,7 +22,7 @@ class PanelControlCifras implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         if (actionEvent.getSource().equals(btnDeshacer)) {
-            if (cifras.haEmpezado() && !cifras.estaBloqueado())
+            if (cifras.haEmpezado() && cifras.estaDesbloqueado())
                 cifras.deshacer();
         }
     }

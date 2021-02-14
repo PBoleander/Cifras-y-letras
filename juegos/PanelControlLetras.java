@@ -83,13 +83,13 @@ class PanelControlLetras implements ActionListener {
             letras.sacar(Letra.Tipo.CONSONANTE);
 
         } else if (source.equals(btnMemorizar)) {
-            if (letras.haEmpezado() && !letras.estaBloqueado()) {
+            if (letras.haEmpezado() && letras.estaDesbloqueado()) {
                 letras.memorizar();
                 actualizarLabelMemoria();
             }
 
         } else if (source.equals(btnRecuperar)) {
-            if (letras.haEmpezado() && !letras.estaBloqueado())
+            if (letras.haEmpezado() && letras.estaDesbloqueado())
                 letras.recuperarMemoria();
 
         } else if (source.equals(btnVocal)) {

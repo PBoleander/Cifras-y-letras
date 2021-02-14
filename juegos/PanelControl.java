@@ -48,13 +48,13 @@ class PanelControl implements ActionListener {
             else if (mostrarConfirmacion() == JOptionPane.YES_OPTION) juego.resolver();
 
         } else if (source.equals(btnLimpiar)) {
-            if (juego.haEmpezado() && !juego.estaBloqueado()) {
+            if (juego.haEmpezado() && juego.estaDesbloqueado()) {
                 juego.limpiar();
             }
 
         } else if (source.equals(btnPausa)) {
             if (juego.haEmpezado()) {
-                if (juego.estaBloqueado()) {
+                if (juego.estaPausado()) {
                     btnPausa.setText("Pausar");
                     juego.reanudar();
 
@@ -65,7 +65,7 @@ class PanelControl implements ActionListener {
             }
 
         } else if (source.equals(btnResolver)) {
-            if (juego.haEmpezado() && !juego.estaBloqueado()) juego.resolver();
+            if (juego.haEmpezado() && juego.estaDesbloqueado()) juego.resolver();
 
         } else if (source.equals(chkContrarreloj)) {
             if (!juego.haEmpezado()) {
@@ -84,7 +84,7 @@ class PanelControl implements ActionListener {
 
     // Muestra confirmación antes de empezar una nueva partida sin haber acabado la actual
     private int mostrarConfirmacion() {
-        if (juego.haEmpezado() && !juego.estaBloqueado()) {
+        if (juego.haEmpezado() && juego.estaDesbloqueado()) {
             juego.pausar();
 
             Object mensaje = "Antes de empezar una nueva partida debes rendirte y resolver. ¿Deseas hacerlo?";

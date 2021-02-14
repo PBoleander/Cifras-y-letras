@@ -17,7 +17,7 @@ abstract class Juego implements MouseListener, Runnable {
     ContenedorFicha contenedorBajoPuntero;
     resultado resultadoPartida;
 
-    private boolean bloqueo, contrarreloj;
+    private boolean bloqueo, contrarreloj, pausado;
 
     Juego() {
         this.mostradorTiempo = new MostradorTiempo();
@@ -31,7 +31,7 @@ abstract class Juego implements MouseListener, Runnable {
 
     @Override
     public void mouseEntered(MouseEvent mouseEvent) {
-        if (haEmpezado() && ! estaBloqueado()) {
+        if (haEmpezado() && estaDesbloqueado()) {
             Object source = mouseEvent.getSource();
             if (source instanceof ContenedorFicha) {
                 contenedorBajoPuntero = (ContenedorFicha) source;
@@ -41,7 +41,7 @@ abstract class Juego implements MouseListener, Runnable {
 
     @Override
     public void mouseExited(MouseEvent mouseEvent) {
-        if (haEmpezado() && ! estaBloqueado()) {
+        if (haEmpezado() && estaDesbloqueado()) {
             Object source = mouseEvent.getSource();
             if (source instanceof ContenedorFicha) {
                 contenedorBajoPuntero = null;
@@ -66,8 +66,12 @@ abstract class Juego implements MouseListener, Runnable {
 
     abstract void limpiar();
 
-    boolean estaBloqueado() {
-        return bloqueo;
+    boolean estaDesbloqueado() {
+        return !bloqueo;
+    }
+
+    public boolean estaPausado() {
+        return pausado;
     }
 
     boolean haEmpezado() {
@@ -81,18 +85,26 @@ abstract class Juego implements MouseListener, Runnable {
             new Thread(this).start();
     }
 
-    void pausar() {
-        if (contrarreloj) {
+    boolean pausar() {
+        if (contrarreloj && estaDesbloqueado() && !estaPausado()) {
             bloqueo = true;
+            pausado = true;
             mostradorTiempo.setPausa(true);
+
+            return true;
         }
+        return false;
     }
 
-    void reanudar() {
-        if (contrarreloj) {
+    boolean reanudar() {
+        if (contrarreloj && estaPausado()) {
             bloqueo = false;
+            pausado = false;
             mostradorTiempo.setPausa(false);
+
+            return true;
         }
+        return false;
     }
 
     void resolver() {

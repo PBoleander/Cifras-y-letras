@@ -11,6 +11,7 @@ import java.awt.*;
 class CifrasYLetras extends JFrame implements ChangeListener {
 
     private final JTabbedPane tabbedPane;
+    private final VisorCifras visorCifras;
     private final VisorLetras visorLetras;
 
     CifrasYLetras() {
@@ -21,10 +22,11 @@ class CifrasYLetras extends JFrame implements ChangeListener {
         setTitle("Cifras y letras");
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/iconos/blackboard.png")));
 
+        visorCifras = new VisorCifras();
         visorLetras = new VisorLetras();
 
         tabbedPane = new JTabbedPane();
-        tabbedPane.addTab("Cifras", new VisorCifras());
+        tabbedPane.addTab("Cifras", visorCifras);
         tabbedPane.addTab("Letras", visorLetras);
 
         tabbedPane.addChangeListener(this);
@@ -38,8 +40,16 @@ class CifrasYLetras extends JFrame implements ChangeListener {
 
     @Override
     public void stateChanged(ChangeEvent changeEvent) {
-        if (tabbedPane.getSelectedComponent().equals(visorLetras)) {
+        Component activeTab = tabbedPane.getSelectedComponent();
+
+        if (activeTab.equals(visorLetras)) {
             visorLetras.requestFocusInWindow();
+            visorCifras.cifras.pausar();
+            visorLetras.letras.reanudar();
+
+        } else if (activeTab.equals(visorCifras)) {
+            visorLetras.letras.pausar();
+            visorCifras.cifras.reanudar();
         }
     }
 

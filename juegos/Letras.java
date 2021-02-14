@@ -10,7 +10,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.util.Arrays;
 
-class Letras extends Juego implements KeyListener {
+public class Letras extends Juego implements KeyListener {
 
     final static int numeroLetras = 9;
 
@@ -68,7 +68,7 @@ class Letras extends Juego implements KeyListener {
 
     @Override
     public void keyTyped(KeyEvent keyEvent) {
-        if (haEmpezado() && !estaBloqueado() && !keyEvent.isAltDown()) {
+        if (haEmpezado() && estaDesbloqueado() && !keyEvent.isAltDown()) {
             if (keyEvent.getKeyChar() == KeyEvent.VK_BACK_SPACE) { // Borra la última letra puesta
                 int ultimaPosicionPuesta = ultimaPosicionPuesta();
                 if (ultimaPosicionPuesta > -1) {
@@ -92,7 +92,7 @@ class Letras extends Juego implements KeyListener {
     @Override
     // Usa/desusa letras
     public void mouseClicked(MouseEvent mouseEvent) {
-        if (haEmpezado() && ! estaBloqueado() && contenedorBajoPuntero != null) {
+        if (haEmpezado() && estaDesbloqueado() && contenedorBajoPuntero != null) {
             if (contenedorBajoPuntero.estaOcupado()) {
                 if (contenedorBajoPuntero.getFicha().isUsada()) {
                     desusar(contenedorBajoPuntero);
@@ -106,7 +106,7 @@ class Letras extends Juego implements KeyListener {
     @Override
     // Arrastra las letras puestas para cambiarlas de posición
     public void mousePressed(MouseEvent mouseEvent) {
-        if (haEmpezado() && ! estaBloqueado() && contenedorBajoPuntero != null) {
+        if (haEmpezado() && estaDesbloqueado() && contenedorBajoPuntero != null) {
             if (contenedorBajoPuntero.estaOcupado()) {
                 if (esLetraPuesta(contenedorBajoPuntero)) {
                     letraArrastrada = (Letra) contenedorBajoPuntero.getFicha();
@@ -119,7 +119,7 @@ class Letras extends Juego implements KeyListener {
     // Suelta la letra arrastrada en el lugar indicado
     public void mouseReleased(MouseEvent mouseEvent) {
         if (mouseEvent.getClickCount() == 0) {
-            if (haEmpezado() && !estaBloqueado() && contenedorBajoPuntero != null) {
+            if (haEmpezado() && estaDesbloqueado() && contenedorBajoPuntero != null) {
                 if (esLetraPuesta(contenedorBajoPuntero)) {
                     if (!contenedorBajoPuntero.estaOcupado()) {
                         if (letraArrastrada != null) {
@@ -138,6 +138,28 @@ class Letras extends Juego implements KeyListener {
         } else { // Se ha hecho clic
             letraArrastrada = null;
         }
+    }
+
+    @Override
+    public boolean pausar() {
+        if (super.pausar()) {
+            alternarMensajePausa();
+            setCambioMensajePausa();
+
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean reanudar() {
+        if (super.reanudar()) {
+            alternarMensajePausa();
+            setCambioMensajePausa();
+
+            return true;
+        }
+        return false;
     }
 
     //***************************************************************************************************************//
@@ -240,22 +262,6 @@ class Letras extends Juego implements KeyListener {
         }
     }
 
-    @Override
-    void pausar() {
-        super.pausar();
-
-        alternarMensajePausa();
-        setCambioMensajePausa();
-    }
-
-    @Override
-    void reanudar() {
-        alternarMensajePausa();
-        setCambioMensajePausa();
-
-        super.reanudar();
-    }
-
     void recuperarMemoria() {
         if (longitudMemoria > 0) {
             limpiar();
@@ -268,7 +274,7 @@ class Letras extends Juego implements KeyListener {
 
     @Override
     synchronized void resolver() {
-        if (!estaBloqueado()) {
+        if (estaDesbloqueado()) {
             super.resolver();
 
             comprobar();

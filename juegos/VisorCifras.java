@@ -11,7 +11,8 @@ import java.awt.event.ContainerListener;
 
 public class VisorCifras extends JPanel implements ActionListener, ContainerListener, Runnable {
 
-    private final Cifras cifras;
+    public final Cifras cifras;
+
     private final JLabel mostradorMinDiferencia;
     private final JPanel panelOperaciones;
     private final JTextField mostradorSolucion;

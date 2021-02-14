@@ -9,8 +9,9 @@ import java.awt.event.*;
 public class VisorLetras extends JPanel implements ActionListener, ContainerListener, FocusListener, MouseListener,
         Runnable {
 
+    public final Letras letras;
+
     private final JPanel panelLetrasPuestas;
-    private final Letras letras;
     private final PanelControl pc;
     private final PanelControlLetras pcl;
 
@@ -148,8 +149,8 @@ public class VisorLetras extends JPanel implements ActionListener, ContainerList
         String palabraMemorizada = letras.getPalabraMemorizada();
         StringBuilder sb = new StringBuilder("Memoria: ");
 
-        if (!letras.estaBloqueado() && palabraMemorizada.length() > 0) {
-            sb.append(palabraMemorizada).append(" (").append(palabraMemorizada.length()).append(" letras").append(")");
+        if (!letras.estaPausado() && palabraMemorizada.length() > 0) {
+            sb.append(palabraMemorizada).append(" (").append(palabraMemorizada.length()).append(" letras)");
         }
 
         pcl.labelMemoria.setText(sb.toString());
