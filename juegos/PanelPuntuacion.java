@@ -48,9 +48,9 @@ class PanelPuntuacion extends JPanel {
         c.gridx = 0;
         c.weightx = 1;
         c.fill = GridBagConstraints.HORIZONTAL;
-        columna1.add(panelPerfectas, c); // FIXME Son éste y...
-        columna1.add(panelMejorables, c); // FIXME ¿Por qué está desalineado un píxel respecto a los otros?
-        columna1.add(panelDerrotas, c); // FIXME ...éste los que están mal alineados, el de mejorables está correcto
+        columna1.add(panelPerfectas, c);
+        columna1.add(panelMejorables, c);
+        columna1.add(panelDerrotas, c);
 
         columna2.add(panelTotal, c);
         columna2.add(panelPartidas, c);
@@ -120,6 +120,7 @@ class PanelPuntuacion extends JPanel {
         c.weightx = 1;
         c.anchor = GridBagConstraints.LINE_START;
         panel.add(etiqueta, c);
+        c.weightx = 0;
         c.anchor = GridBagConstraints.LINE_END;
         panel.add(numero, c);
 
