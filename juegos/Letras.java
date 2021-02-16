@@ -24,7 +24,7 @@ public class Letras extends Juego implements KeyListener {
     int longitudMemoria, numeroLetrasSacadas;
 
     private final Letra[] letrasDisponiblesAux, letrasDisponiblesPausa, letrasPuestasPausa;
-    private boolean cambioMensajeMemoria, resultadoComprobacion;
+    private boolean cambioMensajeMemoria, memorizarAlComprobar, resultadoComprobacion;
     private Letra letraArrastrada;
 
     Letras() {
@@ -180,7 +180,9 @@ public class Letras extends Juego implements KeyListener {
     // la partida
     synchronized void comprobar() {
         String palabraPuesta = getPalabraPuesta();
-        memorizarSiSeDebe(palabraPuesta); // Aquí se actualiza resultadoComprobación
+
+        if (memorizarAlComprobar) memorizarSiSeDebe(palabraPuesta); // Aquí se actualiza resultadoComprobación
+        else resultadoComprobacion = solucionador.contiene(palabraPuesta);
 
         if (!haEmpezado()) { // Se ha procedido a resolver (en otro caso, no es necesario)
             // Si la palabra puesta al terminar la partida ofrece un resultado peor que la de la memoria, la cambia
@@ -300,6 +302,10 @@ public class Letras extends Juego implements KeyListener {
         solucionador.setIdioma(idioma);
         Letra.generador.setIdioma(idioma);
         setTiempoInicial(idioma == Idioma.INGLES ? 60 : 45);
+    }
+
+    void setMemorizarAlComprobar(boolean memorizarAlComprobar) {
+        this.memorizarAlComprobar = memorizarAlComprobar;
     }
 
     //***************************************************************************************************************//

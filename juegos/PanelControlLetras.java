@@ -12,6 +12,7 @@ import java.awt.event.KeyEvent;
 class PanelControlLetras implements ActionListener {
 
     final JButton btnComprobar;
+    final JCheckBox chkAutoMemorizar;
     final JPanel botonesLetras, panelIdioma, panelMemoria;
     final JLabel labelMemoria;
 
@@ -33,6 +34,7 @@ class PanelControlLetras implements ActionListener {
         btnMemorizar = new JButton("Memorizar");
         btnRecuperar = new JButton("Recuperar");
         btnVocal = new JButton("Vocal");
+        chkAutoMemorizar = new JCheckBox("Memorizar al comprobar", true);
         labelMemoria = new JLabel("Memoria:");
         JLabel labelIdioma = new JLabel("Idioma:");
         selectorIdioma = new JComboBox<>(Idioma.values());
@@ -48,6 +50,7 @@ class PanelControlLetras implements ActionListener {
         btnMemorizar.addActionListener(this);
         btnRecuperar.addActionListener(this);
         btnVocal.addActionListener(this);
+        chkAutoMemorizar.addActionListener(this);
         selectorIdioma.addActionListener(this);
 
         labelIdioma.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -70,6 +73,7 @@ class PanelControlLetras implements ActionListener {
 
         anteriorIdioma = (Idioma) selectorIdioma.getSelectedItem();
         letras.setIdioma(anteriorIdioma);
+        letras.setMemorizarAlComprobar(chkAutoMemorizar.isSelected());
     }
 
     @Override
@@ -94,6 +98,9 @@ class PanelControlLetras implements ActionListener {
 
         } else if (source.equals(btnVocal)) {
             letras.sacar(Letra.Tipo.VOCAL);
+
+        } else if (source.equals(chkAutoMemorizar)) {
+            letras.setMemorizarAlComprobar(chkAutoMemorizar.isSelected());
 
         } else if (source.equals(selectorIdioma)) {
             if (!letras.haEmpezado() && letras.numeroLetrasSacadas == 0) {

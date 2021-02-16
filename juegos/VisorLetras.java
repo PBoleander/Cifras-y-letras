@@ -174,6 +174,7 @@ public class VisorLetras extends JPanel implements ActionListener, ContainerList
         panelBotonesGenerales.add(pc.btnResolver, botonesGeneralesConstraints);
         panelBotonesGenerales.add(pc.chkContrarreloj, botonesGeneralesConstraints);
         panelBotonesGenerales.add(pcl.panelIdioma, botonesGeneralesConstraints);
+        panelBotonesGenerales.add(pcl.chkAutoMemorizar, botonesGeneralesConstraints);
 
         constraints.gridx = 0;
         constraints.gridy = 0;
