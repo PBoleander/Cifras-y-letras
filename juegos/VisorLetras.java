@@ -135,7 +135,7 @@ public class VisorLetras extends JPanel implements ActionListener, ContainerList
                 });
             }
         } else { // 2º run
-            while (letras.cambioEnMensajePausa())
+            while (letras.cambioEnMensajeMemoria())
                 actualizarLabelMemoria();
         }
     }

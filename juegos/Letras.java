@@ -24,7 +24,7 @@ public class Letras extends Juego implements KeyListener {
     int longitudMemoria, numeroLetrasSacadas;
 
     private final Letra[] letrasDisponiblesAux, letrasDisponiblesPausa, letrasPuestasPausa;
-    private boolean cambioMensajePausa;
+    private boolean cambioMensajeMemoria;
     private Letra letraArrastrada;
 
     Letras() {
@@ -143,7 +143,7 @@ public class Letras extends Juego implements KeyListener {
     public boolean pausar() {
         if (super.pausar()) {
             alternarMensajePausa();
-            setCambioMensajePausa();
+            setCambioMensajeMemoria();
 
             return true;
         }
@@ -154,7 +154,7 @@ public class Letras extends Juego implements KeyListener {
     public boolean reanudar() {
         if (super.reanudar()) {
             alternarMensajePausa();
-            setCambioMensajePausa();
+            setCambioMensajeMemoria();
 
             return true;
         }
@@ -165,14 +165,14 @@ public class Letras extends Juego implements KeyListener {
     //******************************************* MÉTODOS PACKAGE ***************************************************//
     //***************************************************************************************************************//
 
-    synchronized boolean cambioEnMensajePausa() {
+    synchronized boolean cambioEnMensajeMemoria() {
         try {
-            while (!cambioMensajePausa) wait();
+            while (!cambioMensajeMemoria) wait();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
-        cambioMensajePausa = false;
+        cambioMensajeMemoria = false;
         return true;
     }
 
@@ -190,9 +190,9 @@ public class Letras extends Juego implements KeyListener {
                 palabraPuesta = getPalabraPuesta();
                 resultadoComprobacion = solucionador.contiene(palabraPuesta);
             }
-
-            actualizarResultadoPartida(palabraPuesta);
         }
+
+        actualizarResultadoPartida(palabraPuesta);
 
         comprobado = true;
         notifyAll();
@@ -258,7 +258,7 @@ public class Letras extends Juego implements KeyListener {
                     longitudMemoria++;
                 }
             }
-            setCambioMensajePausa();
+            setCambioMensajeMemoria();
         }
     }
 
@@ -322,9 +322,10 @@ public class Letras extends Juego implements KeyListener {
 
     private void actualizarResultadoPartida(String palabraPuesta) {
         if (resultadoComprobacion) {
-            if (solucionador.getNumLongitudesMejores(palabraPuesta.length()) == 0)
+            if (solucionador.getNumLongitudesMejores(palabraPuesta.length()) == 0) {
                 resultadoPartida = resultado.PERFECTO;
-            else
+                resolver(); // Al no haber palabras más largas, se resuelve directamente
+            } else
                 resultadoPartida = resultado.MEJORABLE;
 
         } else {
@@ -393,7 +394,10 @@ public class Letras extends Juego implements KeyListener {
     }
 
     private boolean palabraAMemorizarEsIlogica(String palabraPuesta) {
-        return !solucionador.contiene(palabraPuesta) ||
+        resultadoComprobacion = solucionador.contiene(palabraPuesta);
+        actualizarResultadoPartida(palabraPuesta);
+
+        return !resultadoComprobacion ||
                 (longitudMemoria > 0 &&
                         solucionador.contiene(getPalabraMemorizada()) && palabraPuesta.length() < longitudMemoria);
     }
@@ -439,8 +443,8 @@ public class Letras extends Juego implements KeyListener {
                 );
     }
 
-    private synchronized void setCambioMensajePausa() {
-        cambioMensajePausa = true;
+    private synchronized void setCambioMensajeMemoria() {
+        cambioMensajeMemoria = true;
         notifyAll();
     }
 
@@ -476,6 +480,6 @@ public class Letras extends Juego implements KeyListener {
     private void vaciarMemoria() {
         Arrays.fill(memoria, -1);
         longitudMemoria = 0;
-        setCambioMensajePausa();
+        setCambioMensajeMemoria();
     }
 }
