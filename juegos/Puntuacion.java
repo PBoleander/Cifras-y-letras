@@ -42,8 +42,13 @@ class Puntuacion {
         numPartidas++;
 
         // Muestra los cambios al usuario
-        panelPuntuacion.actualizar(perfectas, mejorables, derrotas, numPartidas, puntosTotales, puntosUltimaPartida,
-                promedio());
+        panelPuntuacion.actualizar(perfectas, mejorables, derrotas, porcentaje(perfectas), porcentaje(mejorables),
+                porcentaje(derrotas), numPartidas, puntosTotales, puntosUltimaPartida, promedio());
+    }
+
+    private double porcentaje(int numero) {
+        if (numPartidas == 0) return 0;
+        else return (double) numero / numPartidas * 100;
     }
 
     private double promedio() {

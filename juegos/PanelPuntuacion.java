@@ -10,6 +10,7 @@ class PanelPuntuacion extends JPanel {
 
     private final JLabel numPartidas, puntosTotales;
     private final JLabel derrotas, mejorables, perfectas;
+    private final JLabel porcentajeDerrotas, porcentajeMejorables, porcentajePerfectas;
     private final JTextField promedio, puntosUltimaPartida;
 
     PanelPuntuacion() {
@@ -19,23 +20,26 @@ class PanelPuntuacion extends JPanel {
         setLayout(layout);
 
         JLabel etiquetaPartidas = nuevoJLabel("Nº partidas:");
-        numPartidas = nuevoJLabel("0");
+        numPartidas = nuevoJLabel();
         JLabel etiquetaPuntosActuales = nuevoJLabel("Puntos última partida:");
         puntosUltimaPartida = nuevoMarcador("0");
         JLabel etiquetaPuntosTotales = nuevoJLabel("Total puntos:");
-        puntosTotales = nuevoJLabel("0");
+        puntosTotales = nuevoJLabel();
         JLabel etiquetaPromedio = nuevoJLabel("Puntos por partida:");
         promedio = nuevoMarcador("0,00");
         JLabel etiquetaDerrotas = nuevoJLabel("Derrotas:");
-        derrotas = nuevoJLabel("0", Color.RED);
+        derrotas = nuevoJLabel(Color.RED, false);
+        porcentajeDerrotas = nuevoJLabel(Color.RED, true);
         JLabel etiquetaMejorables = nuevoJLabel("Mejorables:");
-        mejorables = nuevoJLabel("0", Colores.NARANJA);
+        mejorables = nuevoJLabel(Colores.NARANJA, false);
+        porcentajeMejorables = nuevoJLabel(Colores.NARANJA, true);
         JLabel etiquetaPerfectas = nuevoJLabel("Perfectas:");
-        perfectas = nuevoJLabel("0", Colores.VERDE);
+        perfectas = nuevoJLabel(Colores.VERDE, false);
+        porcentajePerfectas = nuevoJLabel(Colores.VERDE, true);
 
-        JPanel panelPerfectas = nuevoPanel(etiquetaPerfectas, perfectas);
-        JPanel panelMejorables = nuevoPanel(etiquetaMejorables, mejorables);
-        JPanel panelDerrotas = nuevoPanel(etiquetaDerrotas, derrotas);
+        JPanel panelPerfectas = nuevoPanel(etiquetaPerfectas, perfectas, porcentajePerfectas);
+        JPanel panelMejorables = nuevoPanel(etiquetaMejorables, mejorables, porcentajeMejorables);
+        JPanel panelDerrotas = nuevoPanel(etiquetaDerrotas, derrotas, porcentajeDerrotas);
         JPanel panelPartidas = nuevoPanel(etiquetaPartidas, numPartidas);
         JPanel panelUltimaPartida = nuevoPanel(etiquetaPuntosActuales, puntosUltimaPartida);
         JPanel panelTotal = nuevoPanel(etiquetaPuntosTotales, puntosTotales);
@@ -63,23 +67,31 @@ class PanelPuntuacion extends JPanel {
         c.gridwidth = GridBagConstraints.REMAINDER;
         add(panelUltimaPartida, c);
         add(panelPromedio, c);
+
+        actualizar(0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0);
     }
 
     //***************************************************************************************************************//
     //******************************************* MÉTODOS PACKAGE ***************************************************//
     //***************************************************************************************************************//
 
-    void actualizar(int perfectas, int mejorables, int derrotas, int numPartidas, int puntosTotales,
+    void actualizar(int perfectas, int mejorables, int derrotas, double porcentajePerfectas,
+                    double porcentajeMejorables, double porcentajeDerrotas, int numPartidas, int puntosTotales,
                     int puntosActuales, double promedio) {
-        DecimalFormat df = new DecimalFormat("0.00");
+        DecimalFormat dfPorcentaje = new DecimalFormat("0.0");
+        DecimalFormat dfPromedio = new DecimalFormat("0.00");
         SwingUtilities.invokeLater(() -> {
             this.perfectas.setText(String.valueOf(perfectas));
+            this.porcentajePerfectas.setText("(" + dfPorcentaje.format(porcentajePerfectas) + " %)");
             this.mejorables.setText(String.valueOf(mejorables));
+            this.porcentajeMejorables.setText("(" + dfPorcentaje.format(porcentajeMejorables) + " %)");
             this.derrotas.setText(String.valueOf(derrotas));
+            this.porcentajeDerrotas.setText("(" + dfPorcentaje.format(porcentajeDerrotas) + " %)");
             this.numPartidas.setText(String.valueOf(numPartidas));
             this.puntosTotales.setText(String.valueOf(puntosTotales));
             this.puntosUltimaPartida.setText(String.valueOf(puntosActuales));
-            this.promedio.setText(df.format(promedio));
+            this.promedio.setText(dfPromedio.format(promedio));
         });
     }
 
@@ -87,15 +99,30 @@ class PanelPuntuacion extends JPanel {
     //******************************************* MÉTODOS PRIVADOS **************************************************//
     //***************************************************************************************************************//
 
-    private JLabel nuevoJLabel(String texto) {
-        return nuevoJLabel(texto, getForeground());
+    private JLabel nuevoJLabel() {
+        return nuevoJLabel("");
     }
 
-    private JLabel nuevoJLabel(String texto, Color foreground) {
+    private JLabel nuevoJLabel(Color foreground, boolean porcentaje) {
+        return nuevoJLabel("", foreground, porcentaje);
+    }
+
+    private JLabel nuevoJLabel(String texto) {
+        return nuevoJLabel(texto, getForeground(), false);
+    }
+
+    private JLabel nuevoJLabel(String texto, Color foreground, boolean porcentaje) {
         JLabel label = new JLabel(texto);
 
         label.setFont(new Font(Font.DIALOG, Font.BOLD, 16));
         label.setForeground(foreground);
+        label.setHorizontalAlignment(SwingConstants.RIGHT);
+
+        if (porcentaje) {
+            label.setPreferredSize(new Dimension(100, 21));
+        } else if (texto.isEmpty()) {
+            label.setPreferredSize(new Dimension(50, 21));
+        }
 
         return label;
     }
@@ -116,13 +143,28 @@ class PanelPuntuacion extends JPanel {
     private JPanel nuevoPanel(JLabel etiqueta, JComponent numero) {
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
-        c.insets = new Insets(5, 0, 0, 20);
+        c.insets = new Insets(5, 0, 0, 0);
         c.weightx = 1;
         c.anchor = GridBagConstraints.LINE_START;
         panel.add(etiqueta, c);
         c.weightx = 0;
         c.anchor = GridBagConstraints.LINE_END;
         panel.add(numero, c);
+
+        return panel;
+    }
+
+    private JPanel nuevoPanel(JLabel etiqueta, JLabel numero, JLabel porcentaje) {
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
+        c.insets = new Insets(5, 0, 0, 0);
+        c.weightx = 1;
+        c.anchor = GridBagConstraints.LINE_START;
+        panel.add(etiqueta, c);
+        c.weightx = 0;
+        c.anchor = GridBagConstraints.LINE_END;
+        panel.add(numero, c);
+        panel.add(porcentaje, c);
 
         return panel;
     }
