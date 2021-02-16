@@ -20,11 +20,11 @@ public class Letras extends Juego implements KeyListener {
     final Puntuacion puntuacion;
     final SolucionadorLetras solucionador;
 
-    boolean comprobado, resultadoComprobacion;
+    boolean comprobado;
     int longitudMemoria, numeroLetrasSacadas;
 
     private final Letra[] letrasDisponiblesAux, letrasDisponiblesPausa, letrasPuestasPausa;
-    private boolean cambioMensajeMemoria;
+    private boolean cambioMensajeMemoria, resultadoComprobacion;
     private Letra letraArrastrada;
 
     Letras() {
@@ -180,7 +180,7 @@ public class Letras extends Juego implements KeyListener {
     // la partida
     synchronized void comprobar() {
         String palabraPuesta = getPalabraPuesta();
-        resultadoComprobacion = solucionador.contiene(palabraPuesta);
+        memorizarSiSeDebe(palabraPuesta); // Aquí se actualiza resultadoComprobación
 
         if (!haEmpezado()) { // Se ha procedido a resolver (en otro caso, no es necesario)
             // Si la palabra puesta al terminar la partida ofrece un resultado peor que la de la memoria, la cambia
@@ -245,21 +245,7 @@ public class Letras extends Juego implements KeyListener {
     }
 
     void memorizar() {
-        if (seQuiereMemorizar()) { // Controla si se pretende memorizar una palabra incorrecta o más corta de la ya
-            // memorizada
-            if (longitudMemoria > 0)
-                vaciarMemoria();
-
-            Letra letra;
-            for (ContenedorFicha contenedorFicha : letrasPuestas) {
-                if (contenedorFicha.estaOcupado()) {
-                    letra = (Letra) contenedorFicha.getFicha();
-                    memorizar(letra);
-                    longitudMemoria++;
-                }
-            }
-            setCambioMensajeMemoria();
-        }
+        memorizar(false);
     }
 
     void recuperarMemoria() {
@@ -379,12 +365,36 @@ public class Letras extends Juego implements KeyListener {
         return palabraPuesta.toString();
     }
 
+    private void memorizar(boolean forzarMemorizado) {
+        if (forzarMemorizado || seQuiereMemorizar()) { // Controla si se pretende memorizar una palabra incorrecta o más
+            // corta de la ya memorizada
+            if (longitudMemoria > 0)
+                vaciarMemoria();
+
+            Letra letra;
+            for (ContenedorFicha contenedorFicha : letrasPuestas) {
+                if (contenedorFicha.estaOcupado()) {
+                    letra = (Letra) contenedorFicha.getFicha();
+                    memorizar(letra);
+                    longitudMemoria++;
+                }
+            }
+            setCambioMensajeMemoria();
+        }
+    }
+
     private void memorizar(Letra letra) {
         int i = 0;
         while (i < numeroLetras && memoria[i] != -1)
             i++;
 
         memoria[i] = quePosicionDisponibleOcupa(letra);
+    }
+
+    private void memorizarSiSeDebe(String palabraPuesta) {
+        if (!palabraAMemorizarEsIlogica(palabraPuesta)) {
+            memorizar(true);
+        }
     }
 
     private int mostrarAvisoDeMemorizadoIlogico() {
