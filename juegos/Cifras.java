@@ -2,6 +2,7 @@ package juegos;
 
 import fichas.*;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 
@@ -183,10 +184,16 @@ public class Cifras extends Juego {
         if (estaDesbloqueado()) { // Junto con el synchronized para que sólo se pueda resolver una vez
             super.resolver();
 
-            if (resultadoPartida == null) { // Si se ha perdido, muestra las operaciones que te han llevado a la
-                // mejor aproximación
-                resultadoPartida = resultado.DERROTA;
+            if (resultadoPartida == null || resultadoPartida.equals(resultado.MEJORABLE)) { // Si no se ha hecho una
+                // partida perfecta, muestra las operaciones que han llevado a la mejor aproximación (o al mejorable)
+                if (resultadoPartida == null) resultadoPartida = resultado.DERROTA;
+
                 intercambiarFichasConGuardadas(contenedorFichasMejorDiferencia);
+
+                if (resultadoPartida.equals(resultado.MEJORABLE)) {
+                    assert getUltimaOperacionOcupada() != null;
+                    diferenciaPerfeccion = comprobarResultado((Operacion) getUltimaOperacionOcupada().getFicha());
+                }
             }
 
             puntuacion.actualizar(diferenciaPerfeccion);
@@ -221,7 +228,7 @@ public class Cifras extends Juego {
         }
     }
 
-    private void calcularDiferenciaConseguida(Operacion operacion, int numeroCifrasUsadas) {
+    private int calcularDiferenciaConseguida(Operacion operacion, int numeroCifrasUsadas) {
         int resultadoOperacion = operacion.getResultado().getValor();
         int valorObjetivo = ((Cifra) cifraObjetivo.getFicha()).getValor();
         int diferenciaConseguida = Math.abs(valorObjetivo - resultadoOperacion);
@@ -232,15 +239,17 @@ public class Cifras extends Juego {
             setMinDiferenciaConseguida(diferenciaConseguida);
             minCifrasUsadasMejorDiferencia = numeroCifrasUsadas;
         }
+
+        return diferenciaConseguida;
     }
 
     // Comprueba si el resultado obtenido es el mejor y devuelve la diferencia respecto a la perfección
     private int comprobarResultado(Operacion operacion) {
         int numCifrasUsadas = getNumeroCifrasUsadas();
 
-        calcularDiferenciaConseguida(operacion, numCifrasUsadas);
+        int diferenciaConseguida = calcularDiferenciaConseguida(operacion, numCifrasUsadas);
 
-        int diferenciaPerfeccion = solucionador.getDistanciaPerfeccion(minDiferenciaConseguida, numCifrasUsadas);
+        int diferenciaPerfeccion = solucionador.getDistanciaPerfeccion(diferenciaConseguida, numCifrasUsadas);
 
         if (diferenciaPerfeccion == 0) {
             resultadoPartida = resultado.PERFECTO;
@@ -248,7 +257,7 @@ public class Cifras extends Juego {
             resultadoPartida = resultado.MEJORABLE;
         }
 
-        return Math.min(10, diferenciaPerfeccion); // diferenciaPerfeccion ha de estar entre 0 y 10
+        return Math.min(10, diferenciaPerfeccion); // diferenciaPerfección ha de estar entre 0 y 10
     }
 
     private int getNumeroCifrasUsadas() {
@@ -324,11 +333,16 @@ public class Cifras extends Juego {
 
             Operacion operacion = (Operacion) contenedor.getFicha();
 
-            if (ficha.getFicha() instanceof Cifra) { // Ficha es Cifra u Operacion
+            if (ficha.getFicha() instanceof Cifra) { // Ficha es Cifra u Operación
                 operacion.setOperando((Cifra) ficha.getFicha());
                 if (operacion.getResultado() != null) {
                     diferenciaPerfeccion = comprobarResultado(operacion);
-                    if (diferenciaPerfeccion < 5) resolver(); // Perfecto o mejorable
+                    if (diferenciaPerfeccion == 0) resolver(); // Perfecto
+                    else if (diferenciaPerfeccion < 5) { // Mejorable
+                        pausar();
+                        JOptionPane.showMessageDialog(null, "Se puede mejorar");
+                        reanudar();
+                    }
                 }
 
             } else { // La ficha es un operador
