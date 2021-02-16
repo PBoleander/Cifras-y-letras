@@ -190,10 +190,9 @@ public class Cifras extends Juego {
 
                 intercambiarFichasConGuardadas(contenedorFichasMejorDiferencia);
 
-                if (resultadoPartida.equals(resultado.MEJORABLE)) {
-                    assert getUltimaOperacionOcupada() != null;
-                    diferenciaPerfeccion = comprobarResultado((Operacion) getUltimaOperacionOcupada().getFicha());
-                }
+                ContenedorOperacion ultimaOperacion = getUltimaOperacionOcupada();
+                if (ultimaOperacion != null)
+                    diferenciaPerfeccion = comprobarResultado((Operacion) ultimaOperacion.getFicha());
             }
 
             puntuacion.actualizar(diferenciaPerfeccion);
