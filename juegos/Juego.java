@@ -82,7 +82,7 @@ abstract class Juego implements MouseListener, Runnable {
         bloqueo = false;
         mostradorTiempo.iniciar(contrarreloj);
         if (contrarreloj)
-            new Thread(this).start();
+            new Thread(this).start(); // Resuelve cuando acaba el tiempo
     }
 
     boolean pausar() {

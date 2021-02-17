@@ -22,11 +22,11 @@ class PanelPuntuacion extends JPanel {
         JLabel etiquetaPartidas = nuevoJLabel("Nº partidas:");
         numPartidas = nuevoJLabel();
         JLabel etiquetaPuntosActuales = nuevoJLabel("Puntos última partida:");
-        puntosUltimaPartida = nuevoMarcador("0");
+        puntosUltimaPartida = nuevoMarcador();
         JLabel etiquetaPuntosTotales = nuevoJLabel("Total puntos:");
         puntosTotales = nuevoJLabel();
         JLabel etiquetaPromedio = nuevoJLabel("Puntos por partida:");
-        promedio = nuevoMarcador("0,00");
+        promedio = nuevoMarcador();
         JLabel etiquetaDerrotas = nuevoJLabel("Derrotas:");
         derrotas = nuevoJLabel(Color.RED, false);
         porcentajeDerrotas = nuevoJLabel(Color.RED, true);
@@ -118,17 +118,16 @@ class PanelPuntuacion extends JPanel {
         label.setForeground(foreground);
         label.setHorizontalAlignment(SwingConstants.RIGHT);
 
-        if (porcentaje) {
+        if (porcentaje)
             label.setPreferredSize(new Dimension(100, 21));
-        } else if (texto.isEmpty()) {
+        else if (texto.isEmpty())
             label.setPreferredSize(new Dimension(50, 21));
-        }
 
         return label;
     }
 
-    private JTextField nuevoMarcador(String texto) {
-        JTextField textField = new JTextField(texto);
+    private JTextField nuevoMarcador() {
+        JTextField textField = new JTextField();
 
         textField.setFont(new Font(Font.DIALOG, Font.BOLD, 30));
         textField.setEditable(false);
@@ -141,20 +140,10 @@ class PanelPuntuacion extends JPanel {
     }
 
     private JPanel nuevoPanel(JLabel etiqueta, JComponent numero) {
-        JPanel panel = new JPanel(new GridBagLayout());
-        GridBagConstraints c = new GridBagConstraints();
-        c.insets = new Insets(5, 0, 0, 0);
-        c.weightx = 1;
-        c.anchor = GridBagConstraints.LINE_START;
-        panel.add(etiqueta, c);
-        c.weightx = 0;
-        c.anchor = GridBagConstraints.LINE_END;
-        panel.add(numero, c);
-
-        return panel;
+        return nuevoPanel(etiqueta, numero, null);
     }
 
-    private JPanel nuevoPanel(JLabel etiqueta, JLabel numero, JLabel porcentaje) {
+    private JPanel nuevoPanel(JLabel etiqueta, JComponent numero, JLabel porcentaje) {
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         c.insets = new Insets(5, 0, 0, 0);
@@ -164,7 +153,8 @@ class PanelPuntuacion extends JPanel {
         c.weightx = 0;
         c.anchor = GridBagConstraints.LINE_END;
         panel.add(numero, c);
-        panel.add(porcentaje, c);
+        if (porcentaje != null)
+            panel.add(porcentaje, c);
 
         return panel;
     }

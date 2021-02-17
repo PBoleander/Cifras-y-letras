@@ -9,17 +9,17 @@ class CellRenderer extends JLabel implements ListCellRenderer<String> {
 
     CellRenderer() {
         setOpaque(true);
-        setVerticalAlignment(BOTTOM); // servirá para dejar una línea en blanco cuando la altura sea el doble
+        setVerticalAlignment(BOTTOM); // Servirá para dejar una línea en blanco cuando la altura sea el doble
     }
 
     @Override
     public Component getListCellRendererComponent(JList<? extends String> jList, String text, int index,
                                                    boolean isSelected, boolean cellHasFocus) {
         int height = 16;
-        if (text.length() == 1) { // corresponde al número de letras que contienen las siguientes palabras
+        if (text.length() == 1) { // Corresponde al número de letras que contienen las siguientes palabras
             text += " LETRAS";
-            if (index > 0) height *= 2; // si no es la primera línea, hará que deje una línea en blanco antes
-        } else // palabras solución
+            if (index > 0) height *= 2; // Si no es la primera línea, hará que deje una línea en blanco antes
+        } else // Palabras solución
             text = "    " + text.toLowerCase();
 
         setPreferredSize(new Dimension(0, height));

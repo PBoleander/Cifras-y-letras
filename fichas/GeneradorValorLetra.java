@@ -81,9 +81,11 @@ public class GeneradorValorLetra {
         // Al usarse HashMaps el orden de las entradas no está definido, con lo cual se tienen que recorrer todas las
         // del set buscando la que cumple que el numAleatorio es menor que ella pero no de ninguna otra, por ese
         // motivo se usa minFrecuencia: para guardar el mínimo valor encontrado hasta el momento que cumple lo dicho.
+        int frecuencia;
         for (Map.Entry<Character, Integer> entry: set) {
-            if (entry.getValue() <= minFrecuencia && numAleatorio < entry.getValue()) {
-                minFrecuencia = entry.getValue();
+            frecuencia = entry.getValue();
+            if (frecuencia <= minFrecuencia && numAleatorio < frecuencia) {
+                minFrecuencia = frecuencia;
                 caracter = entry.getKey();
             }
         }

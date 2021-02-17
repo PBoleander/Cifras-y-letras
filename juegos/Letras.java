@@ -397,9 +397,11 @@ public class Letras extends Juego implements KeyListener {
         memoria[i] = quePosicionDisponibleOcupa(letra);
     }
 
+    // Hace la comprobación de seQuiereMemorizar pero sin pedir confirmación en caso de ser palabra ilógica, memorizando
+    // sólo si es lógica
     private void memorizarSiSeDebe(String palabraPuesta) {
         if (!palabraAMemorizarEsIlogica(palabraPuesta)) {
-            memorizar(true);
+            memorizar(true); // Así no realiza la comprobación redundante de seQuiereMemorizar()
         }
     }
 
