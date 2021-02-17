@@ -86,7 +86,7 @@ class PanelPuntuacion extends JPanel {
                     int racha, Juego.resultado resultado, int puntosActuales, double promedio) {
         DecimalFormat dfPorcentaje = new DecimalFormat("0.0");
         DecimalFormat dfPromedio = new DecimalFormat("0.00");
-        String rachaString = (resultado == null) ? "0" : (racha + " " + resultado.name().charAt(0));
+        String rachaString = (resultado == null) ? "0" : (racha + " " + resultado.toString().charAt(0));
 
         SwingUtilities.invokeLater(() -> {
             this.perfectas.setText(String.valueOf(perfectas));

@@ -32,7 +32,7 @@ public class Letras extends Juego implements KeyListener {
 
         this.memoria = new int[numeroLetras];
         this.listaSolucion = new JList<>();
-        this.puntuacion = new Puntuacion(true);
+        this.puntuacion = new Puntuacion();
         this.solucionador = new SolucionadorLetras();
         this.letrasDisponibles = new ContenedorFicha[numeroLetras];
         this.letrasDisponiblesAux = new Letra[numeroLetras];

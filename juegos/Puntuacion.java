@@ -4,17 +4,13 @@ class Puntuacion {
 
     final PanelPuntuacion panelPuntuacion;
 
-    private final boolean partidaLetras;
-
     private int numPartidas;
     private int puntosTotales;
     private int racha;
     private int derrotas, mejorables, perfectas;
     private Juego.resultado resultadoPrevio;
 
-    Puntuacion(boolean partidaLetras) {
-        this.partidaLetras = partidaLetras;
-
+    Puntuacion() {
         panelPuntuacion = new PanelPuntuacion();
 
         numPartidas = 0;
@@ -26,15 +22,15 @@ class Puntuacion {
     }
 
     void actualizar(int diferenciaPerfeccion, Juego.resultado resultado) {
-        actualizarRacha(resultado);
-
         switch (resultado) {
             case DERROTA -> derrotas++;
             case MEJORABLE -> mejorables++;
             case PERFECTO -> perfectas++;
         }
 
+        actualizarRacha(resultado);
         resultadoPrevio = resultado;
+
         int puntosUltimaPartida = 10 - diferenciaPerfeccion;
         puntosTotales += puntosUltimaPartida;
         numPartidas++;
