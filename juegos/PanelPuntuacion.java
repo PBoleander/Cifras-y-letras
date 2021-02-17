@@ -8,7 +8,7 @@ import java.text.DecimalFormat;
 
 class PanelPuntuacion extends JPanel {
 
-    private final JLabel numPartidas, puntosTotales;
+    private final JLabel numPartidas, puntosTotales, racha;
     private final JLabel derrotas, mejorables, perfectas;
     private final JLabel porcentajeDerrotas, porcentajeMejorables, porcentajePerfectas;
     private final JTextField promedio, puntosUltimaPartida;
@@ -27,6 +27,8 @@ class PanelPuntuacion extends JPanel {
         puntosTotales = nuevoJLabel();
         JLabel etiquetaPromedio = nuevoJLabel("Puntos por partida:");
         promedio = nuevoMarcador();
+        JLabel etiquetaRacha = nuevoJLabel("Racha:");
+        racha = nuevoJLabel();
         JLabel etiquetaDerrotas = nuevoJLabel("Derrotas:");
         derrotas = nuevoJLabel(Color.RED, false);
         porcentajeDerrotas = nuevoJLabel(Color.RED, true);
@@ -40,6 +42,7 @@ class PanelPuntuacion extends JPanel {
         JPanel panelPerfectas = nuevoPanel(etiquetaPerfectas, perfectas, porcentajePerfectas);
         JPanel panelMejorables = nuevoPanel(etiquetaMejorables, mejorables, porcentajeMejorables);
         JPanel panelDerrotas = nuevoPanel(etiquetaDerrotas, derrotas, porcentajeDerrotas);
+        JPanel panelRacha = nuevoPanel(etiquetaRacha, racha);
         JPanel panelPartidas = nuevoPanel(etiquetaPartidas, numPartidas);
         JPanel panelUltimaPartida = nuevoPanel(etiquetaPuntosActuales, puntosUltimaPartida);
         JPanel panelTotal = nuevoPanel(etiquetaPuntosTotales, puntosTotales);
@@ -56,8 +59,10 @@ class PanelPuntuacion extends JPanel {
         columna1.add(panelMejorables, c);
         columna1.add(panelDerrotas, c);
 
+        columna2.add(panelRacha, c);
         columna2.add(panelTotal, c);
         columna2.add(panelPartidas, c);
+
 
         c.insets = new Insets(20, 20, 0, 20);
         add(columna1, c);
@@ -69,7 +74,7 @@ class PanelPuntuacion extends JPanel {
         add(panelPromedio, c);
 
         actualizar(0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0);
+                0, 0, 0, null, 0, 0);
     }
 
     //***************************************************************************************************************//
@@ -78,9 +83,11 @@ class PanelPuntuacion extends JPanel {
 
     void actualizar(int perfectas, int mejorables, int derrotas, double porcentajePerfectas,
                     double porcentajeMejorables, double porcentajeDerrotas, int numPartidas, int puntosTotales,
-                    int puntosActuales, double promedio) {
+                    int racha, Juego.resultado resultado, int puntosActuales, double promedio) {
         DecimalFormat dfPorcentaje = new DecimalFormat("0.0");
         DecimalFormat dfPromedio = new DecimalFormat("0.00");
+        String rachaString = (resultado == null) ? "0" : (racha + " " + resultado.name().charAt(0));
+
         SwingUtilities.invokeLater(() -> {
             this.perfectas.setText(String.valueOf(perfectas));
             this.porcentajePerfectas.setText("(" + dfPorcentaje.format(porcentajePerfectas) + " %)");
@@ -92,6 +99,7 @@ class PanelPuntuacion extends JPanel {
             this.puntosTotales.setText(String.valueOf(puntosTotales));
             this.puntosUltimaPartida.setText(String.valueOf(puntosActuales));
             this.promedio.setText(dfPromedio.format(promedio));
+            this.racha.setText(rachaString);
         });
     }
 

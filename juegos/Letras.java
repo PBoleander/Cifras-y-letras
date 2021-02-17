@@ -269,9 +269,9 @@ public class Letras extends Juego implements KeyListener {
             String palabraPuesta = getPalabraPuesta();
 
             if (resultadoComprobacion) { // La palabra puesta es correcta
-                puntuacion.actualizar(solucionador.getNumLongitudesMejores(palabraPuesta.length()));
+                puntuacion.actualizar(solucionador.getNumLongitudesMejores(palabraPuesta.length()), resultadoPartida);
             } else {
-                puntuacion.actualizar(10); // Así da 0 puntos
+                puntuacion.actualizar(10, resultadoPartida); // Así da 0 puntos
             }
 
             SwingUtilities.invokeLater(() -> {

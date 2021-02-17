@@ -8,7 +8,9 @@ class Puntuacion {
 
     private int numPartidas;
     private int puntosTotales;
+    private int racha;
     private int derrotas, mejorables, perfectas;
+    private Juego.resultado resultadoPrevio;
 
     Puntuacion(boolean partidaLetras) {
         this.partidaLetras = partidaLetras;
@@ -17,33 +19,34 @@ class Puntuacion {
 
         numPartidas = 0;
         puntosTotales = 0;
+        racha = 0;
         derrotas = 0;
         mejorables = 0;
         perfectas = 0;
     }
 
-    void actualizar(int diferenciaPerfeccion) {
-        if (partidaLetras) {
-            switch (diferenciaPerfeccion) {
-                case 0 -> perfectas++;
-                case 10 -> derrotas++;
-                default -> mejorables++;
-            }
-        } else {
-            switch (diferenciaPerfeccion) {
-                case 0 -> perfectas++;
-                case 1, 2, 3, 4 -> mejorables++;
-                default -> derrotas++;
-            }
+    void actualizar(int diferenciaPerfeccion, Juego.resultado resultado) {
+        actualizarRacha(resultado);
+
+        switch (resultado) {
+            case DERROTA -> derrotas++;
+            case MEJORABLE -> mejorables++;
+            case PERFECTO -> perfectas++;
         }
 
+        resultadoPrevio = resultado;
         int puntosUltimaPartida = 10 - diferenciaPerfeccion;
         puntosTotales += puntosUltimaPartida;
         numPartidas++;
 
         // Muestra los cambios al usuario
         panelPuntuacion.actualizar(perfectas, mejorables, derrotas, porcentaje(perfectas), porcentaje(mejorables),
-                porcentaje(derrotas), numPartidas, puntosTotales, puntosUltimaPartida, promedio());
+                porcentaje(derrotas), numPartidas, puntosTotales, racha, resultado, puntosUltimaPartida, promedio());
+    }
+
+    private void actualizarRacha(Juego.resultado resultado) {
+        if (resultado.equals(resultadoPrevio)) racha++;
+        else racha = 1;
     }
 
     private double porcentaje(int numero) {

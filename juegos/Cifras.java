@@ -195,7 +195,7 @@ public class Cifras extends Juego {
                     diferenciaPerfeccion = comprobarResultado((Operacion) ultimaOperacion.getFicha());
             }
 
-            puntuacion.actualizar(diferenciaPerfeccion);
+            puntuacion.actualizar(diferenciaPerfeccion, resultadoPartida);
 
             resuelto = true;
             notifyAll();
