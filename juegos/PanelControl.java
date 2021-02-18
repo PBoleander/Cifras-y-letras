@@ -9,7 +9,7 @@ import java.awt.event.KeyEvent;
 class PanelControl implements ActionListener {
 
     final JButton btnIniciar, btnLimpiar, btnPausa, btnResolver;
-    final JCheckBox chkContrarreloj;
+    final JCheckBox chkContrarreloj, chkPreguntarAntesDeResolver;
 
     private final Juego juego;
 
@@ -21,6 +21,7 @@ class PanelControl implements ActionListener {
         btnPausa = new JButton("Pausar");
         btnResolver = new JButton("Resolver");
         chkContrarreloj = new JCheckBox("Contrarreloj", true);
+        chkPreguntarAntesDeResolver = new JCheckBox("Preguntar si resolver", true);
 
         btnIniciar.setMnemonic(KeyEvent.VK_N);
         btnLimpiar.setMnemonic(KeyEvent.VK_L);
@@ -45,7 +46,7 @@ class PanelControl implements ActionListener {
         if (source.equals(btnIniciar)) {
             if (!juego.haEmpezado()) juego.iniciar();
 
-            else if (mostrarConfirmacion() == JOptionPane.YES_OPTION) juego.resolver();
+            else mostrarInformacion();
 
         } else if (source.equals(btnLimpiar)) {
             if (juego.haEmpezado() && juego.estaDesbloqueado()) {
@@ -65,29 +66,28 @@ class PanelControl implements ActionListener {
             }
 
         } else if (source.equals(btnResolver)) {
-            if (juego.haEmpezado() && juego.estaDesbloqueado()) juego.resolver();
+            if (!chkPreguntarAntesDeResolver.isSelected() || mostrarConfirmacion() == JOptionPane.YES_OPTION)
+                juego.resolver();
 
         } else if (source.equals(chkContrarreloj)) {
             if (!juego.haEmpezado()) {
                 juego.setContrarreloj(chkContrarreloj.isSelected());
                 juego.iniciar();
 
-            } else if (mostrarConfirmacion() == JOptionPane.YES_OPTION) {
-                juego.resolver();
-                juego.setContrarreloj(chkContrarreloj.isSelected());
-
             } else {
                 chkContrarreloj.setSelected(!chkContrarreloj.isSelected());
+                mostrarInformacion();
             }
         }
     }
 
-    // Muestra confirmación antes de empezar una nueva partida sin haber acabado la actual
+    // Muestra confirmación antes de resolver la partida
     private int mostrarConfirmacion() {
         if (juego.haEmpezado() && juego.estaDesbloqueado()) {
             juego.pausar();
 
-            Object mensaje = "Antes de empezar una nueva partida debes rendirte y resolver. ¿Deseas hacerlo?";
+            Object mensaje = "Esto acabará la partida y te quedarás con el mejor resultado que has conseguido ¿Deseas" +
+                    " hacerlo?";
             int respuesta =
                     JOptionPane.showConfirmDialog(null, mensaje, "Aviso", JOptionPane.YES_NO_OPTION);
 
@@ -97,6 +97,15 @@ class PanelControl implements ActionListener {
 
         } else {
             return JOptionPane.CANCEL_OPTION;
+        }
+    }
+
+    // Muestra información sobre empezar una nueva partida sin haber acabado la actual
+    private void mostrarInformacion() {
+        if (juego.haEmpezado() && juego.estaDesbloqueado()) {
+            juego.pausar();
+            JOptionPane.showMessageDialog(null, "Para empezar una nueva partida debes resolver.");
+            juego.reanudar();
         }
     }
 }

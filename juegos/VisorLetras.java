@@ -152,8 +152,8 @@ public class VisorLetras extends JPanel implements ActionListener, ContainerList
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.insets = new Insets(5, 10, 5, 10);
 
-        // 2a fila (barra de progreso y botón de pausar/reanudar) (va antes de la primera en el código porque tiene
-        // propiedades especiales como el fill o weight)
+        // 2a fila (barra de progreso, botón de pausar/reanudar y checkbox de contrarreloj) (va antes de la primera en
+        // el código porque tiene propiedades especiales como el fill o weight)
         constraints.gridy = 1;
         constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.weightx = 1;
@@ -161,10 +161,10 @@ public class VisorLetras extends JPanel implements ActionListener, ContainerList
 
         constraints.weightx = 0;
         constraints.fill = GridBagConstraints.NONE; // Reiniciamos el valor de constraints fill al original
-        constraints.gridx = 1;
         columna1.add(pc.btnPausa, constraints);
+        columna1.add(pc.chkContrarreloj, constraints);
 
-        // 1a fila (botones de nueva partida, resolver; checkbox de contrarreloj y selector de idioma)
+        // 1a fila (botones de nueva partida, resolver; checkboxes y selector de idioma)
         JPanel panelBotonesGenerales = new JPanel(gridBagLayout);
 
         GridBagConstraints botonesGeneralesConstraints = new GridBagConstraints();
@@ -172,9 +172,9 @@ public class VisorLetras extends JPanel implements ActionListener, ContainerList
 
         panelBotonesGenerales.add(pc.btnIniciar, botonesGeneralesConstraints);
         panelBotonesGenerales.add(pc.btnResolver, botonesGeneralesConstraints);
-        panelBotonesGenerales.add(pc.chkContrarreloj, botonesGeneralesConstraints);
-        panelBotonesGenerales.add(pcl.panelIdioma, botonesGeneralesConstraints);
+        panelBotonesGenerales.add(pc.chkPreguntarAntesDeResolver, botonesGeneralesConstraints);
         panelBotonesGenerales.add(pcl.chkAutoMemorizar, botonesGeneralesConstraints);
+        panelBotonesGenerales.add(pcl.panelIdioma, botonesGeneralesConstraints);
 
         constraints.gridx = 0;
         constraints.gridy = 0;

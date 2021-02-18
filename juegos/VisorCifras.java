@@ -152,9 +152,17 @@ public class VisorCifras extends JPanel implements ActionListener, ContainerList
         columna2Constraints.insets = new Insets(0, 0, 20, 5);
 
         /* 1a fila (botones de nueva partida y contrarreloj) */
-        JPanel panelBotones = new JPanel(new GridLayout(1, 2, 10, 10));
-        panelBotones.add(pc.btnIniciar);
-        panelBotones.add(pc.chkContrarreloj);
+        JPanel panelBotones = new JPanel(gridBagLayout);
+        GridBagConstraints botonesConstraints = new GridBagConstraints();
+        botonesConstraints.insets = new Insets(5, 5, 5, 5);
+        botonesConstraints.fill = GridBagConstraints.HORIZONTAL;
+
+        panelBotones.add(pc.btnIniciar, botonesConstraints);
+        panelBotones.add(pc.chkContrarreloj, botonesConstraints);
+
+        botonesConstraints.gridy = 1;
+        panelBotones.add(pc.btnResolver, botonesConstraints);
+        panelBotones.add(pc.chkPreguntarAntesDeResolver, botonesConstraints);
 
         columna2.add(cifras.cifraObjetivo, columna2Constraints);
         columna2Constraints.gridx = 1;
@@ -162,10 +170,9 @@ public class VisorCifras extends JPanel implements ActionListener, ContainerList
 
         /* 2a fila (botones que controlan el juego actual) */
         PanelControlCifras pcc = new PanelControlCifras(cifras);
-        JPanel panelBotonesCifras = new JPanel(new GridLayout(1, 3, 10, 10));
+        JPanel panelBotonesCifras = new JPanel(new GridLayout(1, 2, 10, 0));
         panelBotonesCifras.add(pcc.btnDeshacer);
         panelBotonesCifras.add(pc.btnLimpiar);
-        panelBotonesCifras.add(pc.btnResolver);
 
         columna2Constraints.gridx = 0;
         columna2Constraints.gridwidth = GridBagConstraints.REMAINDER;
