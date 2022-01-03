@@ -1,9 +1,13 @@
 # Cifras y letras
-Versión mejorada del juego Cifras y letras
+Versión mejorada del juego Cifras y letras.
 
 Este programa emula el concurso de TV que emitía TVE en los años 90.
 
-Consta de dos juegos: el de cifras y el de letras
+Consta de dos juegos: el de cifras y el de letras.
+
+## Aviso
+
+**Los diccionarios del juego Letras no se han subido al repositorio al igual que el icono del programa.**
 
 ## Cifras
 
@@ -22,7 +26,5 @@ El jugador saca nueve letras al azar eligiendo, en cada caso, si es consonante o
 Una vez empezado el juego el usuario puede elegir las letras disponibles simplemente tecleándolas. Al igual que en el juego de cifras una vez encontrada la palabra más larga posible se termina la partida. Si hay palabras más largas en el diccionario del juego la partida acaba como mejorable al agotarse el tiempo.
 
 Al finalizar la partida, se muestra una lista con todas las palabras que se podían formar con las letras disponibles.
-
-**Los diccionarios no se han subido al repositorio**
 
 ![Ventana del juego de letras](Letras.png)
