@@ -1,4 +1,4 @@
-# Cifras-y-letras
+# Cifras y letras
 Versión mejorada del juego Cifras y letras
 
 Este programa emula el concurso de TV que emitía TVE en los años 90.
