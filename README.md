@@ -23,4 +23,6 @@ Una vez empezado el juego el usuario puede elegir las letras disponibles simplem
 
 Al finalizar la partida, se muestra una lista con todas las palabras que se podían formar con las letras disponibles.
 
+**Los diccionarios no se han subido al repositorio**
+
 ![Ventana del juego de letras](Letras.png)
