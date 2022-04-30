@@ -13,9 +13,6 @@ class Cronometro implements Runnable {
 
     @Override
     public void run() {
-        pausa = false;
-        parado = false;
-
         setup();
 
         try {
@@ -94,8 +91,10 @@ class Cronometro implements Runnable {
     }
 
     private synchronized void setup() {
-        this.segundosRestantes = segundosIniciales;
-        this.decimas = 0;
+        pausa = false;
+        parado = false;
+        segundosRestantes = segundosIniciales;
+        decimas = 0;
         cambio = true;
         notifyAll();
     }
