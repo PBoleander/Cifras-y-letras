@@ -1,6 +1,8 @@
 # Cifras y letras
 Versión mejorada del juego Cifras y letras.
 
+**Requiere Java >= 17**
+
 Este programa emula el concurso de TV que emitía TVE en los años 90.
 
 Consta de dos juegos: el de cifras y el de letras.
